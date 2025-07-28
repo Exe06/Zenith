@@ -1,3 +1,7 @@
+// URL base de tu backend en Railway
+const BASE_URL = 'postgresql://postgres:QtLHLzMgaZBCYBBYqYjROpjtfAVkYFTb@mainline.proxy.rlwy.net:31557/railway';
+
+
 // Inicio de sesión
 document.getElementById('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
