@@ -1,5 +1,5 @@
 // URL base de tu backend en Railway
-const BASE_URL = 'https://tu-backend.railway.app/api/usuarios';
+const BASE_URL = 'https://tp-backend.up.railway.app/usuario';
 
 // Registro de usuario
 document.getElementById('registerForm').addEventListener('submit', async function (e) {
