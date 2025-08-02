@@ -1,0 +1,31 @@
+{
+  "name": "zenith",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Exe06/Zenith.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Exe06/Zenith/issues"
+  },
+  "homepage": "https://github.com/Exe06/Zenith#readme",
+  "dependencies": {
+    "ejs": "3.1.10",
+    "express": "5.1.0",
+    "mysql2": "3.14.3"
+  },
+  "devDependencies": {
+    "nodemon": "3.1.10"
+  }
+}
