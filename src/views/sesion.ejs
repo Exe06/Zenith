@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Registro e Inicio de Sesión</title>
-  <link rel="stylesheet" href="../css/sesion.css" />
-</head>
+
+<%- include('partials/head', { title: 'Inicio de Sesión', stylesheet: '/css/sesion.css'}) %>
+
 <body>
   <div class="container">
     <h1>Inicio de Sesión</h1>
@@ -16,6 +13,6 @@
     </form>
   </div>
 
-  <script src="script.js"></script>
+  <script src="/script.js"></script>
 </body>
 </html>

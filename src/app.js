@@ -17,18 +17,23 @@
 // });
 
 import express from 'express';
-
-const PORT = process.env.PORT || '3000';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import indexRoutes from './routes/index.js';
 
 const app = express();
+const PORT = process.env.PORT || '3000';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.disable('x-powered-by');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('../public'));
+app.use(express.static(join(__dirname, '../public')));
 app.set('view engine', 'ejs');
 app.set('views', './src/views');
 
+app.use(indexRoutes);
+
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Registro e Inicio de Sesión</title>
-  <link rel="stylesheet" href="../css/registro.css" />
-</head>
+
+<%- include('/partials/head', {tittle: 'Registro', stylesheet: '/css/registro.css'}) %>
+
 <body>
   <div class="container">
     <h1>Registro de Usuario</h1>
@@ -27,6 +24,6 @@
       <input type="text" id="direccion" placeholder="Dirección" required />
       <button type="submit">Registrarse</button>
     </form>
-  <script src="script.js"></script>
+  <script src="/script.js"></script>
 </body>
 </html>

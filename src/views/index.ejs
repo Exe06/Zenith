@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zenit Alquileres</title>
-  <link rel="stylesheet" href="../css/styles.css" />
-</head>
+
+<%- include('partials/head') %>
+
 <body>
   <header class="navbar">
-    <div class="logo">Zenit <span>Alquileres</span></div>
+    <div class="logo">Zenith<span>Alquileres</span></div>
     <div class="menu-toggle">
       <span></span>
       <span></span>
@@ -24,7 +21,7 @@
     </nav>
   </header>
 
-  <section class="hero" style="background-image: url('../img/img_inicio/img1.avif');">
+  <section class="hero" style="background-image: url('/img/system/img1.avif');">
     <div class="hero-text">
       <h1>¿Casas? Tenemos.<br />¿Excusas? No.</h1>
     </div>
@@ -32,7 +29,7 @@
 
   <section class="alquileres">
     <div class="alquiler">
-      <img src="../img/img_inicio/img1.avif" alt="Casa moderna" />
+      <img src="/img/system/img1.avif" alt="Casa moderna" />
       <div class="info">
         <h3>8000 metros cuadrados en Santiago del Estero</h3>
         <p>Atrae a compradores potenciales con una descripción clara.</p>
@@ -41,7 +38,7 @@
     </div>
 
     <div class="alquiler">
-      <img src="../img/img_inicio/img2.avif" alt="Casa clásica" />
+      <img src="/img/system/img2.avif" alt="Casa clásica" />
       <div class="info">
         <h3>Casa urbana clásica<br />3 dormitorios con aparcamiento y patio trasero</h3>
         <p>Atrae a compradores potenciales con una descripción clara.</p>
@@ -50,7 +47,7 @@
     </div>
 
     <div class="alquiler">
-      <img src="../img/img_inicio/img3.avif" alt="Apartamento Belden Park" />
+      <img src="/img/system/img3.avif" alt="Apartamento Belden Park" />
       <div class="info">
         <h3>Apartamento de 2 dormitorios en Belden Park</h3>
         <p>Atrae a compradores potenciales con una descripción clara.</p>
@@ -64,17 +61,17 @@
     <h2>Servicios</h2>
     <div class="grid-servicios">
       <div class="servicio">
-        <img src="../img/img_inicio/img4.avif" alt="Publicar propiedad" />
+        <img src="/img/system/img4.avif" alt="Publicar propiedad" />
         <h4>01 PUBLICÁ TU PROPIEDAD</h4>
         <p>¿Estás buscando casa? Podemos ayudarte a encontrarla.</p>
       </div>
       <div class="servicio">
-        <img src="../img/img_inicio/img5.avif" alt="Buscar hogar" />
+        <img src="/img/system/img5.avif" alt="Buscar hogar" />
         <h4>02 BUSCÁ TU NUEVO HOGAR</h4>
         <p>¿Estás pensando en vender tu casa? ¡Queremos ayudarte!</p>
       </div>
       <div class="servicio">
-        <img src="../img/img_inicio/img6.avif" alt="Gestionar alquiler" />
+        <img src="/img/system/img6.avif" alt="Gestionar alquiler" />
         <h4>03 GESTIONÁ TU ALQUILER</h4>
         <p>¡Tenés un nuevo trabajo y te mudás? Podemos ayudar.</p>
       </div>
@@ -85,14 +82,8 @@
     <h2>Fin de página, inicio de contrato <span>😊</span></h2>
   </section>
 
-  <footer>
-    <div class="footer-logo">Zenit <span>Alquileres</span></div>
-    <div class="footer-info">
-      <p><strong>DIRECCIÓN</strong><br />Olaechea 1005</p>
-      <p><strong>CONTACTO</strong><br />612 345 678 📞<br />zenitalquileres@gmail.com 📧<br />@zenit_alquileres 📷<br />@zenit_alquileres 🎒</p>
-    </div>
-  </footer>
+  <%- include('partials/footer') %>
 
-  <script src="../js/script.js"></script>
+  <script src="/js/script.js"></script>
 </body>
 </html>
