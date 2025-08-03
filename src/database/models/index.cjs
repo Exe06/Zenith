@@ -27,7 +27,10 @@ fs
     );
   })
   .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    const imported = require(path.join(__dirname, file));
+    const model = imported.default
+    ? imported.default(sequelize, Sequelize.DataTypes)
+    : imported(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
 
