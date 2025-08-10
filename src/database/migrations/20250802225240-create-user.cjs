@@ -27,14 +27,18 @@ module.exports = {
         allowNull: false,
         unique: true
       },
+      phone: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       password: {
         type: Sequelize.STRING,
         allowNull: false
       },
       image: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: '/img/users/default.png'
+        defaultValue: 'default.png'
       },
       province: {
         type: Sequelize.STRING,

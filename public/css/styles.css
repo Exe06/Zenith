@@ -60,7 +60,7 @@ body {
 
 /* Hero */
 .hero {
-  background-image: url('/img/system/img1.avif');
+  background-image: url('/img/system/img-header.jpeg');
   height: 40vh;
   display: flex;
   align-items: center;
