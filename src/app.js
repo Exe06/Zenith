@@ -24,6 +24,7 @@ import methodOverride from 'method-override';
 import { checkConnection } from './utils/checkConnection.js';
 import indexRoutes from './routes/index.js';
 import userRoutes from './routes/user.js';
+import propertyRoutes from './routes/property.js';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -39,6 +40,7 @@ app.set('views', './src/views');
 
 app.use("/", indexRoutes);
 app.use("/user", userRoutes);
+app.use("/property", propertyRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
