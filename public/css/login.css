@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Fredoka', sans-serif;
+}
+
+body, html {
+  height: 100%;
+  width: 100%;
+  background-color: #f5f6fa;
+  background-image: url(/img/system/img-login.jpeg);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f0f4f8;
+  padding: 20px 30px;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  font-weight: 600;
+  font-size: 20px;
+  color: #003049;
+}
+
+.logo span {
+  color: #669bbc;
+  font-weight: 400;
+  font-size: 0.85em;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #003049;
+  font-size: 0.95em;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+  color: #669bbc;
+}
+
+.btn-inicio-sesion {
+  background-color: #669bbc;  /* azul */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-inicio-sesion:hover {
+  background-color: #e0e0e0; /* azul un poco más oscuro al pasar el mouse */
+}
+
+/* Sección con fondo */
+section {
+  min-height: 100vh;
+  background-image: url("../img/fondo.jpg"); /* Cambia esta ruta si usás otra imagen */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+/* Contenedor principal */
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 1200px;
+  width: 100%;
+}
+
+/* Caja del formulario */
+.container {
+  width: 100%;
+  max-width: 420px;
+  background-color: #ffffff;
+  padding: 30px 25px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.container h1 {
+  font-size: 26px;
+  margin-bottom: 10px;
+  color: #003049;
+}
+
+.container p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* Etiquetas */
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Inputs */
+.input-box {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 10px 5px 10px 35px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background: transparent;
+  font-size: 14px;
+  color: #333;
+}
+
+.input-box input:focus {
+  border-bottom-color: #669bbc;
+  outline: none;
+}
+
+.input-box .icon {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  color: #999;
+}
+
+/* Extras */
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin: 10px 0 20px;
+  color: #333;
+}
+
+.remember-forgot a {
+  color: #669bbc;
+  text-decoration: none;
+}
+
+.remember-forgot a:hover {
+  text-decoration: underline;
+}
+
+/* Botón */
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #669bbc;
+  color: white;
+  font-size: 15px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #4a8dbb;
+}
+
+/* Enlace de registro */
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.register-link a {
+  color: #669bbc;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
