@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<%- include('/partials/head', {tittle: 'Registro', stylesheet: '/css/registro.css'}) %>
+<%- include('partials/head', {tittle: 'Registro', stylesheet: '/css/registro.css'}) %>
 
 <body>
   <div class="container">
@@ -24,6 +24,8 @@
       <input type="text" id="direccion" placeholder="Dirección" required />
       <button type="submit">Registrarse</button>
     </form>
-  <script src="/script.js"></script>
-</body>
+    
+    <%- include('/partials/head') %>
+    <script src="/script.js"></script>
+  </body>
 </html>

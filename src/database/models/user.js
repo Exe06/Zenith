@@ -3,13 +3,24 @@ import { Model } from 'sequelize';
 
 export default (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+
     static associate(models) {
-      // define association here
+    //   User.belongsToMany(models.Role, {
+    //     through: "UserRoles",
+    //     foreignKey: 'user_id',
+    //     otherKey: 'role_id',
+    //     as: 'roles'
+    //   });
+
+    //   User.hasMany(models.Property, {
+    //     foreignKey: 'user_id',
+    //     as: 'properties'
+    //   });
+      
+    //   User.hasMany(models.Contracts, {
+    //     foreignKey: 'user_id',
+    //     as: 'contracts'
+    //   });
     }
   }
 
@@ -42,14 +53,14 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false
       },
+      province: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       image: {
         type: DataTypes.TEXT,
         allowNull: false,
         defaultValue: '/img/users/default.png'
-      },
-      province: {
-        type: DataTypes.STRING,
-        allowNull: false
       },
       created_at: {
         type: DataTypes.DATE,
