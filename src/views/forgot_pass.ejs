@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+    
+<%- include('partials/head') %>
+
+<body>
+  <!-- Header -->
+  <%- include('partials/header') %>
+
+  <main class="hero">
+    <section class="panel" role="dialog" aria-labelledby="title">
+      <h1 id="title">Recuperar acceso</h1>
+      <p class="lead">Ingresa tu correo electrónico, teléfono o D.N.I y te enviaremos un enlace para que recuperes el acceso a tu cuenta.</p>
+
+      <form id="form">
+        <div class="field">
+          <div class="control">
+            <input id="identifier" name="identifier" type="text" placeholder="correo electronico, telefono o DNI" autocomplete="username"/>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Enviar enlace</button>
+        <div id="msgOk" class="alert ok">Listo. Si el dato existe, te enviamos un enlace para restablecer la contraseña.</div>
+        <div id="msgErr" class="alert err">Ingresá un email, teléfono o DNI válido.</div>
+
+        <div class="links">
+          <a href="login.html">Volver a iniciar sesión</a> ·
+          <a href="registro.html">¿No tienes cuenta? Registrarse</a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+<script>
+  const form = document.getElementById('form');
+  const idf = document.getElementById('identifier');
+  const ok = document.getElementById('msgOk');
+  const err = document.getElementById('msgErr');
+  const clearBtn = document.getElementById('clear');
+
+  clearBtn.addEventListener('click', ()=>{ idf.value=''; idf.focus(); hideAlerts(); });
+
+  function hideAlerts(){ ok.style.display='none'; err.style.display='none'; }
+
+  function isValidIdentifier(v){
+    v = (v||'').trim();
+    if(!v) return false;
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    const onlyDigits = v.replace(/\D/g,'');
+    const isPhoneOrDni = onlyDigits.length >= 6;
+    return isEmail || isPhoneOrDni;
+  }
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault(); hideAlerts();
+    const value = idf.value.trim();
+
+    if(!isValidIdentifier(value)){
+      err.style.display='block';
+      return;
+    }
+
+    // fetch('/api/auth/forgot', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ identifier:value }) })
+
+    ok.style.display='block';
+    e.submitter.disabled = true; setTimeout(()=> e.submitter.disabled=false, 2500);
+  });
+</script>
+</body>
+</html>
