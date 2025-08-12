@@ -6,7 +6,7 @@
     padding: 0;
   }
   
-  body{margin:0;background:var(--bg);color:var(--text); padding-top: 64px;}
+  body{margin:0;background:var(--bg);color:var(--text); padding-top: 72px;}
 
   /* filtros */
   .filters-wrap{position:sticky;top:60px;z-index:5;}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body>
+
+  <%- include('partials/header3') %>
+
+  <div class="container">
+    <div>
+      <h1>Mis alquileres</h1>
+
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Buscar por dirección / inquilino…" />
+        <select id="fEstado">
+          <option value="">Estado contrato</option>
+          <option>Activo</option><option>Pendiente de firma</option><option>Finalizado</option>
+          <option>Rescindido</option><option>Incumplimiento</option>
+        </select>
+        <select id="fOperacion">
+          <option value="">Operación</option>
+          <option>Alquiler</option><option>Temporario</option>
+        </select>
+        <select id="fFrecuencia">
+          <option value="">Frecuencia de pago</option>
+          <option>Mensual</option><option>Trimestral</option><option>Anual</option>
+        </select>
+        <button class="btn btn-ghost" id="btnLimpiar">Limpiar</button>
+        <button class="btn btn-primary" id="btnNuevo">Nueva publicación</button>
+      </div>
+
+      <!-- Cards propiedades -->
+      <section class="cards" id="cards"></section>
+
+      <!-- Tabs -->
+      <section class="tabs">
+        <div class="tab-head">
+          <button class="tab-btn active" data-tab="contratos">Contratos</button>
+          <button class="tab-btn" data-tab="pagos">Pagos</button>
+          <button class="tab-btn" data-tab="solicitudes">Solicitudes</button>
+        </div>
+
+        <!-- CONTRATOS -->
+        <div id="contratos" class="tab-pane active">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Inquilino</th><th>Propiedad</th><th>Período</th>
+                  <th>Frecuencia</th><th>Monto base</th><th>Estado</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="tbContratos"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PAGOS -->
+        <div id="pagos" class="tab-pane">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th><th>Inquilino</th><th>Propiedad</th><th>Período</th>
+                  <th>Monto</th><th>Estado</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="tbPagos"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SOLICITUDES -->
+        <div id="solicitudes" class="tab-pane">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th><th>Interesado</th><th>Propiedad</th><th>Mensaje</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="tbSolicitudes"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ASIDE -->
+    <aside>
+      <div class="panel">
+        <h3>Próximos vencimientos</h3>
+        <div class="list" id="vxList"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Accesos rápidos</h3>
+        <div class="list">
+          <div class="item"><span>Subir contrato</span><button class="btn btn-primary">Nuevo</button></div>
+          <div class="item"><span>Registrar pago</span><button class="btn btn-ghost">Cargar</button></div>
+          <div class="item"><span>Exportar movimientos</span><button class="btn btn-ghost">CSV</button></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script src="/js/managment.js"></script>
+</body>
+</html>

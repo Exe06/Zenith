@@ -9,7 +9,7 @@
     padding: 0;
 }
   
-body{margin:0;background:var(--bg);color:var(--text);padding-top: 64px;}
+body{margin:0;background:var(--bg);color:var(--text);padding-top: 72px;}
 .container{max-width:1180px;margin:36px auto;padding:0 20px}
 .crumbs{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:.95rem;margin-bottom:12px}
 .crumbs a{color:var(--muted);text-decoration:none}

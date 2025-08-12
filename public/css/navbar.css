@@ -4,8 +4,9 @@
   justify-content: space-between;
   align-items: center;
   background-color: #f0f4f8;
-  padding: 20px 30px;
+  padding: 0px 30px;
   border-bottom: 1px solid #ddd;
+  height: 72px;
   position: fixed;
   top: 0;
   right: 0;
@@ -29,6 +30,7 @@
   list-style: none;
   display: flex;
   gap: 20px;
+  align-items: center;
 }
 
 .navbar a {
@@ -54,4 +56,12 @@
 
 .btn-inicio-sesion:hover {
   background-color: #e0e0e0; /* azul un poco más oscuro al pasar el mouse */
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
 }

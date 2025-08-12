@@ -26,9 +26,10 @@ export default (sequelize, DataTypes) => {
 
   User.init({
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       allowNull: false,
+      unsigned: true,
       primaryKey: true,
     },
     dni: {

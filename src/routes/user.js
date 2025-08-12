@@ -25,6 +25,10 @@ router.get('/forgot_pass', (req, res) => {
   res.render('forgotPass', { title: 'Olvidé mi contraseña', stylesheet: 'forgot_pass.css' });
 });
 
+router.get('/managment', (req, res) => {
+  res.render('managment', { title: 'Gestión de Propiedades', stylesheet: 'managment.css' });
+});
+
 // Perfil de Usuario
 router.get('/:id', (req, res) => {
   res.render('profile', { title: 'Mi Perfil', stylesheet: 'profile.css' });
