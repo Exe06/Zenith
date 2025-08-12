@@ -4,7 +4,7 @@ const router = Router();
 
 // Main
 router.get('/', (req, res) => {
-  res.render('index', { title: 'Zenit Alquileres', stylesheet: '/css/styles.css' });
+  res.render('index', { title: 'Zenit Alquileres', stylesheet: 'styles.css' });
 });
 
 export default router;

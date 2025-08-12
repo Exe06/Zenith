@@ -39,8 +39,8 @@ app.set('view engine', 'ejs');
 app.set('views', './src/views');
 
 app.use("/", indexRoutes);
-app.use("/user", userRoutes);
 app.use("/property", propertyRoutes);
+app.use("/user", userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
