@@ -1,6 +1,12 @@
   :root{--bg:#f5f7f8;--card:#fff;--text:#0f172a;--muted:#5b6b7a;--border:#e5e7eb;--ring:0 10px 30px rgba(2,14,40,.08);--brand:#0d5c63}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,Segoe UI,Roboto,sans-serif}
+  * {
+    box-sizing:border-box;
+    font-family: 'Fredoka', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body{margin:0;background:var(--bg);color:var(--text); padding-top: 64px;}
 
   /* filtros */
   .filters-wrap{position:sticky;top:60px;z-index:5;}

@@ -8,8 +8,8 @@
   border-bottom: 1px solid #ddd;
   position: fixed;
   top: 0;
-  left: 0;
   right: 0;
+  left: 0;
   z-index: 9999;
 }
 

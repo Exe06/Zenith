@@ -3,12 +3,14 @@
   --bg:#f5f7f8; --card:#fff; --text:#0f172a; --muted:#5b6b7a; --border:#e5e7eb;
   --brand:#0d5c63; --brand-600:#0a4e55; --ring:0 20px 60px rgba(2,14,40,.15);
 }
-*{  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Fredoka', sans-serif;}
+*{
+    box-sizing:border-box;
+    font-family: 'Fredoka', sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-body{margin:0;color:var(--text);background:var(--bg)}
+body{margin:0;color:var(--text);background:var(--bg); padding-top: 64px;}
 
 .topbar{display:flex;align-items:center;gap:8px;height:56px;padding:0 18px;border-bottom:1px solid var(--border);background:#fff}
 .brand{font-weight:800} .brand small{font-weight:600;color:#78919b}

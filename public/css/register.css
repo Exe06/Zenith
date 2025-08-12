@@ -18,28 +18,9 @@ body, html {
   overflow-x: hidden;
 }
 
-/* Encabezado */
-header.navbar {
-  padding: 20px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+body {
+  padding-top: 64px;
 }
-
-.logo {
-  font-weight: 600;
-  font-size: 20px;
-  color: #003049;
-}
-
-.logo span {
-  color: #669bbc;
-  font-weight: 400;
-  font-size: 0.85em;
-}
-
 
 /* Sección principal */
 section {
