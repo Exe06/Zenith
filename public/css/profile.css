@@ -1,0 +1,105 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body, html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background-color: white;
+  background-size: 100% 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  color: white;
+}
+
+.logo a {
+  color: #fff;
+  font-size: 1.5rem;
+  text-decoration: none;
+  font-weight: bold;
+}
+.logo span {
+  color: #ccc;
+  font-weight: normal;
+  font-size: 0.8rem;
+}
+
+.navbar ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+.navbar ul li a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.navbar ul li a:hover {
+  color: #ffdd57;
+}
+
+.profile-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.profile-card {
+  background-color: ghostwhite;
+  border-radius: 15px;
+  padding: 30px;
+  width: 350px;
+  text-align: center;
+  color: black;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+.avatar img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+
+.role {
+  font-style: italic;
+  color: #cce3ff;
+  margin-bottom: 15px;
+}
+
+.info p {
+  margin: 8px 0;
+}
+
+.edit-btn {
+  margin-top: 20px;
+  padding: 10px 25px;
+  background: #005f73;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.edit-btn:hover {
+  background: #0a9396;
+}

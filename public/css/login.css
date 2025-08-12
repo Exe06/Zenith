@@ -17,62 +17,6 @@ body, html {
   overflow: hidden;
 }
 
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f0f4f8;
-  padding: 20px 30px;
-  border-bottom: 1px solid #ddd;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.logo {
-  font-weight: 600;
-  font-size: 20px;
-  color: #003049;
-}
-
-.logo span {
-  color: #669bbc;
-  font-weight: 400;
-  font-size: 0.85em;
-}
-
-.navbar ul {
-  list-style: none;
-  display: flex;
-  gap: 20px;
-}
-
-.navbar a {
-  text-decoration: none;
-  color: #003049;
-  font-size: 0.95em;
-  transition: color 0.3s ease;
-}
-
-.navbar a:hover {
-  color: #669bbc;
-}
-
-.btn-inicio-sesion {
-  background-color: #669bbc;  /* azul */
-  color: white;
-  padding: 10px 20px;
-  border-radius: 30px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.btn-inicio-sesion:hover {
-  background-color: #e0e0e0; /* azul un poco más oscuro al pasar el mouse */
-}
-
 /* Sección con fondo */
 section {
   min-height: 100vh;
