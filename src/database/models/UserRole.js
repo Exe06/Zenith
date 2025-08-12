@@ -12,14 +12,16 @@ export default (sequelize, DataTypes) => {
 
   UserRole.init({
     id: {
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER,
       autoIncrement: true,
       allowNull: false,
+      unsigned: true,
       primaryKey: true
     },
     user_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       allowNull: false,
+      unsigned: true,
       references: {
         model: 'users',
         key: 'id'
@@ -30,6 +32,7 @@ export default (sequelize, DataTypes) => {
     role_id: {
       type: DataTypes.UUID,
       allowNull: false,
+      unsigned: true,
       references: {
         model: 'roles',
         key: 'id'
