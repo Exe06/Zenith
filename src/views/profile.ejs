@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body>
+  <header class="navbar">
+    <div class="logo"><a href="index.html">Zenit <span>Alquileres</span></a></div>
+    <nav>
+      <ul>
+        <li><a href="#">Inicio</a></li>
+        <li><a href="#">Propiedades</a></li>
+        <li><a href="#">Favoritos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="profile-container">
+    <div class="profile-card">
+      <div class="avatar">
+        <img src="../img/users/default.png" alt="Foto de perfil">
+      </div>
+      <h2>Juan Pérez</h2>
+      <p class="role">Inquilino</p>
+
+      <div class="info">
+        <p><strong>Email:</strong> juanperez@mail.com</p>
+        <p><strong>Teléfono:</strong> 123456789</p>
+        <p><strong>Provincia:</strong> Córdoba</p>
+        <p><strong>Localidad:</strong> Nueva Córdoba</p>
+        <p><strong>Dirección:</strong> Calle Falsa 123</p>
+      </div>
+
+      <a href="/user/edit/1">
+        <button class="edit-btn">Editar Perfil</button>
+      </a>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body>
+  
+  <%- include('partials/header') %>
+
+  <div class="container">
+    
+
+    <h1>Nueva publicación</h1>
+    <div class="sub">Ingresá la información de tu propiedad. Podés guardar como borrador y publicar más tarde.</div>
+
+    <form id="listingForm" class="grid" novalidate>
+      <!-- LEFT -->
+      <div>
+        <!-- Básico -->
+        <section class="card section">
+          <h3>Información básica</h3>
+          <div class="row">
+            <div class="field h6">
+              <label class="label" for="title">Título <span class="hint" id="titleCount">0/80</span></label>
+              <input id="title" name="title" maxlength="80" placeholder="Ej: Departamento céntrico, luminoso y con balcón" required />
+            </div>
+            <div class="field h6">
+              <label class="label" for="operationType">Tipo de operación</label>
+              <select id="operationType" name="operation_type" required>
+                <option value="">Seleccionar</option>
+                <option value="alquiler">Alquiler</option>
+                <option value="venta">Venta</option>
+                <option value="temporal">Alquiler temporal (por día)</option>
+              </select>
+            </div>
+            <div class="field h6">
+              <label class="label" for="propertyType">Tipo de inmueble</label>
+              <select id="propertyType" name="property_type" required>
+                <option value="">Seleccionar</option>
+                <option value="departamento">Departamento</option>
+                <option value="casa">Casa</option>
+                <option value="duplex">Dúplex</option>
+                <option value="monoambiente">Monoambiente</option>
+              </select>
+            </div>
+            <div class="field h6">
+              <label class="label" for="address">Dirección</label>
+              <input id="address" name="address" placeholder="Calle, número" required />
+            </div>
+            <div class="field h4">
+              <label class="label" for="province">Provincia</label>
+              <select id="province" required></select>
+            </div>
+            <div class="field h4">
+              <label class="label" for="city">Ciudad / Localidad</label>
+              <input id="city" name="city" placeholder="Santiago del Estero" required />
+            </div>
+            <div class="field h4">
+              <label class="label" for="neighborhood">Barrio (opcional)</label>
+              <input id="neighborhood" name="neighborhood" placeholder="Centro" />
+            </div>
+            <div class="field">
+              <label class="label" for="description">Descripción <span class="hint" id="descCount">0/500</span></label>
+              <textarea id="description" name="description" maxlength="500" placeholder="Contá lo mejor de tu propiedad: orientación, terminaciones, cercanías, etc." required></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Detalles físicos -->
+        <section class="card section">
+          <h3>Detalles</h3>
+          <div class="row">
+            <div class="field h3"><label class="label" for="rooms">Ambientes</label><input id="rooms" type="number" min="1" step="1" required></div>
+            <div class="field h3"><label class="label" for="bedrooms">Dormitorios</label><input id="bedrooms" type="number" min="0" step="1" required></div>
+            <div class="field h3"><label class="label" for="bathrooms">Baños</label><input id="bathrooms" type="number" min="1" step="1" required></div>
+            <div class="field h3"><label class="label" for="area">Superficie (m²)</label><input id="area" type="number" min="10" step="1" required></div>
+            <div class="field h3"><label class="label" for="garage">Cochera</label><select id="garage"><option value="no">No</option><option value="si">Sí</option></select></div>
+            <div class="field h3"><label class="label" for="outdoor">Balcón/Patio</label><select id="outdoor"><option value="ninguno">Ninguno</option><option value="balcon">Balcón</option><option value="patio">Patio</option></select></div>
+            <div class="field h3"><label class="label" for="pets">Mascotas</label><select id="pets"><option value="no">No permitidas</option><option value="si">Permitidas</option></select></div>
+            <div class="field h3"><label class="label" for="age">Antigüedad (años)</label><input id="age" type="number" min="0" step="1"></div>
+          </div>
+        </section>
+
+        <!-- Servicios / amenities -->
+        <section class="card section">
+          <h3>Servicios y amenities</h3>
+          <div class="chips" id="amenities">
+            <span class="chip" data-key="electricidad">Electricidad</span>
+            <span class="chip" data-key="agua">Agua corriente</span>
+            <span class="chip" data-key="gas">Gas natural</span>
+            <span class="chip" data-key="ac">Aire acondicionado</span>
+            <span class="chip" data-key="calefaccion">Calefacción</span>
+            <span class="chip" data-key="seguridad">Seguridad 24h</span>
+            <span class="chip" data-key="lavadero">Lavadero</span>
+            <span class="chip" data-key="piscina">Piscina</span>
+            <span class="chip" data-key="ascensor">Ascensor</span>
+          </div>
+        </section>
+
+        <!-- Imágenes -->
+        <section class="card section">
+          <h3>Imágenes</h3>
+          <div class="uploader" id="drop">
+            <input type="file" id="files" accept="image/*" multiple>
+            <div>
+              <div class="cta" onclick="document.getElementById('files').click()">Subir imágenes</div>
+              <div class="hint" style="margin-top:8px">Arrastrá y soltá hasta 10 imágenes. La primera será la principal.</div>
+            </div>
+          </div>
+          <div id="previews" class="previews" aria-live="polite"></div>
+        </section>
+
+        <!-- Ubicación -->
+        <section class="card section">
+          <h3>Ubicación</h3>
+          <div class="row">
+            <div class="field h6"><label class="label" for="lat">Latitud</label><input id="lat" placeholder="-27.784" type="number" step="any"></div>
+            <div class="field h6"><label class="label" for="lng">Longitud</label><input id="lng" placeholder="-64.264" type="number" step="any"></div>
+            <div class="field"><label class="label" for="maps">URL de Google Maps (opcional)</label><input id="maps" placeholder="https://maps.google.com/..." type="url"></div>
+          </div>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14118.646114725634!2d-64.2755133029628!3d-27.789401490816584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x943b52103439bf83%3A0xdb1fbfa8b97fbad6!2sUrquiza%20200%2C%20G4204%20Santiago%20del%20Estero!5e0!3m2!1ses-419!2sar!4v1754765928238!5m2!1ses-419!2sar" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </section>
+
+        <!-- Condiciones -->
+        <section class="card section">
+          <h3>Condiciones y precio</h3>
+          <div class="row">
+            <div class="field h6"><label class="label" for="baseAmount">Monto base</label><input id="baseAmount" type="number" min="0" step="100" placeholder="Ej: 320000" required></div>
+            <div class="field h6" id="frequencyWrap">
+              <label class="label" for="paymentFrequency">Frecuencia de pago</label>
+              <select id="paymentFrequency">
+                <option value="mensual">Mensual</option>
+                <option value="quincenal">Quincenal</option>
+                <option value="semanal">Semanal</option>
+                <option value="diaria">Diaria</option>
+              </select>
+            </div>
+            <div class="field h6"><label class="label" for="deposit">Depósito</label><input id="deposit" type="number" min="0" step="100" placeholder="Ej: 320000"></div>
+            <div class="field h6"><label class="label" for="expenses">Expensas</label><input id="expenses" type="number" min="0" step="100" placeholder="Ej: 25000"></div>
+            <div class="field h6"><label class="label" for="guarantee">Garantía</label>
+              <select id="guarantee">
+                <option value="">Seleccionar</option>
+                <option value="propietaria">Propietaria</option>
+                <option value="seguro_caucion">Seguro de caución</option>
+                <option value="recibo_sueldo">Recibos de sueldo</option>
+              </select>
+            </div>
+            <div class="field h6">
+              <label class="label">Estado</label>
+              <div class="switch"><input id="active" type="checkbox" checked><span>Publicación activa</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Reglas -->
+        <section class="card section">
+          <h3>Reglas</h3>
+          <div class="row">
+            <div class="field h6"><label class="label" for="smoke">Fumar</label><select id="smoke"><option value="no">No permitido</option><option value="si">Permitido</option></select></div>
+            <div class="field h6"><label class="label" for="events">Eventos</label><select id="events"><option value="no">No permitido</option><option value="si">Permitido</option></select></div>
+            <div class="field h6"><label class="label" for="minStay">Estadía mínima (días)</label><input id="minStay" type="number" min="0" step="1" value="0"></div>
+            <div class="field h6"><label class="label" for="maxGuests">Huéspedes máximos</label><input id="maxGuests" type="number" min="1" step="1" value="3"></div>
+          </div>
+        </section>
+
+        <!-- Acciones -->
+        <section class="card section">
+          <div class="btns">
+            <button type="button" class="btn btn-ghost" id="draftBtn">Guardar borrador</button>
+            <button type="submit" class="btn btn-primary">Publicar</button>
+          </div>
+          <div id="formErrors" class="errors" style="margin-top:8px"></div>
+        </section>
+      </div>
+
+      <!-- RIGHT: Resumen -->
+      <aside class="card sticky side">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="pill" id="sideOp">Operación</div>
+            <div class="price" id="sidePrice">$ 0</div>
+            <div class="hint" id="sideFreq">Frecuencia</div>
+          </div>
+          <div style="width:110px;height:82px;border-radius:16px;overflow:hidden;box-shadow:var(--ring)">
+            <img id="sideImg" src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=600&auto=format&fit=crop" alt="Preview" style="width:100%;height:100%;object-fit:cover">
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div style="font-weight:800" id="sideTitle">Título de la publicación</div>
+        <div class="hint" id="sideLocation">Provincia, Ciudad</div>
+        <div class="chips" id="sideChips" style="margin-top:10px"></div>
+      </aside>
+    </form>
+  </div>
+
+  <script>
+    // Provincias AR (simplificado)
+    const provincias = [
+      'Buenos Aires','Catamarca','Chaco','Chubut','Córdoba','Corrientes','Entre Ríos','Formosa','Jujuy','La Pampa','La Rioja','Mendoza','Misiones','Neuquén','Río Negro','Salta','San Juan','San Luis','Santa Cruz','Santa Fe','Santiago del Estero','Tierra del Fuego','Tucumán'
+    ];
+    const provinceSel = document.getElementById('province');
+    provinceSel.innerHTML = '<option value="">Seleccionar</option>' + provincias.map(p=>`<option>${p}</option>`).join('');
+
+    // Contadores
+    const title = document.getElementById('title');
+    const titleCount = document.getElementById('titleCount');
+    const desc = document.getElementById('description');
+    const descCount = document.getElementById('descCount');
+    const price = document.getElementById('baseAmount');
+    const sidePrice = document.getElementById('sidePrice');
+
+    function fmt(n){
+      if(!n) return '$ 0';
+      return '$ ' + Number(n).toLocaleString('es-AR');
+    }
+
+    function updateSide(){
+      document.getElementById('sideTitle').textContent = title.value || 'Título de la publicación';
+      document.getElementById('sideLocation').textContent = `${provinceSel.value || 'Provincia'}, ${document.getElementById('city').value || 'Ciudad'}`;
+      document.getElementById('sideOp').textContent = (document.getElementById('operationType').value || 'Operación').replace(/^./, s=>s.toUpperCase());
+      sidePrice.textContent = fmt(price.value);
+      const pf = document.getElementById('paymentFrequency');
+      document.getElementById('sideFreq').textContent = pf ? `Pago: ${pf.value}` : 'Pago: -';
+
+      const chips = document.getElementById('sideChips');
+      const am = Array.from(document.querySelectorAll('#amenities .chip[data-active="true"]')).slice(0,4).map(e=>e.textContent);
+      chips.innerHTML = am.map(t=>`<span class="chip">${t}</span>`).join('');
+    }
+
+    title.addEventListener('input',()=>{titleCount.textContent = `${title.value.length}/80`; updateSide();});
+    desc.addEventListener('input',()=>{descCount.textContent = `${desc.value.length}/500`;});
+    ['city','operationType','paymentFrequency','province','baseAmount'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('input', updateSide);
+      if(el) el.addEventListener('change', updateSide);
+    });
+
+    // Amenities toggle
+    document.getElementById('amenities').addEventListener('click', (e)=>{
+      if(e.target.classList.contains('chip')){
+        e.target.dataset.active = e.target.dataset.active === 'true' ? 'false' : 'true';
+        updateSide();
+      }
+    });
+
+    // Uploader
+    const drop = document.getElementById('drop');
+    const input = document.getElementById('files');
+    const previews = document.getElementById('previews');
+
+    function renderPreview(file){
+      const url = URL.createObjectURL(file);
+      const box = document.createElement('div');
+      box.className = 'ph';
+      box.innerHTML = `<img src="${url}" alt="imagen">\n<button title="Eliminar">✕</button>`;
+      box.querySelector('button').onclick = ()=>{box.remove(); if(!previews.children.length){document.getElementById('sideImg').src='https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=600&auto=format&fit=crop'} };
+      previews.appendChild(box);
+      if(previews.children.length === 1){ document.getElementById('sideImg').src = url; }
+    }
+
+    input.addEventListener('change', ()=>{[...input.files].slice(0,10).forEach(renderPreview)});
+    ;['dragover','drop'].forEach(ev=>drop.addEventListener(ev, e=>{e.preventDefault()}));
+    drop.addEventListener('drop', (e)=>{
+      const files = [...e.dataTransfer.files].filter(f=>f.type.startsWith('image/')).slice(0,10);
+      files.forEach(renderPreview);
+    });
+
+    // Frecuencia visible solo en alquiler/temporal
+    const op = document.getElementById('operationType');
+    const frequencyWrap = document.getElementById('frequencyWrap');
+    function toggleFrequency(){
+      const show = ['alquiler','temporal'].includes(op.value);
+      frequencyWrap.style.display = show ? 'block' : 'none';
+      updateSide();
+    }
+    op.addEventListener('change', toggleFrequency); toggleFrequency();
+
+    // Submit / draft
+    const form = document.getElementById('listingForm');
+    const errors = document.getElementById('formErrors');
+
+    document.getElementById('draftBtn').addEventListener('click', ()=>{
+      alert('Borrador guardado localmente (simulado).');
+    });
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      errors.textContent = '';
+      if(!form.checkValidity()){
+        errors.textContent = 'Revisá los datos: hay campos obligatorios sin completar.';
+        return;
+      }
+      const payload = {
+        title: title.value,
+        operation_type: op.value,
+        property_type: document.getElementById('propertyType').value,
+        address: document.getElementById('address').value,
+        province: provinceSel.value,
+        city: document.getElementById('city').value,
+        neighborhood: document.getElementById('neighborhood').value,
+        description: desc.value,
+        details: {
+          rooms: +document.getElementById('rooms').value,
+          bedrooms: +document.getElementById('bedrooms').value,
+          bathrooms: +document.getElementById('bathrooms').value,
+          area: +document.getElementById('area').value,
+          garage: document.getElementById('garage').value === 'si',
+          outdoor: document.getElementById('outdoor').value,
+          pets: document.getElementById('pets').value === 'si',
+          age: +document.getElementById('age').value || 0,
+        },
+        amenities: Array.from(document.querySelectorAll('#amenities .chip[data-active="true"]')).map(el=>el.dataset.key),
+        pricing: {
+          base_amount: +document.getElementById('baseAmount').value,
+          payment_frequency: (document.getElementById('paymentFrequency')||{}).value || null,
+          deposit: +document.getElementById('deposit').value || 0,
+          expenses: +document.getElementById('expenses').value || 0,
+          guarantee: document.getElementById('guarantee').value || null,
+          active: document.getElementById('active').checked
+        },
+        rules: {
+          smoke: document.getElementById('smoke').value,
+          events: document.getElementById('events').value,
+          min_stay: +document.getElementById('minStay').value || 0,
+          max_guests: +document.getElementById('maxGuests').value || 0,
+        },
+        location: {
+          lat: parseFloat(document.getElementById('lat').value),
+          lng: parseFloat(document.getElementById('lng').value),
+          maps: document.getElementById('maps').value
+        }
+      };
+      console.log('Payload listo para API:', payload);
+      alert('Publicación creada (simulación). Mirá la consola para ver el payload.');
+    });
+
+    updateSide();
+  </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body>
+  <!-- NAVBAR -->
+  <%- include('partials/header') %>
+
+  <!-- FILTROS -->
+  <section class="filters-wrap">
+    <div class="filters" id="filters">
+      <div class="filter" style="grid-column:span 2">
+        <label for="fUbicacion">Ubicación</label>
+        <select id="fUbicacion"><option value="">Todas</option></select>
+      </div>
+
+      <div class="filter" style="grid-column:span 2">
+        <label for="fTipo">Tipo</label>
+        <select id="fTipo"><option value="">Todos</option></select>
+      </div>
+
+      <div class="filter" style="grid-column:span 2">
+        <label for="fOperacion">Operación</label>
+        <select id="fOperacion">
+          <option value="">Cualquiera</option>
+          <option value="mensual">Mensual</option>
+          <option value="temporario">Temporario</option>
+        </select>
+      </div>
+
+      <div class="filter" style="grid-column:span 2">
+        <label for="fGarantia">Garantía</label>
+        <select id="fGarantia">
+          <option value="">Cualquiera</option>
+          <option value="propietario">Propietario</option>
+          <option value="seguro_caucion">Seguro de caución</option>
+          <option value="recibo_sueldo">Recibo de sueldo</option>
+        </select>
+      </div>
+
+      <div class="filter" style="grid-column:span 2">
+        <label for="fPrecio">Precio máx.</label>
+        <select id="fPrecio">
+          <option value="">Sin tope</option>
+          <option value="150000">Hasta $150.000</option>
+          <option value="250000">Hasta $250.000</option>
+          <option value="350000">Hasta $350.000</option>
+          <option value="500000">Hasta $500.000</option>
+        </select>
+      </div>
+
+      <div class="filter" style="grid-column:span 1">
+        <label for="fAmb">Ambientes (mín.)</label>
+        <select id="fAmb">
+          <option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option>
+        </select>
+      </div>
+
+      <div class="filter" style="grid-column:span 1">
+        <label for="fDorm">Dorm. (mín.)</label>
+        <select id="fDorm">
+          <option value="">—</option><option>1</option><option>2</option><option>3</option>
+        </select>
+      </div>
+
+      <div class="filter" style="grid-column:span 6">
+        <div class="checkline">
+          <label><input type="checkbox" id="fMascotas"> Mascotas</label>
+          <label><input type="checkbox" id="fCochera"> Cochera</label>
+          <label><input type="checkbox" id="fBalcon"> Balcón</label>
+          <!-- servicios básicos -->
+          <label><input type="checkbox" class="srv" value="internet"> Internet</label>
+          <label><input type="checkbox" class="srv" value="gas"> Gas</label>
+          <label><input type="checkbox" class="srv" value="luz"> Luz</label>
+          <label><input type="checkbox" class="srv" value="agua"> Agua</label>
+        </div>
+      </div>
+
+      <div class="searchbox" id="searchbox">
+        <button class="icon-btn" id="btnSearch" aria-label="Buscar">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M21 21l-4.35-4.35m1.1-4.4a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <input id="q" type="search" placeholder="Buscar por título o descripción…"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENIDO -->
+  <main class="container">
+    <h1 class="title">Propiedades Disponibles</h1>
+
+    <section id="grid" class="grid">
+      <!-- 8 TARJETAS DE EJEMPLO -->
+      <!-- data-servicios es lista separada por coma -->
+      <article class="prop-card card-propiedad"
+        data-ubicacion="Centro" data-tipo="Departamento" data-operacion="mensual"
+        data-precio="280000" data-ambientes="2" data-dormitorios="1"
+        data-mascotas="no" data-cochera="no" data-balcon="si"
+        data-garantia="seguro_caucion" data-servicios="agua,luz,gas,internet">
+        <div class="img"><img src="https://images.unsplash.com/photo-1505691723518-36a5ac3b2d00?q=80&w=1200" alt=""></div>
+        <div class="body">
+          <h3>Pequeño moderno</h3>
+          <p class="muted">Minimalista, eficiente y luminoso.</p>
+          <div class="meta">
+            <span class="chip">Centro</span><span class="chip">2 amb</span><span class="chip">Balcón</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <span class="price">$280.000</span>
+          <a class="btn btn-primary" href="/property/1">Ver propiedad</a>
+        </div>
+      </article>
+
+      <article class="prop-card card-propiedad"
+        data-ubicacion="Norte" data-tipo="Loft" data-operacion="mensual"
+        data-precio="350000" data-ambientes="1" data-dormitorios="1"
+        data-mascotas="si" data-cochera="no" data-balcon="no"
+        data-garantia="recibo_sueldo" data-servicios="agua,luz,internet">
+        <div class="img"><img src="https://images.unsplash.com/photo-1515263487990-61b07816b324?q=80&w=1200" alt=""></div>
+        <div class="body">
+          <h3>Loft moderno</h3>
+          <p class="muted">Ambiente integrado con gran luz natural.</p>
+          <div class="meta">
+            <span class="chip">Norte</span><span class="chip">1 amb</span><span class="chip">Mascotas</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <span class="price">$350.000</span>
+          <a class="btn btn-primary" href="/property/1">Ver propiedad</a>
+        </div>
+      </article>
+
+      <article class="prop-card card-propiedad"
+        data-ubicacion="Centro" data-tipo="Departamento" data-operacion="temporario"
+        data-precio="220000" data-ambientes="3" data-dormitorios="2"
+        data-mascotas="si" data-cochera="si" data-balcon="si"
+        data-garantia="propietario" data-servicios="agua,luz,gas,internet">
+        <div class="img"><img src="/property/1" alt=""></div>
+        <div class="body">
+          <h3>Estilo cálido</h3>
+          <p class="muted">3 habitaciones, patio y garage.</p>
+          <div class="meta">
+            <span class="chip">Cochera</span><span class="chip">Mascotas</span><span class="chip">Balcón</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <span class="price">$220.000</span>
+          <a class="btn btn-primary" href="/property/1">Ver propiedad</a>
+        </div>
+      </article>
+
+      <article class="prop-card card-propiedad"
+        data-ubicacion="Sur" data-tipo="Casa" data-operacion="mensual"
+        data-precio="310000" data-ambientes="4" data-dormitorios="3"
+        data-mascotas="si" data-cochera="si" data-balcon="no"
+        data-garantia="propietario" data-servicios="agua,luz,gas">
+        <div class="img"><img src="https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?q=80&w=1200" alt=""></div>
+        <div class="body">
+          <h3>Casa familiar con patio</h3>
+          <p class="muted">Amplia y luminosa, ideal familias.</p>
+          <div class="meta"><span class="chip">Sur</span><span class="chip">Cochera</span></div>
+        </div>
+        <div class="card-actions">
+          <span class="price">$310.000</span>
+          <a class="btn btn-primary" href="/property/1">Ver propiedad</a>
+        </div>
+      </article>
+
+      <article class="prop-card card-propiedad"
+        data-ubicacion="Oeste" data-tipo="PH" data-operacion="mensual"
+        data-precio="190000" data-ambientes="2" data-dormitorios="1"
+        data-mascotas="no" data-cochera="no" data-balcon="no"
+        data-garantia="seguro_caucion" data-servicios="agua,luz">
+        <div class="img"><img src="https://images.unsplash.com/photo-1505692794403-34cb0b1b4bd5?q=80&w=1200" alt=""></div>
+        <div class="body">
+          <h3>PH compacto</h3>
+          <p class="muted">Bajo mantenimiento, práctico.</p>
+          <div class="meta"><span class="chip">Oeste</span></div>
+        </div>
+        <div class="card-actions">
+          <span class="price">$190.000</span>
+          <a class="btn btn-primary" href="/property/1">Ver propiedad</a>
+        </div>
+      </article>
+
+      <article class="prop-card card-propiedad"
+        data-ubicacion="Norte" data-tipo="Departamento" data-operacion="mensual"
+        data-precio="260000" data-ambientes="2" data-dormitorios="1"
+        data-mascotas="si" data-cochera="no" data-balcon="si"
+        data-garantia="recibo_sueldo" data-servicios="agua,luz,internet">
+        <div class="img"><img src="https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200" alt=""></div>
+        <div class="body">
+          <h3>Depto con balcón</h3>
+          <p class="muted">Cerca de facultades y parques.</p>
+          <div class="meta"><span class="chip">Balcón</span><span class="chip">Mascotas</span></div>
+        </div>
+        <div class="card-actions">
+          <span class="price">$260.000</span>
+          <a class="btn btn-primary" href="/property/1">Ver propiedad</a>
+        </div>
+      </article>
+
+      <article class="prop-card card-propiedad"
+        data-ubicacion="Centro" data-tipo="Monoambiente" data-operacion="temporario"
+        data-precio="150000" data-ambientes="1" data-dormitorios="0"
+        data-mascotas="no" data-cochera="no" data-balcon="no"
+        data-garantia="seguro_caucion" data-servicios="agua,luz,internet">
+        <div class="img"><img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1200" alt=""></div>
+        <div class="body">
+          <h3>Monoambiente céntrico</h3>
+          <p class="muted">Ideal estudiantes o viajantes.</p>
+          <div class="meta"><span class="chip">Centro</span></div>
+        </div>
+        <div class="card-actions">
+          <span class="price">$150.000</span>
+          <a class="btn btn-primary" href="/property/1">Ver propiedad</a>
+        </div>
+      </article>
+
+      <article class="prop-card card-propiedad"
+        data-ubicacion="Sur" data-tipo="Casa" data-operacion="mensual"
+        data-precio="480000" data-ambientes="5" data-dormitorios="4"
+        data-mascotas="si" data-cochera="si" data-balcon="si"
+        data-garantia="propietario" data-servicios="agua,luz,gas,internet">
+        <div class="img"><img src="https://images.unsplash.com/photo-1502005097973-6a7082348e28?q=80&w=1200" alt=""></div>
+        <div class="body">
+          <h3>Casa premium</h3>
+          <p class="muted">Amplios espacios, lista para mudarse.</p>
+          <div class="meta"><span class="chip">4 dorm</span><span class="chip">Cochera</span></div>
+        </div>
+        <div class="card-actions">
+          <span class="price">$480.000</span>
+          <a class="btn btn-primary" href="/property/1">Ver propiedad</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="/js/search.js"></script>
+</body>
+</html>
+
