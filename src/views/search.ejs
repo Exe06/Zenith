@@ -5,27 +5,28 @@
 
 <body>
   <!-- NAVBAR -->
-  <%- include('partials/header') %>
+  <%- include('partials/header1') %>
 
   <!-- FILTROS -->
   <section class="filters-wrap">
     <div class="filters" id="filters">
-      <div class="filter" style="grid-column:span 2">
-        <label for="fUbicacion">Ubicación</label>
-        <select id="fUbicacion"><option value="">Todas</option></select>
-      </div>
 
       <div class="filter" style="grid-column:span 2">
         <label for="fTipo">Tipo</label>
-        <select id="fTipo"><option value="">Todos</option></select>
+        <select id="fTipo">
+          <option value="">Todos</option>
+          <option value="casa">Casa</option>
+          <option value="departamento">Departamento</option>
+          <option value="monoambiente">Monoambiente</option>
+        </select>
       </div>
 
       <div class="filter" style="grid-column:span 2">
         <label for="fOperacion">Operación</label>
         <select id="fOperacion">
           <option value="">Cualquiera</option>
-          <option value="mensual">Mensual</option>
-          <option value="temporario">Temporario</option>
+          <option value="mensual">Largo Plazo</option>
+          <option value="temporario">Temporal</option>
         </select>
       </div>
 
@@ -35,7 +36,7 @@
           <option value="">Cualquiera</option>
           <option value="propietario">Propietario</option>
           <option value="seguro_caucion">Seguro de caución</option>
-          <option value="recibo_sueldo">Recibo de sueldo</option>
+          <option value="recibo_sueldo">Aval Bancario</option>
         </select>
       </div>
 
@@ -97,7 +98,7 @@
       <!-- 8 TARJETAS DE EJEMPLO -->
       <!-- data-servicios es lista separada por coma -->
       <article class="prop-card card-propiedad"
-        data-ubicacion="Centro" data-tipo="Departamento" data-operacion="mensual"
+        data-ubicacion="Centro" data-tipo="departamento" data-operacion="mensual"
         data-precio="280000" data-ambientes="2" data-dormitorios="1"
         data-mascotas="no" data-cochera="no" data-balcon="si"
         data-garantia="seguro_caucion" data-servicios="agua,luz,gas,internet">
@@ -116,7 +117,7 @@
       </article>
 
       <article class="prop-card card-propiedad"
-        data-ubicacion="Norte" data-tipo="Loft" data-operacion="mensual"
+        data-ubicacion="Norte" data-tipo="casa" data-operacion="mensual"
         data-precio="350000" data-ambientes="1" data-dormitorios="1"
         data-mascotas="si" data-cochera="no" data-balcon="no"
         data-garantia="recibo_sueldo" data-servicios="agua,luz,internet">
@@ -135,7 +136,7 @@
       </article>
 
       <article class="prop-card card-propiedad"
-        data-ubicacion="Centro" data-tipo="Departamento" data-operacion="temporario"
+        data-ubicacion="Centro" data-tipo="departamento" data-operacion="temporario"
         data-precio="220000" data-ambientes="3" data-dormitorios="2"
         data-mascotas="si" data-cochera="si" data-balcon="si"
         data-garantia="propietario" data-servicios="agua,luz,gas,internet">
@@ -154,7 +155,7 @@
       </article>
 
       <article class="prop-card card-propiedad"
-        data-ubicacion="Sur" data-tipo="Casa" data-operacion="mensual"
+        data-ubicacion="Sur" data-tipo="casa" data-operacion="mensual"
         data-precio="310000" data-ambientes="4" data-dormitorios="3"
         data-mascotas="si" data-cochera="si" data-balcon="no"
         data-garantia="propietario" data-servicios="agua,luz,gas">
@@ -171,13 +172,13 @@
       </article>
 
       <article class="prop-card card-propiedad"
-        data-ubicacion="Oeste" data-tipo="PH" data-operacion="mensual"
+        data-ubicacion="Oeste" data-tipo="departamento" data-operacion="mensual"
         data-precio="190000" data-ambientes="2" data-dormitorios="1"
         data-mascotas="no" data-cochera="no" data-balcon="no"
         data-garantia="seguro_caucion" data-servicios="agua,luz">
         <div class="img"><img src="/img/properties/property6.avif" alt=""></div>
         <div class="body">
-          <h3>PH compacto</h3>
+          <h3>Departamento compacto</h3>
           <p class="muted">Bajo mantenimiento, práctico.</p>
           <div class="meta"><span class="chip">Oeste</span></div>
         </div>
