@@ -30,11 +30,6 @@ router.get('/managment', (req, res) => {
   res.render('managment', { title: 'Gestión de Propiedades', stylesheet: 'managment.css' });
 });
 
-// Panel de Administración
-router.get('/admin', (req, res) => {
-  res.render('admin', { title: 'Panel de Administración', stylesheet: 'admin.css' });
-});
-
 // Perfil de Usuario
 router.get('/:id', (req, res) => {
   res.render('profile2', { title: 'Mi Perfil', stylesheet: 'profile2.css' });
