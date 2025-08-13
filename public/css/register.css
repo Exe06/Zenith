@@ -42,6 +42,10 @@ section {
   width: 100%;
 }
 
+form {
+  margin-bottom: 20px;
+}
+
 /* Contenedor del formulario centrado y con borde */
 .container {
   flex: 1;

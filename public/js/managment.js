@@ -59,7 +59,7 @@ function renderCards(list){
 
             Object.assign(el('a',{
                 className: 'btn btn-ghost',
-                href: `/property/${p.id}/edit` // URL para editar
+                href: `/property/edit/${p.id}` // URL para editar
             }), { textContent: 'Editar' })
         );
         c.appendChild(row);

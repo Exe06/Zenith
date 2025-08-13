@@ -3,11 +3,11 @@ const main = document.querySelector('#mainPhoto img');
 const label = document.getElementById('imgLabel');
 document.querySelectorAll('.thumb img').forEach((el)=>{
     el.addEventListener('click', ()=>{
-    const all = Array.from(document.querySelectorAll('.thumb img'));
-    const idx = all.indexOf(el) + 1;
-    main.src = el.src.replace('w=1200','w=1780');
-    main.alt = el.alt;
-    label.innerHTML = label.innerHTML.replace(/\d+\s\/\s\d+/, `${idx} / 8`);
+        const all = Array.from(document.querySelectorAll('.thumb img'));
+        const idx = all.indexOf(el) + 1;
+        main.src = el.src.replace('w=1200','w=1780');
+        main.alt = el.alt;
+        label.innerHTML = label.innerHTML.replace(/\d+\s\/\s\d+/, `${idx} / 8`);
     })
 })
 

@@ -25,7 +25,7 @@ router.get('/:id', (req, res) => {
 
 // Editar un inmueble
 router.get('/edit/:id', (req, res) => {
-  res.render('index', { title: 'Editar Inmobiliaria', stylesheet: 'styles.css' });
+  res.render('editProperty', { title: 'Editar Inmobiliaria', stylesheet: 'create_property.css' });
 });
 
 router.patch('/:id', (req, res) => {

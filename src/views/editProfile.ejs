@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body>
+
+  <%- include('partials/header2') %>
+
+  <div class="perfil-container">
+    
+    <!-- VISTA DEL PERFIL -->
+    <div class="perfil-view">
+      <img src="/img/users/default.png" alt="Avatar" class="avatar">
+      <h2>Juan Pérez</h2>
+      <p><strong>Email:</strong> juan.perez@gmail.com</p>
+      <p><strong>Provincia:</strong> Córdoba</p>
+    </div>
+
+    <!-- FORMULARIO PARA EDITAR -->
+    <div class="perfil-form">
+      <h2>Editar Perfil</h2>
+      <form action="#" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="avatar">Foto de Perfil</label>
+          <input type="file" id="avatar" name="avatar" accept="image/*" />
+        </div>
+
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Ej: Juan" required />
+        </div>
+
+        <div class="form-group">
+          <label for="apellido">Apellido</label>
+          <input type="text" id="apellido" name="apellido" placeholder="Ej: Pérez" required />
+        </div>
+
+        <div class="form-group">
+          <label for="provincia">Provincia</label>
+          <select id="provincia" name="provincia" required>
+            <option value="buenos_aires">Buenos Aires</option>
+            <option value="catamarca">Catamarca</option>
+            <option value="chaco">Chaco</option>
+            <option value="chubut">Chubut</option>
+            <option value="cordoba">Córdoba</option>
+            <option value="corrientes">Corrientes</option>
+            <option value="entre_rios">Entre Ríos</option>
+            <option value="formosa">Formosa</option>
+            <option value="jujuy">Jujuy</option>
+            <option value="la_pampa">La Pampa</option>
+            <option value="la_rioja">La Rioja</option>
+            <option value="mendoza">Mendoza</option>
+            <option value="misiones">Misiones</option>
+            <option value="neuquen">Neuquén</option>
+            <option value="rio_negro">Río Negro</option>
+            <option value="salta">Salta</option>
+            <option value="san_juan">San Juan</option>
+            <option value="san_luis">San Luis</option>
+            <option value="santa_cruz">Santa Cruz</option>
+            <option value="santa_fe">Santa Fe</option>
+            <option value="santiago_del_estero">Santiago del Estero</option>
+            <option value="tierra_del_fuego">Tierra del Fuego</option>
+            <option value="tucuman">Tucumán</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <button type="submit">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</body>
+</html>
+<!--hola-->

@@ -25,8 +25,14 @@ router.get('/forgot_pass', (req, res) => {
   res.render('forgotPass', { title: 'Olvidé mi contraseña', stylesheet: 'forgot_pass.css' });
 });
 
+// Panel de Gestión de Propiedades
 router.get('/managment', (req, res) => {
   res.render('managment', { title: 'Gestión de Propiedades', stylesheet: 'managment.css' });
+});
+
+// Panel de Administración
+router.get('/admin', (req, res) => {
+  res.render('admin', { title: 'Panel de Administración', stylesheet: 'admin.css' });
 });
 
 // Perfil de Usuario
@@ -36,7 +42,7 @@ router.get('/:id', (req, res) => {
 
 // Editar Perfil
 router.get('/edit/:id', (req, res) => {
-  res.send('editar');
+  res.render('editProfile', { title: 'Editar Perfil', stylesheet: 'edit_profile.css' });
 });
 
 router.patch('/:id', (req, res) => {

@@ -2,7 +2,7 @@
     --bg:#f6f7f9;--card:#fff;--text:#0f172a;--muted:#5b6b7a;--brand:#0088ff;--brand-600:#0074d6;--ring:0 10px 30px rgba(2,14,40,.08);--ring-2:0 16px 48px rgba(2,14,40,.12)
 }
 
-*{
+* {
     box-sizing:border-box;
     font-family: 'Fredoka', sans-serif;
     margin: 0;
