@@ -37,7 +37,7 @@ router.get('/admin', (req, res) => {
 
 // Perfil de Usuario
 router.get('/:id', (req, res) => {
-  res.render('profile', { title: 'Mi Perfil', stylesheet: 'profile.css' });
+  res.render('profile2', { title: 'Mi Perfil', stylesheet: 'profile2.css' });
 });
 
 // Editar Perfil

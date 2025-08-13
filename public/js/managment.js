@@ -6,15 +6,15 @@ const propiedades = [
 ];
 
 const contratos = [
-    {inquilino:'Juan Pérez',prop:'Estilo cálido',periodo:'2025-2027',payment_frequency:'Mensual',base_amount:320000,estado:'Activo'},
-    {inquilino:'Ana Gómez',prop:'Departamento céntrico',periodo:'2024-2026',payment_frequency:'Mensual',base_amount:210000,estado:'Pendiente de firma'},
-    {inquilino:'Lucía Díaz',prop:'Loft moderno',periodo:'2025-2025',payment_frequency:'Mensual',base_amount:180000,estado:'Finalizado'},
+    {inquilino:'Juan Pérez',prop:'Estilo cálido',inicio:'01/03/2025',fin:'31/01/2026',payment_frequency:'Mensual',base_amount:320000,estado:'Activo'},
+    {inquilino:'Ana Gómez',prop:'Departamento céntrico',inicio:'01/02/2024',fin:'28/02/2025',payment_frequency:'Mensual',base_amount:210000,estado:'Finalizado'},
+    {inquilino:'Lucía Díaz',prop:'Loft moderno',inicio:'01/01/2025',fin:'01/01/2026',payment_frequency:'Mensual',base_amount:180000,estado:'Activo'},
 ];
 
 const pagos = [
-    {fecha:'10/07/2025',inq:'Juan Pérez',prop:'Estilo cálido',periodo:'Jul 2025',monto:320000,estado:'Pagado'},
-    {fecha:'15/07/2025',inq:'Ana Gómez',prop:'Departamento céntrico',periodo:'Jul 2025',monto:210000,estado:'Pendiente'},
-    {fecha:'02/08/2025',inq:'Lucía Díaz',prop:'Loft moderno',periodo:'Ago 2025',monto:180000,estado:'Atrasado'},
+    {fecha:'10/07/2025',inq:'Juan Pérez',prop:'Estilo cálido',mes:'Jul',año:'2025',monto:320000,estado:'Pagado'},
+    {fecha:'15/07/2025',inq:'Ana Gómez',prop:'Departamento céntrico',mes:'Jul',año:'2025',monto:210000,estado:'Pendiente'},
+    {fecha:'02/08/2025',inq:'Lucía Díaz',prop:'Loft moderno',mes:'Agosto',año:'2025',monto:180000,estado:'Atrasado'},
 ];
 
 const solicitudes = [
@@ -76,13 +76,14 @@ function renderContratos(){
         tr.append(
             el('td',{textContent:c.inquilino}),
             el('td',{textContent:c.prop}),
-            el('td',{textContent:c.periodo}),
+            el('td',{textContent:c.inicio}),
+            el('td',{textContent:c.fin}),
             el('td',{textContent:c.payment_frequency}),
             el('td',{textContent:money(c.base_amount)}),
             el('td'), el('td')
         );
-        tr.children[5].appendChild(statusPill(c.estado));
-        tr.children[6].append(
+        tr.children[6].appendChild(statusPill(c.estado));
+        tr.children[7].append(
             Object.assign(el('button',{className:'btn btn-ghost'}),{textContent:'Ver'}),
         );
         tb.appendChild(tr);
@@ -97,13 +98,14 @@ function renderPagos(){
             el('td',{textContent:p.fecha}),
             el('td',{textContent:p.inq}),
             el('td',{textContent:p.prop}),
-            el('td',{textContent:p.periodo}),
+            el('td',{textContent:p.mes}),
+            el('td',{textContent:p.año}),
             el('td',{textContent:money(p.monto)}),
             el('td'),
             el('td',{className:'actions'}),
         );
-        tr.children[5].appendChild(statusPill(p.estado));
-        tr.children[6].append(
+        tr.children[6].appendChild(statusPill(p.estado));
+        tr.children[7].append(
             Object.assign(el('button',{className:'btn btn-ghost'}),{textContent:'Comprobante'}),
         );
         tb.appendChild(tr);
