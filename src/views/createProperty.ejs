@@ -28,9 +28,8 @@
               <label class="label" for="operationType">Tipo de operación</label>
               <select id="operationType" name="operation_type" required>
                 <option value="">Seleccionar</option>
-                <option value="alquiler">Alquiler</option>
-                <option value="venta">Venta</option>
-                <option value="temporal">Alquiler temporal (por día)</option>
+                <option value="alquiler">Alquiler a largo plazo</option>
+                <option value="temporal">Alquiler mensual</option>
               </select>
             </div>
             <div class="field h6">
@@ -39,7 +38,6 @@
                 <option value="">Seleccionar</option>
                 <option value="departamento">Departamento</option>
                 <option value="casa">Casa</option>
-                <option value="duplex">Dúplex</option>
                 <option value="monoambiente">Monoambiente</option>
               </select>
             </div>
@@ -74,26 +72,28 @@
             <div class="field h3"><label class="label" for="bedrooms">Dormitorios</label><input id="bedrooms" type="number" min="0" step="1" required></div>
             <div class="field h3"><label class="label" for="bathrooms">Baños</label><input id="bathrooms" type="number" min="1" step="1" required></div>
             <div class="field h3"><label class="label" for="area">Superficie (m²)</label><input id="area" type="number" min="10" step="1" required></div>
-            <div class="field h3"><label class="label" for="garage">Cochera</label><select id="garage"><option value="no">No</option><option value="si">Sí</option></select></div>
-            <div class="field h3"><label class="label" for="outdoor">Balcón/Patio</label><select id="outdoor"><option value="ninguno">Ninguno</option><option value="balcon">Balcón</option><option value="patio">Patio</option></select></div>
-            <div class="field h3"><label class="label" for="pets">Mascotas</label><select id="pets"><option value="no">No permitidas</option><option value="si">Permitidas</option></select></div>
-            <div class="field h3"><label class="label" for="age">Antigüedad (años)</label><input id="age" type="number" min="0" step="1"></div>
+            <div class="field h3"><label class="label" for="covered-area">Superficie Cubierta(m²)</label><input id="covered-area" type="number" min="10" step="1" required></div>
+            <div class="field h3"><label class="label" for="floors">Pisos</label><input id="floors" type="number" min="1" step="1" required></div>
           </div>
         </section>
 
-        <!-- Servicios / amenities -->
+        <!-- Servicios -->
         <section class="card section">
-          <h3>Servicios y amenities</h3>
+          <h3>Servicios</h3>
           <div class="chips" id="amenities">
             <span class="chip" data-key="electricidad">Electricidad</span>
-            <span class="chip" data-key="agua">Agua corriente</span>
-            <span class="chip" data-key="gas">Gas natural</span>
-            <span class="chip" data-key="ac">Aire acondicionado</span>
+            <span class="chip" data-key="agua">Agua Corriente</span>
+            <span class="chip" data-key="gas">Gas Natural</span>
+            <span class="chip" data-key="ac">Aire Acondicionado</span>
             <span class="chip" data-key="calefaccion">Calefacción</span>
             <span class="chip" data-key="seguridad">Seguridad 24h</span>
             <span class="chip" data-key="lavadero">Lavadero</span>
             <span class="chip" data-key="piscina">Piscina</span>
             <span class="chip" data-key="ascensor">Ascensor</span>
+            <span class="chip" data-key="cochera">Cochera</span>
+            <span class="chip" data-key="balcon">Balcon</span>
+            <span class="chip" data-key="patio">Patio</span>
+            <span class="chip" data-key="mascotas">Mascotas</span>
           </div>
         </section>
 
@@ -114,8 +114,6 @@
         <section class="card section">
           <h3>Ubicación</h3>
           <div class="row">
-            <div class="field h6"><label class="label" for="lat">Latitud</label><input id="lat" placeholder="-27.784" type="number" step="any"></div>
-            <div class="field h6"><label class="label" for="lng">Longitud</label><input id="lng" placeholder="-64.264" type="number" step="any"></div>
             <div class="field"><label class="label" for="maps">URL de Google Maps (opcional)</label><input id="maps" placeholder="https://maps.google.com/..." type="url"></div>
           </div>
           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14118.646114725634!2d-64.2755133029628!3d-27.789401490816584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x943b52103439bf83%3A0xdb1fbfa8b97fbad6!2sUrquiza%20200%2C%20G4204%20Santiago%20del%20Estero!5e0!3m2!1ses-419!2sar!4v1754765928238!5m2!1ses-419!2sar" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -130,7 +128,6 @@
               <label class="label" for="paymentFrequency">Frecuencia de pago</label>
               <select id="paymentFrequency">
                 <option value="mensual">Mensual</option>
-                <option value="quincenal">Quincenal</option>
                 <option value="semanal">Semanal</option>
                 <option value="diaria">Diaria</option>
               </select>
@@ -142,24 +139,9 @@
                 <option value="">Seleccionar</option>
                 <option value="propietaria">Propietaria</option>
                 <option value="seguro_caucion">Seguro de caución</option>
-                <option value="recibo_sueldo">Recibos de sueldo</option>
+                <option value="recibo_sueldo">Aval bancario</option>
               </select>
             </div>
-            <div class="field h6">
-              <label class="label">Estado</label>
-              <div class="switch"><input id="active" type="checkbox" checked><span>Publicación activa</span></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Reglas -->
-        <section class="card section">
-          <h3>Reglas</h3>
-          <div class="row">
-            <div class="field h6"><label class="label" for="smoke">Fumar</label><select id="smoke"><option value="no">No permitido</option><option value="si">Permitido</option></select></div>
-            <div class="field h6"><label class="label" for="events">Eventos</label><select id="events"><option value="no">No permitido</option><option value="si">Permitido</option></select></div>
-            <div class="field h6"><label class="label" for="minStay">Estadía mínima (días)</label><input id="minStay" type="number" min="0" step="1" value="0"></div>
-            <div class="field h6"><label class="label" for="maxGuests">Huéspedes máximos</label><input id="maxGuests" type="number" min="1" step="1" value="3"></div>
           </div>
         </section>
 

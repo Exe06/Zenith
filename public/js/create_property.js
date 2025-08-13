@@ -68,16 +68,6 @@ drop.addEventListener('drop', (e)=>{
     files.forEach(renderPreview);
 });
 
-// Frecuencia visible solo en alquiler/temporal
-const op = document.getElementById('operationType');
-const frequencyWrap = document.getElementById('frequencyWrap');
-function toggleFrequency(){
-    const show = ['alquiler','temporal'].includes(op.value);
-    frequencyWrap.style.display = show ? 'block' : 'none';
-    updateSide();
-}
-op.addEventListener('change', toggleFrequency); toggleFrequency();
-
 // Submit / draft
 const form = document.getElementById('listingForm');
 const errors = document.getElementById('formErrors');

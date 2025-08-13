@@ -101,8 +101,9 @@ window.verUsuario = (id)=>{
     const u = usuarios.find(x=>x.id===id);
     openModal('Usuario', `
         <div class="body">
-            <div><strong>${u.nombre}</strong></div>
-            <div>${u.email}</div>
+            <div>Nombre: ${u.nombre}</div>
+            <div>Apellido: ${u.apellido}</div>
+            <div>Email: ${u.email}</div>
             <div>Rol: ${u.rol}</div>
             <div>Estado: ${u.estado}</div>
         </div>
@@ -111,6 +112,9 @@ window.verUsuario = (id)=>{
 function formUsuario(u={}){
     return `
     <div class="grid">
+        <div class="field"><label>Nombre</label><input id="f-nombre" value="${u.nombre||''}" /></div>
+        <div class="field"><label>Apellido</label><input id="f-apellido" value="${u.apellido||''}" /></div>
+        <div class="field"><label>Email</label><input id="f-email" type="email" value="${u.email||''}" /></div>
         <div class="field"><label>Rol</label>
         <select id="f-rol">
             ${['Inquilino','Propietario','Admin'].map(r=>`<option ${u.rol===r?'selected':''}>${r}</option>`).join('')}

@@ -205,12 +205,12 @@ body {
   display: flex;
   gap: 15px;
   align-items: center;
+  color: #4a8dbb;
 }
 
 .footer-social img {
   width: 24px;
   height: 24px;
-  filter: invert(100%);
   transition: transform 0.2s ease;
 }
 
