@@ -1,53 +1,33 @@
 import { Router } from 'express';
+import userController from '../controllers/user.js';
+import requireAuth from '../middlewares/requireAuth.js';
+import requireGuest from '../middlewares/requireGuest.js';
 
 const router = Router();
 
 // Registro
-router.get('/register', (req, res) => {
-  res.render('register', {  title: 'Registro', stylesheet: 'register.css' });
-});
-
-router.post('/register', (req, res) => {
-  res.redirect('/login'); // Redirigir al usuario a la página de inicio de sesión después del registro
-});
+router.get('/register', requireGuest, userController.register);
+router.post('/register', requireGuest, userController.proccesRegister);
 
 // Inicio de Sesión
-router.get('/login', (req, res) => {
-  res.render('login', { title: 'Iniciar Sesión', stylesheet: 'login.css' });
-});
-
-router.post('/login', (req, res) => {
-  res.redirect('/profile'); // Redirigir al usuario a su perfil después de iniciar sesión
-});
+router.get('/login', requireGuest, userController.login);
+router.post('/login', requireGuest, userController.processLogin);
 
 // Olvidé mi contraseña
-router.get('/forgot_pass', (req, res) => {
-  res.render('forgotPass', { title: 'Olvidé mi contraseña', stylesheet: 'forgot_pass.css' });
-});
+router.get('/forgot_pass', requireGuest, userController.forgot_pass);
 
 // Panel de Gestión de Propiedades
-router.get('/managment', (req, res) => {
-  res.render('managment', { title: 'Gestión de Propiedades', stylesheet: 'managment.css' });
-});
+router.get('/managment', requireAuth, userController.managment);
 
 // Perfil de Usuario
-router.get('/:id', (req, res) => {
-  res.render('profile2', { title: 'Mi Perfil', stylesheet: 'profile2.css' });
-});
+router.get('/profile', requireAuth, userController.profile);
 
 // Editar Perfil
-router.get('/edit/:id', (req, res) => {
-  res.render('editProfile', { title: 'Editar Perfil', stylesheet: 'edit_profile.css' });
-});
+router.get('/edit/:id', requireAuth, userController.edit);
 
-router.patch('/:id', (req, res) => {
-  res.redirect('/profile');
-});
-
+router.patch('/:id', requireAuth, userController.update);
 
 // Borrar Usuario
-router.delete('/:id', (req, res) => {
-  res.redirect('/');
-});
+router.delete('/:id', requireAuth, userController.delete);
 
 export default router;

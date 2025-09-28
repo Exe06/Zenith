@@ -6,7 +6,7 @@ export default (sequelize, DataTypes) => {
 
     static associate(models) {
       User.belongsToMany(models.Role, {
-        through: "user_roles",
+        through: models.UserRole,
         foreignKey: 'user_id',
         otherKey: 'role_id',
         as: 'roles'
@@ -30,18 +30,18 @@ export default (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false,
       unsigned: true,
-      primaryKey: true,
+      primaryKey: true
     },
     dni: {
       type: DataTypes.STRING(8),
-      allowNull: false,
-      unique: true
+      allowNull: true,
+      unique: true,
     },
-    first_name: {
+    apellido: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    last_name: {
+    nombre: {
       type: DataTypes.STRING,
       allowNull: false
     },
@@ -50,19 +50,19 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
-    phone: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
     password: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    province: {
+    telefono: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    provincia: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    image: {
+    imagen: {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'default.png'
@@ -79,7 +79,7 @@ export default (sequelize, DataTypes) => {
     },
     deleted_at: {
       type: DataTypes.DATE,
-      allowNull: true,
+      allowNull: true
     }
   },
   {
@@ -92,10 +92,10 @@ export default (sequelize, DataTypes) => {
   });
 
   // Asignar rol "Inquilino" por defecto al crear un usuario
-    User.afterCreate(async (user, options) => {
+  User.afterCreate(async (user, options) => {
     const { Role } = user.sequelize.models;
     const userRole = await Role.findOne({
-      where: { name: 'inquilino' },
+      where: { id: '3' },
       transaction: options?.transaction
     });
 

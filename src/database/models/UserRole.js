@@ -5,8 +5,6 @@ export default (sequelize, DataTypes) => {
   class UserRole extends Model {
     
     static associate(models) {
-      UserRole.belongsTo(models.User, {
-      });
     }
   }
 
@@ -30,7 +28,7 @@ export default (sequelize, DataTypes) => {
       onDelete: 'CASCADE'
     },
     role_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.INTEGER,
       allowNull: false,
       unsigned: true,
       references: {

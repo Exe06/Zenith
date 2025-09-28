@@ -8,18 +8,18 @@ module.exports = {
         autoIncrement: true,
         allowNull: false,
         unsigned: true,
-        primaryKey: true,
+        primaryKey: true
       },
       dni: {
         type: Sequelize.STRING(8),
-        allowNull: false,
-        unique: true
+        allowNull: true,
+        unique: true,
       },
-      first_name: {
+      apellido: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      last_name: {
+      nombre: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -28,22 +28,22 @@ module.exports = {
         allowNull: false,
         unique: true
       },
-      phone: {
-        type: Sequelize.STRING,
-        allowNull: true
-      },
       password: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      image: {
+      telefono: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      provincia: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      imagen: {
         type: Sequelize.STRING,
         allowNull: false,
         defaultValue: 'default.png'
-      },
-      province: {
-        type: Sequelize.STRING,
-        allowNull: false
       },
       created_at: {
         type: Sequelize.DATE,

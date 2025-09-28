@@ -2,8 +2,15 @@
     <div class="logo"><a href="/">Zenit <span>Alquileres</span></a></div>
     <nav>
       <ul>
-        <li><a href="/property/create">Conviertete en Propietario</a></li>
-        <li><a href="/user/login" class="btn-inicio-sesion">Iniciar Sesión</a></li>
+        <% if (!locals.user) { %>
+          <li><a href="/user/login" class="btn-inicio-sesion">Iniciar Sesión</a></li>
+        <% } else if (locals.user.roles.includes("Propietario")) { %>
+          <li><a href="/user/managment">Propiedades</a></li>
+          <li><a href="/user/profile"><img src="/img/users/<%= locals.user.imagen %>" alt="Foto de perfil" class="profile-img"></a></li>
+        <% } else { %>
+          <li><a href="/property/create">Conviertete en Propietario</a></li>
+          <li><a href="/user/profile"><img src="/img/users/<%= locals.user.imagen %>" alt="Foto de perfil" class="profile-img"></a></li>
+        <% } %>
       </ul>
     </nav>
 </header>

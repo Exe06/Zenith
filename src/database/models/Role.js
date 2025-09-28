@@ -6,7 +6,7 @@ export default (sequelize, DataTypes) => {
     
     static associate(models) {
       Role.belongsToMany(models.User, {
-        through: "user_roles",
+        through: models.UserRole,
         foreignKey: 'role_id',
         otherKey: 'user_id',
         as: 'users'
@@ -22,7 +22,7 @@ export default (sequelize, DataTypes) => {
       unsigned: true,
       primaryKey: true
     },
-    name: {
+    nombre: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true
@@ -32,7 +32,7 @@ export default (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Role',
     tableName: 'roles',
-    timestamps: false,
+    timestamps: false
   });
   
   return Role;
