@@ -109,7 +109,6 @@ form.addEventListener('submit', (e)=>{
         deposit: +document.getElementById('deposit').value || 0,
         expenses: +document.getElementById('expenses').value || 0,
         guarantee: document.getElementById('guarantee').value || null,
-        active: document.getElementById('active').checked
     },
     rules: {
         smoke: document.getElementById('smoke').value,
@@ -125,6 +124,33 @@ form.addEventListener('submit', (e)=>{
 
     console.log('Payload listo para API:', payload);
     alert('Publicación creada (simulación). Mirá la consola para ver el payload.');
+    form.submit()
 });
+
+function getFieldLabel(el){
+  // 1) label for="id"
+  if (el.id) {
+    const byFor = document.querySelector(`label[for="${el.id}"]`);
+    if (byFor) return byFor.textContent.trim();
+  }
+  // 2) input dentro de un <label>
+  const wrap = el.closest('label');
+  if (wrap) return wrap.textContent.trim();
+  // 3) fallback
+  return el.getAttribute('placeholder') || el.name || el.id || 'Campo';
+}
+
+function getValidityReason(el){
+  const v = el.validity;
+  if (v.valueMissing)      return 'es obligatorio';
+  if (v.typeMismatch)      return 'tiene un formato inválido';
+  if (v.patternMismatch)   return 'no cumple el formato requerido';
+  if (v.tooShort)          return `debe tener al menos ${el.minLength} caracteres`;
+  if (v.tooLong)           return `no puede superar ${el.maxLength} caracteres`;
+  if (v.rangeUnderflow)    return `debe ser ≥ ${el.min}`;
+  if (v.rangeOverflow)     return `debe ser ≤ ${el.max}`;
+  if (v.stepMismatch)      return 'no coincide con el incremento permitido';
+  return el.validationMessage || 'no es válido';
+}
 
 updateSide();

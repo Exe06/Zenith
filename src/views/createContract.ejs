@@ -1,0 +1,142 @@
+<!-- views/contracts/new.ejs (o .html si no usás EJS) -->
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body>
+  <%- include('partials/header') %>
+  <main class="page">
+    <h1>Crear contrato</h1>
+
+    <form id="contractForm" class="card" action="/owner/contracts" method="post" novalidate>
+      <!-- Oculto: lo completás en servidor con el user logueado -->
+      <input type="hidden" id="owner_id" name="owner_id" value="<%= locals.user?.id || '' %>">
+
+      <!-- 1) Cabecera: Propiedad + Tipo (solo lectura) -->
+      <section class="grid-2 grid-top-gap">
+        <div class="field">
+          <label>Propiedad <span class="req">*</span></label>
+          <select id="property_id" name="property_id" required>
+            <option value="">Seleccioná una propiedad…</option>
+            <!-- Renderizar desde servidor. data-* usados por el JS -->
+            <option value="1"
+              data-owner-id="11"
+              data-contract-type="Largo Plazo"
+              data-monthly-price="320000"
+              data-title="Estilo cálido">
+              #1 · Estilo cálido (LP)
+            </option>
+            <option value="3"
+              data-owner-id="12"
+              data-contract-type="Temporal"
+              data-daily-price="20000"
+              data-title="Loft moderno">
+              #3 · Loft moderno (TEMP)
+            </option>
+          </select>
+          <small class="muted">El tipo de contrato depende de la propiedad.</small>
+        </div>
+
+        <div class="field">
+          <label>Tipo de contrato</label>
+          <input id="contract_type" name="contract_type" readonly class="readonly" />
+        </div>
+      </section>
+
+      <!-- 2) Partes -->
+      <section class="grid-3">
+        <div class="field">
+          <label>Inquilino (DNI) <span class="req">*</span></label>
+          <input id="tenant_dni" name="tenant_dni" inputmode="numeric" pattern="[0-9]{6,12}" placeholder="Ej: 32123456" required />
+          <small class="muted">Ingresá el DNI del inquilino.</small>
+        </div>
+
+        <div class="field" id="box_guarantee" style="display:none">
+          <label>Garantía (opcional)</label>
+          <select id="guarantee_id" name="guarantee_id">
+            <option value="">Sin garantía</option>
+            <!-- Render desde servidor -->
+            <option value="301">Propietaria</option>
+            <option value="302">Seguro de Caucion</option>
+            <option value="303">Aval Bancario</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- 3) Fechas + Frecuencia -->
+      <section class="grid-3">
+        <div class="field">
+          <label>Inicio <span class="req">*</span></label>
+          <input type="date" id="start_date" name="start_date" required />
+        </div>
+        <div class="field">
+          <label>Fin <span class="req">*</span></label>
+          <input type="date" id="end_date" name="end_date" required />
+        </div>
+        <div class="field" id="box_frequency">
+          <label>Frecuencia de pago <span class="req">*</span></label>
+          <select id="pay_frequency" name="pay_frequency" required></select>
+        </div>
+        <!-- Para LP, mandamos una hidden fija en 'mensual' -->
+        <input type="hidden" id="pay_frequency_hidden" name="pay_frequency" value="mensual" disabled />
+      </section>
+
+      <!-- 4) Importes -->
+      <section class="grid-3">
+        <div class="field">
+          <label id="lbl_unit_price">Precio (…)</label>
+          <input type="number" id="unit_price" name="unit_price" min="0" step="0.01" placeholder="0.00" required />
+          <small class="muted" id="help_unit_price"></small>
+        </div>
+
+        <div class="field" id="box_expensas" style="display:none">
+          <label>Expensas mensuales</label>
+          <input type="number" id="expensas" name="expensas" min="0" step="0.01" placeholder="0.00" />
+          <small class="muted">Se registran aparte del alquiler.</small>
+        </div>
+
+        <div class="field" id="box_deposito" style="display:none">
+          <label>Depósito</label>
+          <input type="number" id="deposito" name="deposito" min="0" step="0.01" placeholder="0.00" />
+        </div>
+      </section>
+
+      <!-- 5) Total (solo lectura) -->
+      <section class="grid-3">
+        <div class="field" id="box_cuota" style="display:none">
+          <label>Cuota</label>
+          <input type="number" id="cuota" name="cuota" readonly placeholder="0.00" />
+          <small class="muted">Se calcula según precio diario × frecuencia.</small>
+        </div>
+        
+        <div class="field">
+          <label>Total</label>
+          <input type="number" id="total" name="total" min="0" step="0.01" placeholder="0.00" readonly />
+          <small class="muted">Se calcula con fechas + precio + frecuencia.</small>
+        </div>
+      </section>
+
+      <!-- 6) Ayudas -->
+      <div class="panel">
+        <div class="grid-3">
+          <div><small class="muted">Duración: <span id="calc_span">–</span></small></div>
+          <div><small class="muted">Sugerido: <span id="calc_suggest">–</span></small></div>
+          <div><small class="muted">Propiedad: <span id="prop_title">–</span></small></div>
+        </div>
+      </div>
+
+      <!-- 7) Estado oculto (auto) -->
+      <input type="hidden" id="estado" name="estado" value="pendiente" />
+
+      <!-- CTA -->
+      <footer class="form-actions">
+        <button type="button" class="btn btn-ghost" onclick="history.back()">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Crear contrato</button>
+      </footer>
+    </form>
+  </main>
+
+  <script src="/js/contract.js"></script>
+</body>
+</html>

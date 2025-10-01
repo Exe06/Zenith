@@ -8,9 +8,21 @@
           <li><a href="/user/managment">Propiedades</a></li>
           <li><a href="/user/profile"><img src="/img/users/<%= locals.user.imagen %>" alt="Foto de perfil" class="profile-img"></a></li>
         <% } else { %>
-          <li><a href="/property/create">Conviertete en Propietario</a></li>
+          <li>
+            <form action="/become-owner?_method=PATCH" method="POST" id="become-owner">
+              <button type="submit">Conviertete en Propietario</button>
+            </form>
+          </li>
           <li><a href="/user/profile"><img src="/img/users/<%= locals.user.imagen %>" alt="Foto de perfil" class="profile-img"></a></li>
         <% } %>
       </ul>
     </nav>
+
+    <script>
+      document.getElementById('become-owner').addEventListener('submit', function (e) {
+        if (!confirm('¿Seguro que querés convertirte en Propietario?')) {
+          e.preventDefault();
+        }
+      });
+    </script>
 </header>

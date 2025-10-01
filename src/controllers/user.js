@@ -1,10 +1,19 @@
 import bcrypt from 'bcryptjs';
 import db from '../database/models/index.cjs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
 const { User } = db;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const provincias = [
+    'Buenos Aires','Catamarca','Chaco','Chubut','Córdoba','Corrientes','Entre Ríos','Formosa','Jujuy','La Pampa','La Rioja','Mendoza','Misiones','Neuquén','Río Negro','Salta','San Juan','San Luis','Santa Cruz','Santa Fe','Santiago del Estero','Tierra del Fuego','Tucumán'
+];
 
 const userController = {
     register: (req, res) => {
-        res.render('register', {  title: 'Registro', stylesheet: 'register.css' })
+        res.render('register', {  title: 'Registro', stylesheet: 'register.css', provincias })
     },
 
     proccesRegister: async (req, res) => {
@@ -31,10 +40,10 @@ const userController = {
     processLogin: async (req, res) => {
         const { email, password } = req.body;
 
+        
         const user = await User.findOne({
             where: { 
-                email,
-                estado: true
+                email
             },
             attributes: [
                 'id',
@@ -47,8 +56,8 @@ const userController = {
                 'provincia',
                 'imagen'
             ]
-        });  
-
+        });
+      
         if (!user) {
             return res.render('login', { 
                 title: 'Iniciar Sesión', 
@@ -82,6 +91,8 @@ const userController = {
 
     logout: (req, res) => {
         req.session.destroy();
+
+        res.redirect('/');
     },
 
     profile: (req, res) => {
@@ -93,24 +104,42 @@ const userController = {
     },
 
     edit: (req, res) => {
-        res.render('editprofile', { title: 'Editar Perfil', stylesheet: 'edit_profile.css', user: req.session.user });
+        res.render('editprofile', { title: 'Editar Perfil', stylesheet: 'edit_profile.css', user: req.session.user, provincias });
     },
 
     update: async (req, res) => {
         const userId = req.session.user.id;
-        const userBody = req.body;
-        const user = await User.findByPk(userId);
+        if (!userId) return res.redirect('/user/login');
 
-        user.apellido = userBody.apellido;
-        user.nombre = userBody.nombre;
-        user.email = userBody.email;
-        user.telefono = userBody.telefono;
-        user.provincia = userBody.provincia;
+        const user = await User.findByPk(userId);
+        const b = req.body;
+
+        if (req.file) {
+            const nombreArchivo = req.file.filename;
+            if (!nombreArchivo) return res.redirect("/users/edit");
+            const avatarAnterior = user.imagen;
+            user.imagen = nombreArchivo;
+            if (!(avatarAnterior === 'default.png')){
+                try {
+                    fs.unlinkSync(
+                        path.join(__dirname, "../../public/img/users", avatarAnterior)
+                    );
+                } catch (error) {
+                    console.log("Error:", error);
+                }
+            }
+        }
+
+        user.apellido = b.apellido;
+        user.nombre = b.nombre;
+        user.telefono = b.telefono;
+        user.provincia = b.provincia;
         await user.save();
 
-        const userData = user.get({ plain: true });
+        const userData = await user.get({ plain: true });
         delete userData.password;
-        req.session.user = userData;
+
+        req.session.user = {...req.session.user, ...userData};
 
         return res.redirect('/user/profile');
     },

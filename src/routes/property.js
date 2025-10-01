@@ -1,40 +1,34 @@
 import { Router } from 'express';
+import propertyController from '../controllers/property.js';
+import requireAuth from '../middlewares/requireAuth.js';
+import requireOwner from '../middlewares/requireOwner.js';
+import upload from '../middlewares/multerProperty.js';
+import persistFilters from '../middlewares/persistFilters.js'
 
 const router = Router();
+router.use(persistFilters)
 
 // Mostrar todos los inmuebles
-router.get('/', (req, res) => {
-  res.render('search', { title: 'Inmuebles', stylesheet: 'search.css' });
-});
-
-// Buscar inmuebles
-router.get('/search', (req, res) => {
-    res.render('Buscar inmuebles');
-});
+router.get('/search', propertyController.search);
 
 // Crear un inmueble
-router.get('/create', (req, res) => {
-  res.render('createProperty', { title: 'Crear Propiedad', stylesheet: 'create_property.css' });
-});
+router.get('/create', requireAuth, propertyController.create);
+router.post('/create',  upload.fields([
+  { name: 'images', maxCount: 10 },
+  { name: 'escritura', maxCount: 1 }
+]), propertyController.ProcessCreate);
 
-// Detalle de un inmueble
-router.get('/:id', (req, res) => {
-    res.render('propertyDetail', { title: 'Detalle de Inmueble', stylesheet: 'property_detail.css' });
-});
-
+// Crear contrato
+router.get('/create-contract', requireAuth, requireOwner, propertyController.createContract);
 
 // Editar un inmueble
-router.get('/edit/:id', (req, res) => {
-  res.render('editProperty', { title: 'Editar Inmobiliaria', stylesheet: 'create_property.css' });
-});
+router.get('/edit/:id', requireAuth, requireOwner, propertyController.edit);
+router.patch('/:id', requireAuth, requireOwner, propertyController.update);
 
-router.patch('/:id', (req, res) => {
-  res.redirect('/property');
-});
+// Detalle de un inmueble
+router.get('/:id', propertyController.detail);
 
 // Eliminar un inmueble
-router.delete('/:id', (req, res) => {
-  res.redirect('/property');
-});
+router.delete('/:id', requireAuth, requireOwner, propertyController.delete);
 
 export default router;

@@ -5,7 +5,7 @@
 
 <body>
 
-  <%- include('partials/header1') %>
+  <%- include('partials/header') %>
 
   <section>
     <div class="form-wrapper">
@@ -29,35 +29,14 @@
           <input type="password" id="password" name="password" required />
 
           <label for="telefono">Teléfono</label>
-          <input type="text" id="telefono" name="telefono" required />
+          <input type="number" id="telefono" name="telefono" />
 
           <label for="provincia">Provincia*</label>
-          <input list="provincias" id="provincia" name="provincia" placeholder="Ej: Córdoba" required/>
-          <datalist id="provincias">
-            <option value="Buenos Aires">
-            <option value="Catamarca">
-            <option value="Chaco">
-            <option value="Chubut">
-            <option value="Córdoba">
-            <option value="Corrientes">
-            <option value="Entre Ríos">
-            <option value="Formosa">
-            <option value="Jujuy">
-            <option value="La Pampa">
-            <option value="La Rioja">
-            <option value="Mendoza">
-            <option value="Misiones">
-            <option value="Neuquén">
-            <option value="Río Negro">
-            <option value="Salta">
-            <option value="San Juan">
-            <option value="San Luis">
-            <option value="Santa Cruz">
-            <option value="Santa Fe">
-            <option value="Santiago del Estero">
-            <option value="Tierra del Fuego">
-            <option value="Tucumán">
-          </datalist>
+          <select name="provincia" id="provincia" required>
+            <% provincias.forEach(p => {  %>
+              <option value="<%= p %>"><%= p %></option>
+            <% }) %>
+          </select>
 
           <br><br>
 

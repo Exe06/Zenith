@@ -40,7 +40,16 @@
   transition: color 0.3s ease;
 }
 
-.navbar a:hover {
+.navbar button {
+  background: none;
+  border: none;
+  color: #003049;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.navbar button:hover {
   color: #669bbc;
 }
 

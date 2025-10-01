@@ -1,15 +1,15 @@
 import { Router } from 'express';
+import indexController from '../controllers/index.js';
+import requireAuth from '../middlewares/requireAuth.js';
 
 const router = Router();
 
 // Main
-router.get('/', (req, res) => {
-  res.render('index', { title: 'Zenit Alquileres', stylesheet: 'styles.css' });
-});
+router.get('/', indexController.index);
 
 // Admin
-router.get('/admin', (req, res) => {
-  res.render('admin', { title: 'Panel de Administración', stylesheet: 'admin.css' });
-});
+router.get('/admin', requireAuth, indexController.admin);
+
+router.patch('/become-owner', requireAuth, indexController.becomeOwner);
 
 export default router;

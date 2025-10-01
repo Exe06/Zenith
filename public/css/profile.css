@@ -53,6 +53,8 @@ border:1px solid var(--line); border-radius:14px; padding:14px; color:var(--ink)
 .btn.ghost{ background:transparent; color:var(--primary); border-color:var(--primary); }
 .btn.ghost:hover{ background:rgba(15,163,173,.07); }
 .btn.edit{ margin-top:16px; }
+.btn.logout{ background: var(--chip-bad-ink); }
+.btn.logout:hover{ background: #ff4a4a; }
 
 /* Panel derecho + tabs */
 .rentals-panel{ background:var(--card); border-radius:var(--radius); padding:18px; box-shadow:0 10px 30px rgba(2,6,23,.08); }
@@ -79,3 +81,78 @@ background:var(--thead); color:#1f2937; font-weight:700; position:sticky; top:0;
 .chip-ok{ background:var(--chip-ok); color:var(--chip-ok-ink); }
 .chip-warn{ background:var(--chip-warn); color:var(--chip-warn-ink); }
 .chip-bad{ background:var(--chip-bad); color:var(--chip-bad-ink); }
+
+/* ====== Tabs (leve realce al activo) ====== */
+.panel-header{ gap:8px }
+.tab{ background:transparent; border:none; cursor:pointer; padding:8px 14px; border-radius:10px;
+      font-weight:700; color:#344054; margin-right:8px; transition:background .15s ease, box-shadow .15s ease }
+.tab:hover{ background:#f2f6fb }
+.tab.active{ background:#fff; box-shadow:0 2px 8px rgba(36,50,90,.12) }
+
+/* ====== Acciones en tablas ====== */
+.actions .btn{ padding:8px 12px; border-radius:10px; font-weight:700 }
+.btn.pay{ background:var(--primary); color:#fff; border-color:transparent }
+.btn.pay:hover{ background:var(--primary-2); box-shadow:0 6px 14px rgba(15,163,173,.25) }
+
+/* ====== Chips de estado (ya tenés las bases; agrego neutral) ====== */
+.chip{ display:inline-block; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:700 }
+.chip-neutral{ background:#eef2f7; color:#334155 }
+
+/* ====== Modal genérico (mensajes / ver-detalle) ====== */
+dialog::backdrop{ background:rgba(15,23,42,.35) } /* overlay suave */
+
+.modal-surface{
+  min-width:min(820px,95vw); max-width:1000px;
+  background:var(--card); color:var(--ink);
+  border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:0 16px 40px rgba(2,6,23,.18);
+}
+
+.modal-header{
+  padding:14px 16px; border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:8px;
+}
+.modal-header .btn{ margin-left:auto }
+
+.modal-body{ padding:16px; display:flex; flex-direction:column; gap:12px }
+
+/* Chat dentro del modal */
+.chat-box{
+  background:#f6f9ff; border:1px solid var(--line); border-radius:14px;
+  padding:10px; max-height:45vh; overflow:auto;
+}
+.bubble{
+  margin:6px 0; padding:10px; border-radius:12px; border:1px solid var(--line); background:#fff;
+}
+.bubble.them{ border-color:#bee3f8; background:#eef7ff } /* mensajes del propietario */
+.bubble.me{   border-color:#e2e8f0; background:#fafbfc } /* respuestas del inquilino */
+
+.input-area{
+  background:#fff; color:var(--ink);
+  border:1px solid var(--line); border-radius:12px; padding:10px; min-height:90px; resize:vertical;
+}
+
+/* ====== Table wrap (ya tenés base; sumo sombra suave cuando está sola) ====== */
+.table-wrap{ box-shadow:0 6px 18px rgba(2,6,23,.06) }
+
+/* —— Pago modal —— */
+.pay-modal .method-switch{ display:flex; gap:8px; margin-bottom:8px }
+.pay-modal .pill{
+  padding:8px 12px; border:1px solid var(--line); border-radius:999px; cursor:pointer;
+  background:#fff; color:#344054; font-weight:700;
+}
+.pay-modal .pill.active{ background:var(--primary); color:#fff; border-color:transparent }
+
+.pay-box{ border:1px solid var(--line); border-radius:14px; padding:12px; background:#f8fafc }
+
+.pay-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px }
+@media (max-width:900px){ .pay-grid{ grid-template-columns:1fr } }
+
+.kv{ display:grid; grid-template-columns:160px 1fr; gap:8px; align-items:center }
+.kv code{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:6px 8px; display:inline-block }
+.copy{ padding:6px 10px; border-radius:10px; border:1px solid var(--line); background:#fff; cursor:pointer; font-weight:700 }
+
+.input{ width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff }
+.hint{ color:var(--muted); font-size:12px }
+
+.pay-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:10px }

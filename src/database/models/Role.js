@@ -16,10 +16,9 @@ export default (sequelize, DataTypes) => {
 
   Role.init({
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       allowNull: false,
-      unsigned: true,
       primaryKey: true
     },
     nombre: {

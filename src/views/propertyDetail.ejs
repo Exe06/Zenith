@@ -9,20 +9,17 @@
 
   <div class="container">
     <div>
-      <h1 class="h1">Estilo cálido en barrio residencial</h1>
+      <h1 class="h1"><%= property.titulo %></h1>
       <div class="sub">
-        <span>Santiago del Estero</span>
+        <span><%= property.provincia %>, <%= property.ciudad %> <% if (barrio) { %> — <%= barrio %><% } %></span>
         <span class="dot"></span>
-        <span>3 habitaciones</span>
-        <span class="dot"></span>
-        <span>Patio y garage</span>
-        <span class="dot"></span>
-        <span class="pill">Alquiler mensual</span>
+        <span><%= property.ambientes %> habitaciones</span>
+        <span class="dot"><%= property.operation.nombre %></span>
       </div>
       <div class="tagline">
-        <span class="tag">Luminoso</span>
-        <span class="tag">Remodelado</span>
-        <span class="tag">Pet‑friendly</span>
+        <% property.services.forEach(service => { %>
+          <span class="tag"><%= service.nombre %></span>
+        <% }); %></span>
       </div>
     </div>
 
@@ -32,16 +29,32 @@
         <button class="fav" id="favBtn" aria-label="Marcar como favorito" title="Agregar a favoritos">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.1 8.64l.9.92.9-.92c1.2-1.22 3.15-1.22 4.35 0 1.2 1.22 1.2 3.2 0 4.42l-1.02 1.04L12 20l-5.23-5.9-1.02-1.04a3.13 3.13 0 010-4.42 3.02 3.02 0 014.35 0l.9.92.9-.92c1.2-1.22 3.15-1.22 4.35 0z"/></svg>
         </button>
-        <img src="/img/properties/property3.avif" alt="Cocina integrada con barra de madera"/>
+        <img src="/img/properties/<%= property.images[0].filename %>" alt="Principal" style="width:100%; height:100%; object-fit:cover"/>
         <div class="badge" id="imgLabel">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
-          1 / 8
+          1 / <%= property.images.length%>
         </div>
       </figure>
-      <div class="thumbs">
-        <div class="thumb"><img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=1200&auto=format&fit=crop" alt="Living principal" data-index="1"></div>
-        <div class="thumb"><img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1200&auto=format&fit=crop" alt="Dormitorio" data-index="2"></div>
-        <div class="thumb"><img src="/img/properties/property2.avif" alt="Cocina" data-index="3"><span class="count">+5</span></div>
+      <div class="thumbs" id="thumbs">
+        <% (property.images.slice(1,3) || []).forEach((img, i) => { %>
+          <div class="thumb"><img src="/img/properties/<%= img.filename %>" alt="" data-idx="<% i + 1 %>"></div>
+        <% }); %>
+        <% if (property.images.length > 3) { %>
+          <button type="button" class="more" id="seeAllBtn">+ Ver todas (<%= property.images.length %>)</button>
+        <% } else { %>
+          <div style="height:380px; background:#eee"></div>
+        <% } %>
+      </div>
+
+      <div id="lightbox" hidden>
+        <div class="lb-backdrop" data-close="1"></div>
+        <figure class="lb-content">
+          <button class="lb-close" data-close="1" aria-label="Cerrar">✕</button>
+          <button class="lb-prev" aria-label="Anterior">‹</button>
+          <img id="lbImg" alt="">
+          <button class="lb-next" aria-label="Siguiente">›</button>
+          <figcaption id="lbCounter"></figcaption>
+        </figure>
       </div>
     </section>
 
@@ -51,35 +64,31 @@
       <article class="card">
         <div class="section">
           <h3>Descripción</h3>
-          <p class="desc">Departamento cálido y funcional, con espacios integrados y terminaciones modernas. Ideal para familias con niños. Ubicado a 4 cuadras de la plaza principal, con colegios, supermercados y transporte público cercanos.</p>
+          <p class="desc"><%= property.descripcion%></p>
         </div>
         <div class="divider"></div>
         <div class="section">
           <h3>Características</h3>
           <div class="grid-spec">
-            <div class="spec"><div class="label">Ambientes</div><div class="val">4</div></div>
-            <div class="spec"><div class="label">Dormitorios</div><div class="val">3</div></div>
-            <div class="spec"><div class="label">Baños</div><div class="val">2</div></div>
-            <div class="spec"><div class="label">Superficie</div><div class="val">95 m²</div></div>
-            <div class="spec"><div class="label">Cochera</div><div class="val">Sí</div></div>
-            <div class="spec"><div class="label">Balcón/Patio</div><div class="val">Patio</div></div>
-            <div class="spec"><div class="label">Mascotas</div><div class="val">Permitidas</div></div>
+            <div class="spec"><div class="label">Ambientes</div><div class="val"><%= property.ambientes%></div></div>
+            <div class="spec"><div class="label">Dormitorios</div><div class="val"><%= property.habitaciones%></div></div>
+            <div class="spec"><div class="label">Baños</div><div class="val"><%= property.banios%></div></div>
+            <div class="spec"><div class="label">Pisos</div><div class="val"><%= property.pisos%></div></div>
+            <div class="spec"><div class="label">Superficie</div><div class="val"><%= property.area_total%> m²</div></div>
+            <div class="spec"><div class="label">Superficie Cubierta</div><div class="val"><%= property.area_cubierta%> m²</div></div>
           </div>
         </div>
         <div class="divider"></div>
+
         <div class="section">
-          <h3>Servicios y Amenities</h3>
+          <h3>Servicios</h3>
           <div class="chips">
-            <span class="chip ok">Electricidad</span>
-            <span class="chip ok">Agua corriente</span>
-            <span class="chip ok">Gas natural</span>
-            <span class="chip">Aire acondicionado</span>
-            <span class="chip ok">Calefacción</span>
-            <span class="chip">Seguridad 24h</span>
-            <span class="chip ok">Lavadero</span>
-            <span class="chip">Piscina del complejo</span>
+            <% property.services.forEach(s => { %>
+              <span class="chip ok"><%= s.nombre %></span>
+            <% }); %>
           </div>
         </div>
+
         <div class="divider"></div>
         <div class="section">
           <h3>Ubicación</h3>
@@ -92,10 +101,9 @@
         <div class="section">
           <h3>Propietario</h3>
           <div class="owner">
-            <div class="avatar">ML</div>
+            <div class="avatar"><img src="/img/users/<%= property.owner.imagen %>" alt="Avatar"></div>
             <div>
-              <strong>María López</strong><br>
-              <small>Miembro desde 2022 · Última vez en línea: hace 1 h</small>
+              <strong><%= property.owner.nombre %></strong><br>
             </div>
           </div>
         </div>
@@ -104,38 +112,78 @@
       <!-- RIGHT -->
       <aside>
         <div class="card price-card">
-          <div class="price-top">
-            <div>
-              <div class="price">$ 320.000</div>
-              <div class="price-sub">Base mensual · Alquiler</div>
-            </div>
-            <span class="pill">Disponible</span>
+            <% if (isTemporal) { %>
+              <div class="price-top">
+                <div>
+                  <div class="price">$ <%= display.price %></div>
+                  <div class="price-sub">Por dia · Alquiler</div>
+                </div>
+                <span class="pill"><%= property.estado %></span>
+              </div>
+
+              <div class="details">
+                <div class="row"><span>Tipo de operación</span><strong><%= property.operation.nombre %></strong></div>
+
+                <% if (display.discounts && (display.discounts.weekly || display.discounts.monthly)) { %>
+                <div class="hint" style="margin-top:8px">
+                  Descuentos:
+                  <% if (display.discounts.weekly)  { %> 
+                    <div class="row"><span>Semanal</span><strong> <%= display.discounts.weekly %>% </strong></div>
+                  <% } %>
+                  <% if (display.discounts.monthly) { %>
+                    <div class="row"><span>Mensual</span><strong> <%= display.discounts.monthly %>% </strong></div>
+                  <% } %>
+                </div>
+                <% } %>
+              </div>
+            <% } else { %>
+              <div class="price-top">
+                <div>
+                  <div class="price">$ <%= display.price %></div>
+                  <div class="price-sub">Mensual · Alquiler</div>
+                </div>
+                <span class="pill"><%= property.estado %></span>
+              </div>
+
+              <div class="details">
+                <div class="row"><span>Tipo de operación</span><strong><%= property.operation.nombre %></strong></div>
+                <% if (display.deposit != null) { %>
+                  <div class="row"><span>Depósito</span><strong>$<%= display.deposit %></strong></div>
+                <% } %>
+                <% if (display.expenses != null) { %>
+                <div class="row"><span>Expensas</span><strong>$<%= display.expenses %></strong></div>
+                <% } %>
+                <% if (display.guarantee) { %>
+                <div class="row"><span>Garantía</span><strong><%= display.guarantee?.nombre %></strong></div>
+                <% } %>
+              </div>
+            <% } %>
           </div>
-          <div class="details">
-            <div class="row"><span>Tipo de operación</span><strong>Alquiler (mensual)</strong></div>
-            <div class="row"><span>Frecuencia de pago</span><strong>Mensual</strong></div>
-            <div class="row"><span>Depósito</span><strong>$ 320.000</strong></div>
-            <div class="row"><span>Expensas</span><strong>$ 25.000</strong></div>
-            <div class="row"><span>Garantía</span><strong>Propietaria / Seguro de caución</strong></div>
-          </div>
-          <div class="cta">
+
+          <% if (locals.user) { %>
             <button class="btn btn-primary">Contactar</button>
             <button class="btn btn-ghost" id="shareBtn">Compartir</button>
-          </div>
-        </div>
-
-        <div class="card contact-card">
-          <h3 style="margin:0 0 10px">Enviar consulta</h3>
-          <form onsubmit="event.preventDefault(); alert('Consulta enviada. ¡Te contactaremos pronto!')">
-            <label class="sr-only" for="msg">Mensaje</label>
-            <textarea id="msg" placeholder="Hola, me interesa la propiedad. ¿Cuándo puedo visitarla?"></textarea>
-            <button class="btn btn-primary" style="margin-top:12px;width:100%">Enviar</button>
-          </form>
+            <div class="card contact-card">
+              <h3 style="margin:0 0 10px">Enviar consulta</h3>
+              <form onsubmit="event.preventDefault(); alert('Consulta enviada. ¡Te contactaremos pronto!')">
+                <label class="sr-only" for="msg">Mensaje</label>
+                <textarea id="msg" placeholder="Hola, me interesa la propiedad. ¿Cuándo puedo visitarla?"></textarea>
+                <button class="btn btn-primary" style="margin-top:12px;width:100%">Enviar</button>
+              </form>
+            </div>
+          <% } else { %>
+            <h3>Inicia sesión para contactarnos!</h3>
+          <% } %>
         </div>
       </aside>
     </section>
   </div>
 
+  <script>
+    window.GALLERY = <%- JSON.stringify(
+      property.images.map(img => ('/img/properties/'+img.filename))
+    ) %>;
+  </script>
   <script src="/js/property_detail.js"></script>
 </body>
 </html>

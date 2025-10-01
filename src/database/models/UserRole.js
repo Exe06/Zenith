@@ -10,33 +10,18 @@ export default (sequelize, DataTypes) => {
 
   UserRole.init({
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       allowNull: false,
-      unsigned: true,
       primaryKey: true
     },
     user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unsigned: true,
-      references: {
-        model: 'users',
-        key: 'id'
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE'
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false
     },
     role_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unsigned: true,
-      references: {
-        model: 'roles',
-        key: 'id'
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE'
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false
     },
   },
   {

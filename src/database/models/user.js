@@ -12,10 +12,10 @@ export default (sequelize, DataTypes) => {
         as: 'roles'
       });
 
-    //   User.hasMany(models.Property, {
-    //     foreignKey: 'user_id',
-    //     as: 'properties'
-    //   });
+      User.hasMany(models.Property, {
+        foreignKey: 'user_id',
+        as: 'properties'
+      });
       
     //   User.hasMany(models.Contracts, {
     //     foreignKey: 'user_id',
@@ -26,10 +26,9 @@ export default (sequelize, DataTypes) => {
 
   User.init({
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       allowNull: false,
-      unsigned: true,
       primaryKey: true
     },
     dni: {
@@ -101,6 +100,13 @@ export default (sequelize, DataTypes) => {
 
     if (userRole) {
       await user.addRole(userRole, { transaction: options?.transaction });
+    }
+  });
+
+  User.beforeDestroy(async (user, { transaction, force }) => {
+    if (!force) {
+      const count = await Property.count({ where: { user_id: user.id }, transaction });
+      if (count > 0) throw new Error('No podés eliminar tu cuenta: hay propiedades asociadas.');
     }
   });
 
