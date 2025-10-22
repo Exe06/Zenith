@@ -16,12 +16,13 @@
   <section class="servicios">
     <h2>Servicios</h2>
     <div class="grid-servicios">
-      <a href="/property/create" class="link-servicio">
+      <a href="/user/become_owner" class="link-servicio">
         <div class="servicio">
           <h4>PUBLICÁ TU PROPIEDAD</h4>
           <p>¿Estás pensando en alquilar tu casa?</p>
         </div>
       </a>
+
       <a href="/property/search" class="link-servicio">
         <div class="servicio">
           <h4>BUSCÁ TU NUEVO HOGAR</h4>
@@ -59,6 +60,14 @@
   </section>
 
 <%- include('partials/footer') %>
+
+<script>
+  document.getElementById('become-owner').addEventListener('submit', function (e) {
+    if (!confirm('¿Seguro que querés convertirte en Propietario?')) {
+      e.preventDefault();
+    }
+  });
+</script>
 
 </body>
 </html>

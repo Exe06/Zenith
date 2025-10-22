@@ -84,7 +84,7 @@ input,
 select {
   width: 100%;
   padding: 10px 5px;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   border: none;
   border-bottom: 2px solid #ccc;
   background: transparent;
@@ -97,6 +97,14 @@ input:focus,
 select:focus {
   border-bottom-color: #669bbc;
   outline: none;
+}
+
+.form-error {
+  display: block; 
+  color: #d93025;
+  font-size: .9rem;
+  margin-top: .25rem;
+  margin-bottom: 1.25rem;
 }
 
 /* Botón */

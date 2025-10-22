@@ -47,7 +47,7 @@ export default (sequelize, DataTypes) => {
       allowNull: true
     },
     contract_type: {
-      type: DataTypes.ENUM('temporary','long_term'),
+      type: DataTypes.ENUM('temporal','largo_plazo'),
       allowNull: false
     },
     start_date: {
@@ -75,7 +75,7 @@ export default (sequelize, DataTypes) => {
       allowNull: true
     },
     estado: {
-      type: DataTypes.ENUM('pendiente','activo','completado','canceledo'),
+      type: DataTypes.ENUM('pendiente','activo','finalizado','cancelado'),
       allowNull: false,
       defaultValue: 'pendiente'
     },

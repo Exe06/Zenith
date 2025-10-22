@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Verificación de identidad</h1>
+    <p>Subí las fotos de tu DNI y un método para transferirte.</p>
+
+    <form action="/admin/upgrade" method="POST" enctype="multipart/form-data" class="form">
+      <!-- DNI -->
+      <div class="form-group">
+        <label for="dni_front">DNI - Frente*</label>
+        <input type="file" id="dni_front" name="dni_front" accept="image/*" required>
+        <% if (errors?.dni_front) { %><span class="form-error"><%= errors.dni_front.msg %></span><% } %>
+      </div>
+
+      <div class="form-group">
+        <label for="dni_back">DNI - Dorso*</label>
+        <input type="file" id="dni_back" name="dni_back" accept="image/*" required>
+        <% if (errors?.dni_back) { %><span class="form-error"><%= errors.dni_back.msg %></span><% } %>
+      </div>
+
+      <!-- DATOS BANCARIOS (transferencia) -->
+      <h3>Cuenta Bancaria</h3>
+
+      <div class="form-group">
+        <label for="bank_name">Banco*</label>
+        <input type="text" id="bank_name" name="bank_name" value="<%= old?.bank_name || '' %>" required>
+        <% if (errors?.bank_name) { %><span class="form-error"><%= errors.bank_name.msg %></span><% } %>
+      </div>
+
+      <div class="form-group">
+        <label for="holder_name">Nombre del titular*</label>
+        <input type="text" id="holder_name" name="holder_name" value="<%= old?.holder_name || '' %>" required>
+        <% if (errors?.holder_name) { %><span class="form-error"><%= errors.holder_name.msg %></span><% } %>
+      </div>
+
+      <div class="form-group">
+        <label for="cuit">CUIT/CUIL*</label>
+        <input type="text" id="cuit" name="cuit" value="<%= old?.cuit || '' %>" placeholder="20-12345678-3" required>
+        <% if (errors?.cuit) { %><span class="form-error"><%= errors.cuit.msg %></span><% } %>
+      </div>
+
+      <div class="form-group">
+        <label for="cbu">CBU*</label>
+        <input type="text" id="cbu" name="cbu" value="<%= old?.cbu || '' %>" maxlength="22" inputmode="numeric" pattern="\d*" required>
+        <% if (errors?.cbu) { %><span class="form-error"><%= errors.cbu.msg %></span><% } %>
+      </div>
+
+      <div class="form-group">
+        <label for="alias">Alias*</label>
+        <input type="text" id="alias" name="alias" value="<%= old?.alias || '' %>" required>
+        <% if (errors?.alias) { %><span class="form-error"><%= errors.alias.msg %></span><% } %>
+      </div>
+
+      <!-- (OPCIONAL) LIQUIDAR A CUENTA DE MERCADO PAGO -->
+      <h3>¿Preferís Mercado Pago?</h3>
+
+      <div class="form-group">
+        <label for="mp_email">Email de la cuenta de Mercado Pago</label>
+        <input type="email" id="mp_email" name="mp_email" value="<%= old?.mp_email || '' %>">
+        <% if (errors?.mp_email) { %><span class="form-error"><%= errors.mp_email.msg %></span><% } %>
+      </div>
+
+      <div class="form-group">
+        <label for="mp_cvu">CVU</label>
+        <input type="text" id="mp_cvu" name="mp_cvu" value="<%= old?.mp_cvu || '' %>" maxlength="22" inputmode="numeric" pattern="\d*">
+        <% if (errors?.mp_cvu) { %><span class="form-error"><%= errors.mp_cvu.msg %></span><% } %>
+      </div>
+
+      <div class="form-group">
+        <label for="mp_alias">Alias</label>
+        <input type="text" id="mp_alias" name="mp_alias" value="<%= old?.mp_alias || '' %>">
+        <% if (errors?.mp_alias) { %><span class="form-error"><%= errors.mp_alias.msg %></span><% } %>
+      </div>
+
+      <button type="submit">Enviar verificación</button>
+    </form>
+
+    <script>
+      document.getElementById('become-owner').addEventListener('submit', function (e) {
+        if (!confirm('¿Seguro que querés convertirte en Propietario?')) {
+          e.preventDefault();
+        }
+      });
+    </script>
+</body>
+</html>

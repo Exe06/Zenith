@@ -117,10 +117,10 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10, 2).UNSIGNED,
       allowNull: true,
     },
-    expensas: {
-      type: DataTypes.DECIMAL(10, 2).UNSIGNED,
-      allowNull: true,
-    },
+    // expensas: {
+    //   type: DataTypes.DECIMAL(10, 2).UNSIGNED,
+    //   allowNull: true,
+    // },
     precio_diario: {
       type: DataTypes.DECIMAL(10, 2).UNSIGNED,
       allowNull: true,

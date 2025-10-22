@@ -104,6 +104,14 @@ label {
   color: #999;
 }
 
+.form-error {
+  display: block; 
+  color: #d93025;
+  font-size: .9rem;
+  margin-top: .25rem;
+  margin-bottom: 1.25rem;
+}
+
 /* Extras */
 .remember-forgot {
   display: flex;

@@ -10,6 +10,4 @@ router.get('/', indexController.index);
 // Admin
 router.get('/admin', requireAuth, indexController.admin);
 
-router.patch('/become-owner', requireAuth, indexController.becomeOwner);
-
 export default router;

@@ -12,8 +12,8 @@ router.use(persistFilters)
 router.get('/search', propertyController.search);
 
 // Crear un inmueble
-router.get('/create', requireAuth, propertyController.create);
-router.post('/create',  upload.fields([
+router.get('/create', requireAuth, requireOwner, propertyController.create);
+router.post('/create', requireAuth, requireOwner, upload.fields([
   { name: 'images', maxCount: 10 },
   { name: 'escritura', maxCount: 1 }
 ]), propertyController.ProcessCreate);

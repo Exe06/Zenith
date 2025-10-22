@@ -3,6 +3,7 @@ import db from '../database/models/index.cjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { validationResult } from 'express-validator';
 
 const { User } = db;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -17,11 +18,23 @@ const userController = {
     },
 
     proccesRegister: async (req, res) => {
-        const { apellido, nombre, email, password, telefono, provincia } = req.body;
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.render ('register', {
+                errors: errors.mapped(),
+                old: req.body,
+                title: 'Registro',
+                stylesheet: 'register.css',
+                provincias
+            })
+        }
+
+        const { apellido, nombre, dni, email, password, telefono, provincia } = req.body;
         try {
             const newUser = await User.create({
                 apellido,
                 nombre,
+                dni,
                 email,
                 password: bcrypt.hashSync(password, 10),
                 telefono,
@@ -38,8 +51,17 @@ const userController = {
     },
 
     processLogin: async (req, res) => {
-        const { email, password } = req.body;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render ('login', {
+                errors: errors.mapped(),
+                old: req.body,
+                title: 'Iniciar Sesión',
+                stylesheet: 'login.css'
+            })
+        }
 
+        const { email, password } = req.body;
         
         const user = await User.findOne({
             where: { 
@@ -158,6 +180,41 @@ const userController = {
         }
 
         return res.redirect('/');
+    },
+
+    becomeOwner: (req, res) => {
+        const errors = validationResult(req);
+
+        const isOwner = req.session.user.roles?.includes('Propietario');
+        
+        if (isOwner) return res.redirect('/user/managment')
+
+        return res.render('becomeOwner', {
+            errors: errors.mapped(),
+            old: req.body
+        })
+    },
+
+    updateOwner: async (req, res) => {
+        const userId = req.session.user.id;
+        const user = await User.findByPk(userId)
+        const rol = await Role.findOne({ where: { nombre: 'Propietario' } });
+
+        const isOwner = await user.hasRole(rol);
+        if (!isOwner) {
+            await user.addRole(rol);
+        }
+
+        const roles = await user.getRoles({ attributes: ['nombre'] });
+        const nombreRoles = roles.map(role => role.nombre);
+
+        const userData = user.get({ plain: true });
+        delete userData.password;
+        userData.roles = nombreRoles;
+
+        req.session.user = userData
+
+        return res.redirect('/user/managment');
     }
 };
 

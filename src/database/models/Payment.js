@@ -28,21 +28,20 @@ export default (sequelize, DataTypes) => {
     },
     paid_at: {
       type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW
+      allowNull: true
     },
     method: { 
       type: DataTypes.ENUM('transferencia', 'mercado_pago'),
       allowNull: false 
     },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     status: { 
       type: DataTypes.ENUM('pendiente', 'pagado', 'atrasado'),
       allowNull: false, 
       defaultValue: 'pendiente' 
-    },
-    descrition: {
-      type: DataTypes.STRING,
-      allowNull: true
     },
     created_at: {
       type: DataTypes.DATE,
