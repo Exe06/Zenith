@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container">
+    <div>
+      <h1>Verificar mi Cuenta</h1>
+      <p class="muted" style="margin-bottom: 24px;">
+        Para poder publicar propiedades, necesitamos validar tu identidad y los datos donde recibirás tus cobros.
+      </p>
+
+      <form method="POST" action="/user/verify_account" enctype="multipart/form-data">
+
+        <section class="card section">
+          <h3>Identidad</h3>
+          <p class="muted" style="margin-bottom: 16px;">
+            Sube una foto clara del frente y dorso de tu DNI.
+          </p>
+
+          <div class="field">
+            <label class="label" for="dni_front">Frente del DNI</label>
+            <input type="file" id="dni_front" name="dni_front" accept="image/*">
+            <% if (locals.errors && errors.dni_front) { %>
+              <span class="form-error"><%= errors.dni_front.msg %></span>
+            <% } %>
+          </div>
+
+          <div class="field">
+            <label class="label" for="dni_back">Dorso del DNI</label>
+            <input type="file" id="dni_back" name="dni_back" accept="image/*">
+            <% if (locals.errors && errors.dni_back) { %>
+              <span class="form-error"><%= errors.dni_back.msg %></span>
+            <% } %>
+          </div>
+        </section>
+
+        <section class="card section">
+          <h3>Datos de Cobro</h3>
+          <p class="muted" style="margin-bottom: 16px;">
+            Ingresa la cuenta donde recibirás el dinero de tus alquileres.
+          </p>
+
+          <div class="field">
+            <label class="label" for="bank_account_type">Tipo de Cuenta</label>
+            <select id="bank_account_type" name="bank_account_type">
+              <option value="">Seleccionar...</option>
+              <option value="cbu" <%= (locals.old?.bank_account_type === 'cbu') ? 'selected' : '' %>>
+                CBU (Cuenta Bancaria)
+              </option>
+              <option value="cvu" <%= (locals.old?.bank_account_type === 'cvu') ? 'selected' : '' %>>
+                CVU (Billetera Virtual - ej. Mercado Pago)
+              </option>
+            </select>
+            <% if (locals.errors && errors.bank_account_type) { %>
+              <span class="form-error"><%= errors.bank_account_type.msg %></span>
+            <% } %>
+          </div>
+
+          <div class="field">
+            <label class="label" for="bank_account_number">Número de CBU/CVU</label>
+            <input 
+              type="text" 
+              id="bank_account_number" 
+              name="bank_account_number" 
+              value="<%= locals.old?.bank_account_number || '' %>" 
+              maxlength="22" 
+              placeholder="22 dígitos numéricos"
+            >
+            <% if (locals.errors && errors.bank_account_number) { %>
+              <span class="form-error"><%= errors.bank_account_number.msg %></span>
+            <% } %>
+          </div>
+
+          <div class="field">
+            <label class="label" for="bank_account_alias">Alias (Opcional)</label>
+            <input 
+              type="text" 
+              id="bank_account_alias" 
+              name="bank_account_alias" 
+              value="<%= locals.old?.bank_account_alias || '' %>" 
+              placeholder="ej: mi.alias.mp"
+            >
+            <% if (locals.errors && errors.bank_account_alias) { %>
+              <span class="form-error"><%= errors.bank_account_alias.msg %></span>
+            <% } %>
+          </div>
+        </section>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 16px;">
+          Enviar Verificación
+        </button>
+      </form>
+    </div>
+
+    <aside>
+      <div class="panel">
+        <h3>¿Por qué pedimos esto?</h3>
+        <p class="muted" style="font-size: 0.9rem;">
+          La validación de identidad nos permite construir una comunidad segura.
+          <br><br>
+          Los datos de cobro son necesarios para que podamos transferirte el dinero de los pagos que procesamos a través de la plataforma.
+        </p>
+      </div>
+    </aside>
+
+  </div>
+
+  <%- include('partials/footer') %>
+  </body>
+</html>

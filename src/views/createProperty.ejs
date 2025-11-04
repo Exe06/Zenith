@@ -9,7 +9,7 @@
 
   <div class="container">
     <h1>Nueva publicación</h1>
-    <div class="sub">Ingresá la información de tu propiedad. Podés guardar como borrador y publicar más tarde.</div>
+    <div class="sub">Ingresá la información de tu propiedad.</div>
 
     <form id="listingForm" class="grid" action="/property/create" method="POST" enctype="multipart/form-data" novalidate>
       <!-- LEFT -->
@@ -21,6 +21,9 @@
             <div class="field h6">
               <label class="label" for="title">Título <span class="hint" id="titleCount">0/80</span></label>
               <input id="title" name="title" maxlength="80" placeholder="Ej: Departamento céntrico, luminoso y con balcón" required />
+              <% if (locals.errors && errors.title) { %>
+                <span class="form-error"> <%= errors.title.msg %> </span>
+              <% } %>
             </div>
 
             <div class="field h6">
@@ -30,6 +33,9 @@
                 <option value="1">Alquiler a largo plazo</option>
                 <option value="2">Alquiler temporal</option>
               </select>
+              <% if (locals.errors && errors.operation_type) { %>
+                <span class="form-error"> <%= errors.operation_type.msg %> </span>
+              <% } %>
             </div>
 
             <div class="field h6">
@@ -40,35 +46,54 @@
                 <option value="2">Departamento</option>
                 <option value="3">Monoambiente</option>
               </select>
+              <% if (locals.errors && errors.property_type) { %>
+                <span class="form-error"> <%= errors.property_type.msg %> </span>
+              <% } %>
             </div>
 
             <div class="field h6">
               <label class="label" for="address">Dirección</label>
               <input id="address" name="direccion" placeholder="Calle, número" required />
+              <% if (locals.errors && errors.direccion) { %>
+                <span class="form-error"> <%= errors.direccion.msg %> </span>
+              <% } %>
             </div>
 
             <div class="field h4">
               <label class="label" for="province">Provincia</label>
               <select id="province" name="provincia" required>
+                <option value="" selected>Seleccione una provincia</option>
                 <% provincias.forEach(p => {  %>
                   <option value="<%= p %>"><%= p %></option>
                 <% }) %>
               </select>
+              <% if (locals.errors && errors.provincia) { %>
+                <span class="form-error"> <%= errors.provincia.msg %> </span>
+              <% } %>
             </div>
 
             <div class="field h4">
               <label class="label" for="city">Ciudad / Localidad</label>
               <input id="city" name="ciudad" placeholder="Santiago del Estero" required />
+              <% if (locals.errors && errors.ciudad) { %>
+                <span class="form-error"> <%= errors.ciudad.msg %> </span>
+              <% } %>
             </div>
 
             <div class="field h4">
               <label class="label" for="neighborhood">Barrio (opcional)</label>
               <input id="neighborhood" name="barrio" placeholder="Centro" />
+              <% if (locals.errors && errors.barrio) { %>
+                <span class="form-error"> <%= errors.barrio.msg %> </span>
+              <% } %>
             </div>
 
             <div class="field">
               <label class="label" for="description">Descripción <span class="hint" id="descCount">0/500</span></label>
               <textarea id="description" name="descripcion" maxlength="500" placeholder="Contá lo mejor de tu propiedad: orientación, terminaciones, cercanías, etc." required></textarea>
+              <% if (locals.errors && errors.descripcion) { %>
+                <span class="form-error"> <%= errors.descripcion.msg %> </span>
+              <% } %>
             </div>
           </div>
         </section>
@@ -77,12 +102,48 @@
         <section class="card section">
           <h3>Detalles</h3>
           <div class="row">
-            <div class="field h3"><label class="label" for="rooms">Ambientes</label><input id="rooms" name="ambientes" type="number" min="1" step="1" required></div>
-            <div class="field h3"><label class="label" for="bedrooms">Dormitorios</label><input id="bedrooms" name="habitaciones" type="number" min="0" step="1" required></div>
-            <div class="field h3"><label class="label" for="bathrooms">Baños</label><input id="bathrooms" name="banios" type="number" min="1" step="1" required></div>
-            <div class="field h3"><label class="label" for="area">Superficie (m²)</label><input id="area" name="areaTotal" type="number" min="10" step="1" required></div>
-            <div class="field h3"><label class="label" for="covered-area">Superficie Cubierta (m²)</label><input id="covered-area" name="areaCubierta" type="number" min="10" step="1" required></div>
-            <div class="field h3"><label class="label" for="floors">Pisos</label><input id="floors" name="pisos" type="number" min="1" step="1" required></div>
+            <div class="field h3">
+              <label class="label" for="rooms">Ambientes</label>
+              <input id="rooms" name="ambientes" type="number" min="1" step="1" required>
+              <% if (locals.errors && errors.ambientes) { %>
+                <span class="form-error"> <%= errors.ambientes.msg %> </span>
+              <% } %>
+            </div>
+            <div class="field h3">
+              <label class="label" for="bedrooms">Dormitorios</label>
+              <input id="bedrooms" name="habitaciones" type="number" min="0" step="1" required>
+              <% if (locals.errors && errors.habitaciones) { %>
+                <span class="form-error"> <%= errors.habitaciones.msg %> </span>
+              <% } %>
+            </div>
+            <div class="field h3">
+              <label class="label" for="bathrooms">Baños</label>
+              <input id="bathrooms" name="banios" type="number" min="1" step="1" required>
+              <% if (locals.errors && errors.banios) { %>
+                <span class="form-error"> <%= errors.banios.msg %> </span>
+              <% } %>
+            </div>
+            <div class="field h3">
+              <label class="label" for="area">Superficie (m²)</label>
+              <input id="area" name="areaTotal" type="number" min="10" step="1" required>
+              <% if (locals.errors && errors.areaTotal) { %>
+                <span class="form-error"> <%= errors.areaTotal.msg %> </span>
+              <% } %>
+            </div>
+            <div class="field h3">
+              <label class="label" for="covered-area">Superficie Cubierta (m²)</label>
+              <input id="covered-area" name="areaCubierta" type="number" min="10" step="1" required>
+              <% if (locals.errors && errors.areaCubierta) { %>
+                <span class="form-error"> <%= errors.areaCubierta.msg %> </span>
+              <% } %>
+            </div>
+            <div class="field h3">
+              <label class="label" for="floors">Pisos</label>
+              <input id="floors" name="pisos" type="number" min="0" step="1" required>
+              <% if (locals.errors && errors.pisos) { %>
+                <span class="form-error"> <%= errors.pisos.msg %> </span>
+              <% } %>
+            </div>
           </div>
         </section>
 
@@ -96,14 +157,18 @@
             <span class="chip" data-key="ac">Aire Acondicionado</span>
             <span class="chip" data-key="calefaccion">Calefacción</span>
             <span class="chip" data-key="seguridad">Seguridad 24h</span>
-            <span class="chip" data-key="lavadero">Lavadero</span>
+            <span class="chip" data-key="lavanderia">Lavanderia</span>
             <span class="chip" data-key="piscina">Piscina</span>
             <span class="chip" data-key="ascensor">Ascensor</span>
             <span class="chip" data-key="cochera">Cochera</span>
             <span class="chip" data-key="balcon">Balcon</span>
             <span class="chip" data-key="patio">Patio</span>
             <span class="chip" data-key="mascotas">Mascotas</span>
+            <span class="chip" data-key="internet">Internet</span>
           </div>
+          <% if (locals.errors && errors.servicios) { %>
+            <span class="form-error"> <%= errors.servicios.msg %> </span>
+          <% } %>
         </section>
 
         <!-- Imágenes -->
@@ -117,52 +182,82 @@
             </div>
           </div>
           <div id="previews" class="previews" aria-live="polite"></div>
+          <% if (locals.errors && errors.images) { %>
+            <span class="form-error"> <%= errors.images.msg %> </span>
+          <% } %>
         </section>
 
         <!-- Ubicación -->
-        <section class="card section">
+        <!-- <section class="card section">
           <h3>Ubicación</h3>
           <div class="row">
             <div class="field"><label class="label" for="maps">URL de Google Maps (opcional)</label><input id="maps" name="ubicacion" placeholder="https://maps.google.com/..." type="url"></div>
           </div>
           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14118.646114725634!2d-64.2755133029628!3d-27.789401490816584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x943b52103439bf83%3A0xdb1fbfa8b97fbad6!2sUrquiza%20200%2C%20G4204%20Santiago%20del%20Estero!5e0!3m2!1ses-419!2sar!4v1754765928238!5m2!1ses-419!2sar" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </section>
+        </section> -->
 
         <!-- Condiciones -->
         <section class="card section">
           <h3>Condiciones y precio</h3>
           <div class="row">
-            <div class="field h6"><label class="label" for="baseAmount">Monto base</label><input id="baseAmount" name="montoBase" type="number" min="0" step="100" placeholder="Ej: 320000" required></div>
-            <!-- <div class="field h6" id="frequencyWrap">
-              <label class="label" for="paymentFrequency">Frecuencia de pago</label>
-              <select id="paymentFrequency" name="frecuenciaPago" required>
-                <option value="mensual">Mensual</option>
-                <option value="semanal">Semanal</option>
-                <option value="diaria">Diaria</option>
-              </select>
-            </div> -->
-            <div class="field h6"><label class="label" for="deposit">Depósito</label><input id="deposit" name="deposito" type="number" min="0" step="100" placeholder="Ej: 320000"></div>
+            <div class="field h6">
+              <label class="label" for="baseAmount">Monto base</label>
+              <input id="baseAmount" name="montoBase" type="number" min="0" step="100" placeholder="Ej: 320000" required>
+              <% if (locals.errors && errors.montoBase) { %>
+                <span class="form-error"> <%= errors.montoBase.msg %> </span>
+              <% } %>
+            </div>
+            <div class="field h6">
+              <label class="label" for="deposit">Depósito</label>
+              <input id="deposit" name="deposito" type="number" min="0" step="100" placeholder="Ej: 320000">
+              <% if (locals.errors && errors.deposito) { %>
+                <span class="form-error"> <%= errors.deposito.msg %> </span>
+              <% } %>
+            </div>
             <!-- <div class="field h6"><label class="label" for="expenses">Expensas</label><input id="expenses" name="expensas" type="number" min="0" step="100" placeholder="Ej: 25000"></div> -->
-            <div class="field h6"><label class="label" for="guarantee">Garantía</label>
-              <select id="guarantee" name="garantia">
-                <option value="">Seleccionar</option>
-                <option value="1">Propietaria</option>
-                <option value="2">Seguro de caución</option>
-                <option value="3">Aval bancario</option>
-              </select>
+
+            <div class="field">
+              <label class="label">Garantía propuesta</label>
+              
+              <div class="checkbox-group" id="guarantee">
+                <div>
+                  <input type="checkbox" id="garantia_1" name="garantia" value="1">
+                  <label for="garantia_1">Propietaria</label>
+                </div>   
+                <div>
+                  <input type="checkbox" id="garantia_2" name="garantia" value="2">
+                  <label for="garantia_2">Seguro de caución</label>
+                </div>
+                <div>
+                  <input type="checkbox" id="garantia_3" name="garantia" value="3">
+                  <label for="garantia_3">Aval bancario</label>
+                </div>
+              </div>
+              <% if (locals.errors && errors.garantia) { %>
+                <span class="form-error"> <%= errors.garantia.msg %> </span>
+              <% } %>
             </div>
 
             <div class="field h6" hidden>
               <label class="label" for="dailyPrice">Valor por día</label>
               <input id="dailyPrice" name="dailyPrice" type="number" min="0" step="100" placeholder="Ej: 25000" />
+              <% if (locals.errors && errors.dailyPrice) { %>
+                <span class="form-error"> <%= errors.dailyPrice.msg %> </span>
+              <% } %>
             </div>
             <div class="field h6" hidden>
               <label class="label" for="weeklyDiscount">Descuento semanal (%)</label>
               <input id="weeklyDiscount" name="weeklyDiscount" type="number" min="5" max="15" step="1" placeholder="Ej: 10">
+              <% if (locals.errors && errors.weeklyDiscount) { %>
+                <span class="form-error"> <%= errors.weeklyDiscount.msg %> </span>
+              <% } %>
             </div>
             <div class="field h6" hidden>
               <label class="label" for="monthlyDiscount">Descuento mensual (%)</label>
               <input id="monthlyDiscount" name="monthlyDiscount" type="number" min="20" max="40" step="1" placeholder="Ej: 25">
+              <% if (locals.errors && errors.monthlyDiscount) { %>
+                <span class="form-error"> <%= errors.monthlyDiscount.msg %> </span>
+              <% } %>
             </div>
           </div>
         </section>
@@ -174,6 +269,9 @@
             <div class="field h6">
               <label class="label" for="titleDeed">Título de propiedad</label>
               <input type="file" id="titleDeed" name="escritura" accept="application/pdf">
+              <% if (locals.errors && errors.escritura) { %>
+                <span class="form-error"> <%= errors.escritura.msg %> </span>
+              <% } %>
             </div>
           </div>
         </section>
@@ -181,10 +279,8 @@
         <!-- Acciones -->
         <section class="card section">
           <div class="btns">
-            <button type="button" class="btn btn-ghost" id="draftBtn">Guardar borrador</button>
             <button type="submit" class="btn btn-primary">Publicar</button>
           </div>
-          <div id="formErrors" class="errors" style="margin-top:8px"></div>
         </section>
       </div>
 
@@ -194,7 +290,6 @@
           <div>
             <div class="pill" id="sideOp">Operación</div>
             <div class="price" id="sidePrice">$ 0</div>
-            <div class="hint" id="sideFreq">Frecuencia</div>
           </div>
           <div style="width:110px;height:82px;border-radius:16px;overflow:hidden;box-shadow:var(--ring)">
             <img id="sideImg" src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=600&auto=format&fit=crop" alt="Preview" style="width:100%;height:100%;object-fit:cover">
@@ -208,6 +303,6 @@
     </form>
   </div>
 
-  <script src="/js/createProperty3.js"></script>
+  <script src="/js/createProperty.js"></script>
 </body>
 </html>

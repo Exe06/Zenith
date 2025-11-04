@@ -1,47 +1,268 @@
-  :root{--bg:#f5f7f8;--card:#fff;--text:#0f172a;--muted:#5b6b7a;--border:#e5e7eb;--ring:0 10px 30px rgba(2,14,40,.08);--brand:#0d5c63}
+/* PASO 1: Copiamos las variables de :root de managment.css 
+  para unificar el estilo (colores, bordes, etc.)
+*/
+:root {
+  --bg: #f6f7f9;
+  --card: #fff;
+  --text: #0f172a;
+  --muted: #5b6b7a;
+  --brand: #0088ff; /* Color de 'managment' */
+  --brand-600: #0074d6;
+  --ok: #065f46;
+  --warn: #92400e;
+  --err: #991b1b;
+  --ring: 0 10px 30px rgba(2, 14, 40, .08);
+  --border: #e5e7eb;
+}
+
+/* PASO 2: Reseteo básico (igual que managment)
+*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Fredoka', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  padding-top: 72px;
+}
+
+/* PASO 3: Estilo de Toolbar (¡LA CLAVE!)
+  Usamos Flexbox.
+*/
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;     /* Permite que los filtros bajen de línea si no entran */
+  gap: 12px;           /* Espacio entre filtros */
+  align-items: end;    /* <-- CLAVE: Alinea los 'select' y botones por abajo */
   
-  * {
-    box-sizing:border-box;
-    font-family: 'Fredoka', sans-serif;
-    margin: 0;
-    padding: 0;
+  /* Estilos de la barra (sticky) */
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--ring);
+  position: sticky;
+  top: 72px; 
+  z-index: 5;
+}
+
+/* PASO 4: Hacemos que CADA .filter sea una columna 
+  (label arriba, select abajo)
+*/
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* Espacio entre el label y el select */
+}
+
+/* PASO 5: Mostramos las <label>s (esto es lo que querías)
+  y les damos el estilo "muted".
+*/
+.filter > label {
+  font-size: .8rem;
+  color: var(--muted);
+  font-weight: 500;
+  display: block; /* Asegura que sea visible */
+}
+
+/* PASO 6: Estilos de Inputs y Selects (copiado de managment)
+*/
+.toolbar input[type="search"],
+.toolbar select {
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 12px;
+  background: #fff;
+}
+
+/* PASO 7: Estilos para los Checkboxes
+*/
+.checkline {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+/* La label del checkline SÍ se muestra 
+  (porque la regla .filter > label no la afecta)
+*/
+.checkline label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: .9rem;
+  color: var(--text);
+}
+
+/* PASO 8: Botones (copiado de managment)
+*/
+.btn {
+  border: none;
+  border-radius: 10px;
+  height: 38px;
+  padding: 0 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: var(--brand-600); }
+.btn-ghost { background: #f1f5f9; }
+.btn-ghost:hover { background: #e9eef4; }
+
+/* PASO 9: ¡LA MAGIA! 
+  Empujamos el botón "Limpiar" al final de la fila.
+*/
+.toolbar #btnLimpiar {
+  margin-left: auto;
+}
+
+/* PASO 10: El resto de tu CSS de 'search' (contenido, cards)
+  Ahora usará las variables unificadas.
+*/
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+h1.title {
+  font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.2rem);
+  text-align: center;
+  margin: 18px 0 8px;
+  font-weight: 800;
+  color: var(--text); /* Unificado */
+}
+
+a { text-decoration: none; color: var(--text); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin: 20px 0 60px;
+}
+
+.prop-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--ring);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.prop-card .img { height: 210px; background: #ddd; }
+.prop-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.prop-card .body { padding: 16px 18px 12px; }
+.prop-card h3 { margin: 2px 0 6px; font-size: 1.1rem; }
+.muted { color: var(--muted); }
+
+.meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.chip {
+  font-size: .78rem;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  margin-top: auto; /* Empuja las acciones al fondo */
+}
+
+.price { font-weight: 800; }
+
+footer {
+  background: #1a1a1a;
+  color: white;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer-logo h2 {
+  font-weight: 600;
+  font-size: 22px;
+  color: #fff;
+  margin: 0;
+}
+
+.footer-logo span {
+  color: #669bbc;
+  font-weight: 400;
+}
+
+.footer-contacto h4 {
+  margin: 0 0 10px;
+}
+
+.footer-contacto p {
+  margin: 5px 0;
+  font-size: 0.9em;
+}
+
+.footer-social {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  color: #4a8dbb;
+}
+
+.footer-social img {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s ease;
+}
+
+.footer-social img:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
-  
-  body{margin:0;background:var(--bg);color:var(--text); padding-top: 72px;}
 
-  /* filtros */
-  .filters-wrap{position:sticky;top:60px;z-index:5;}
-  .filters{max-width:1280px;margin:0 auto;padding:12px 20px;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--ring);display:grid;grid-template-columns:repeat(12,1fr);gap:12px;align-items:end}
-  .filter{display:flex;flex-direction:column;gap:6px}
-  .filter label{font-size:.8rem;color:var(--muted)}
-  .filter select,.filter input[type="search"]{height:40px;border:1px solid var(--border);border-radius:10px;padding:0 12px;background:#fff}
-  .checkline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .checkline label{display:flex;gap:6px;align-items:center;font-size:.9rem;color:var(--text)}
-  .searchbox{grid-column:10/13;display:flex;gap:8px;justify-self:end;align-items:center}
-  .searchbox input{width:0;opacity:0;pointer-events:none;transition:width .25s ease,opacity .2s ease}
-  .searchbox.open input{width:260px;opacity:1;pointer-events:auto}
-
-  /* contenido */
-  .container{max-width:1280px;margin:0 auto;padding:0 20px}
-  h1.title{font-size:clamp(1.6rem,1.2rem+1.5vw,2.2rem);text-align:center;margin:18px 0 8px;font-weight:800;color:#063a42}
-  a{text-decoration: none; color: var(--text);}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;margin:20px 0 60px}
-  .prop-card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--ring);overflow:hidden;display:flex;flex-direction:column}
-  .prop-card .img{height:210px;background:#ddd}
-  .prop-card img{width:100%;height:100%;object-fit:cover;display:block}
-  .prop-card .body{padding:16px 18px 12px}
-  .prop-card h3{margin:2px 0 6px;font-size:1.1rem;color:#0a3a44}
-  .muted{color:#334155}
-  .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-  .chip{font-size:.78rem;background:#f1f5f9;border:1px solid var(--border);padding:4px 8px;border-radius:999px}
-  .card-actions{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid var(--border)}
-  .btn{border:none;border-radius:10px;height:38px;padding:0 14px;font-weight:700;cursor:pointer; display: inline-flex; align-items: center;justify-content: center;}
-  .btn-primary{background:#0b7285;color:#fff}
-  .btn-primary:hover{background:#0a6473}
-  .price{font-weight:800}
-
-  @media (max-width:1000px){
-    .filters{grid-template-columns:repeat(6,1fr)}
-    .searchbox{grid-column:1/-1;justify-self:stretch}
-    .searchbox.open input{width:100%}
+  .footer-left {
+    align-items: center;
   }
+
+  .footer-social {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 1000px) {
+  /* Simplificado */
+  .container { grid-template-columns: 1fr; }
+  /* Opcional: Centrar el botón de limpiar en móvil si se rompe */
+  .toolbar #btnLimpiar { margin-left: 0; }
+}

@@ -1,177 +1,121 @@
-// --- Datos mock (ajustados a tus requisitos: base_amount, payment_frequency, etc.)
-const propiedades = [
-    {id:1,titulo:'Estilo cálido',ubic:'Santiago del Estero',amb:'3 amb',img:'https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=800',estado:'Activo',operacion:'Alquiler'},
-    {id:2,titulo:'Departamento céntrico',ubic:'Centro',amb:'2 amb',img:'/img/properties/property1.avif',estado:'Inactivo',operacion:'Alquiler'},
-    {id:3,titulo:'Loft moderno',ubic:'Norte',amb:'1 amb',img:'https://images.unsplash.com/photo-1515263487990-61b07816b324?q=80&w=800',estado:'Activo',operacion:'Temporario'},
-];
+document.addEventListener('DOMContentLoaded', () => {
+  
+  // ----- 1. LÓGICA DE TABS -----
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      const tabId = b.dataset.tab;
 
-const contratos = [
-    {inquilino:'Juan Pérez',prop:'Estilo cálido',inicio:'01/03/2025',fin:'31/01/2026',payment_frequency:'Mensual',base_amount:320000,estado:'Activo'},
-    {inquilino:'Ana Gómez',prop:'Departamento céntrico',inicio:'01/02/2024',fin:'28/02/2025',payment_frequency:'Mensual',base_amount:210000,estado:'Finalizado'},
-    {inquilino:'Lucía Díaz',prop:'Loft moderno',inicio:'01/01/2025',fin:'01/01/2026',payment_frequency:'Mensual',base_amount:180000,estado:'Activo'},
-];
+      document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      
+      document.querySelectorAll('.local-filter').forEach(f => {
+        f.style.display = 'none';
+      });
 
-const pagos = [
-    {fecha:'10/07/2025',inq:'Juan Pérez',prop:'Estilo cálido',mes:'Jul',año:'2025',monto:320000,estado:'Pagado'},
-    {fecha:'15/07/2025',inq:'Ana Gómez',prop:'Departamento céntrico',mes:'Jul',año:'2025',monto:210000,estado:'Pendiente'},
-    {fecha:'02/08/2025',inq:'Lucía Díaz',prop:'Loft moderno',mes:'Agosto',año:'2025',monto:180000,estado:'Atrasado'},
-];
+      b.classList.add('active');
+      const targetPane = document.getElementById(tabId);
+      if (targetPane) {
+        targetPane.classList.add('active');
+      }
 
-const solicitudes = [
-    {fecha:'03/08/2025',nombre:'Marcos R.',prop:'Loft moderno',msg:'¿Se aceptan mascotas?'},
-    {fecha:'04/08/2025',nombre:'Sofía P.',prop:'Estilo cálido',msg:'Quiero visitar este fin de semana.'},
-];
-
-const vencimientos = [
-    {prop:'Loft moderno',fecha:'30/08',estado:'Renovación en curso'},
-];
-
-// --- Render helpers
-const $ = s => document.querySelector(s);
-const el = (t,o={}) => Object.assign(document.createElement(t),o);
-
-const statusPill = (txt) => {
-    const map = {
-        'Activo':'st-activo','Pagado':'st-activo','Finalizado':'st-finalizado',
-        'Pendiente de firma':'st-pendiente','Pendiente':'st-pendiente',
-        'Atrasado':'st-inactivo','Incumplimiento':'st-incumplimiento','Inactivo':'st-inactivo'
-    };
-    const span = el('span',{className:`status ${map[txt]||'st-pendiente'}`,textContent:txt});
-    return span;
-};
-
-function renderCards(list){
-    const wrap = $('#cards'); wrap.innerHTML = '';
-    list.forEach(p=>{
-        const c = el('div',{className:'card'});
-        c.innerHTML = `
-        <img src="${p.img}" alt="${p.titulo}">
-        <div class="title">${p.titulo}</div>
-        <div class="muted">${p.ubic} · ${p.amb}</div>
-        `;
-        c.appendChild(statusPill(p.estado));
-        const row = el('div',{className:'row'});
-        row.append(
-            Object.assign(el('a',{
-                className: 'btn btn-primary',
-                href: `/property/${p.id}` // URL para ver detalles
-            }), { textContent: 'Ver detalles' }),
-
-            Object.assign(el('a',{
-                className: 'btn btn-ghost',
-                href: `/property/edit/${p.id}` // URL para editar
-            }), { textContent: 'Editar' })
-        );
-        c.appendChild(row);
-        wrap.appendChild(c);
+      const targetFilter = document.querySelector(`.local-filter[data-tab="${tabId}"]`);
+      if (targetFilter) {
+        targetFilter.style.display = 'block'; 
+      }
     });
-}
+  });
 
-function money(n){ return new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n); }
+  // ----- 2. LÓGICA DE FILTROS -----
+  const filterInputs = ['q', 'fOperacion', 'fPropEstado'];
+  const btnLimpiar = document.getElementById('btnLimpiar');
 
-function renderContratos(){
-    const tb = $('#tbContratos'); tb.innerHTML = '';
-    contratos.forEach(c=>{
-        const tr = el('tr');
-        tr.append(
-            el('td',{textContent:c.inquilino}),
-            el('td',{textContent:c.prop}),
-            el('td',{textContent:c.inicio}),
-            el('td',{textContent:c.fin}),
-            el('td',{textContent:c.payment_frequency}),
-            el('td',{textContent:money(c.base_amount)}),
-            el('td'), el('td')
-        );
-        tr.children[6].appendChild(statusPill(c.estado));
-        tr.children[7].append(
-            Object.assign(el('button',{className:'btn btn-ghost'}),{textContent:'Ver'}),
-        );
-        tb.appendChild(tr);
+  function applyFiltersAndReload() {
+    // Obtenemos la URL base (sin queries)
+    const baseUrl = window.location.origin + window.location.pathname;
+    const params = new URLSearchParams();
+    
+    filterInputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.value) {
+        params.set(id, el.value);
+      }
     });
-}
 
-function renderPagos(){
-    const tb = $('#tbPagos'); tb.innerHTML = '';
-    pagos.forEach(p=>{
-        const tr = el('tr');
-        tr.append(
-            el('td',{textContent:p.fecha}),
-            el('td',{textContent:p.inq}),
-            el('td',{textContent:p.prop}),
-            el('td',{textContent:p.mes}),
-            el('td',{textContent:p.año}),
-            el('td',{textContent:money(p.monto)}),
-            el('td'),
-            el('td',{className:'actions'}),
-        );
-        tr.children[6].appendChild(statusPill(p.estado));
-        tr.children[7].append(
-            Object.assign(el('button',{className:'btn btn-ghost'}),{textContent:'Comprobante'}),
-        );
-        tb.appendChild(tr);
+    window.location.href = baseUrl + '?' + params.toString();
+  }
+
+  // Asignamos el evento 'change' a todos los inputs de filtro
+  filterInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('change', applyFiltersAndReload);
+    }
+  });
+
+  // El botón "Limpiar" simplemente recarga la página sin filtros
+  if (btnLimpiar) {
+    btnLimpiar.addEventListener('click', () => {
+      window.location.href = window.location.origin + window.location.pathname;
     });
-}
+  }
 
-function renderSolicitudes(){
-    const tb = $('#tbSolicitudes'); tb.innerHTML = '';
-    solicitudes.forEach(s=>{
-        const tr = el('tr');
-        tr.append(
-            el('td',{textContent:s.fecha}),
-            el('td',{textContent:s.nombre}),
-            el('td',{textContent:s.prop}),
-            el('td',{textContent:s.msg}),
-            el('td')
-        );
-        tr.lastChild.append(
-            Object.assign(el('button',{className:'btn btn-ghost'}),{textContent:'Responder'}),
-        );
-        
-        tb.appendChild(tr);
+  // ----- 3. LÓGICA DE FILTROS LOCALES (SIN RECARGA) -----
+  // Filtro para la tabla de Contratos
+  const filtroContratos = document.getElementById('filtroEstadoContrato');
+  const tablaContratos = document.getElementById('tablaContratos');
+
+  if (filtroContratos && tablaContratos) {
+    const filasDeDatos = tablaContratos.querySelectorAll('tbody tr.data-row');
+    const filaSinResultados = tablaContratos.querySelector('tbody tr.no-results-row');
+
+    filtroContratos.addEventListener('change', () => {
+      const estadoSeleccionado = filtroContratos.value;
+      let visibleRowCount = 0;
+
+      filasDeDatos.forEach(fila => {
+        // Si no se selecciona nada (value=""), o si el estado coincide,
+        // se muestra la fila. Si no, se oculta.
+        const estadoFila = fila.dataset.estado;
+        if (estadoSeleccionado === "" || estadoFila === estadoSeleccionado) {
+          fila.style.display = "";
+          visibleRowCount++;
+        } else {
+          fila.style.display = "none";
+        }
+      });
+
+      if (filaSinResultados) {
+        filaSinResultados.style.display = (visibleRowCount === 0) ? "" : "none";
+      }
     });
-}
+  }
 
-function renderVencimientos(){
-const box = $('#vxList'); box.innerHTML = '';
-vencimientos.forEach(v=>{
-        const line = el('div',{className:'item'});
-        const left = el('div'); left.innerHTML = `<strong>${v.prop}</strong><div class="muted">${v.estado}</div>`;
-        const right = el('div',{className:'chip',textContent:v.fecha});
-        line.append(left,right); box.appendChild(line);
+  // Filtro para la tabla de Pagos
+  const filtroPagos = document.getElementById('filtroEstadoPago');
+  const tablaPagos = document.getElementById('tablaPagos');
+
+  if (filtroPagos && tablaPagosBody) {
+    const filasDeDatos = tablaPagos.querySelectorAll('tbody tr.data-row');
+    const filaSinResultados = tablaPagos.querySelector('tbody tr.no-results-row');
+    
+    filtroPagos.addEventListener('change', () => {
+      const estadoSeleccionado = filtroPagos.value;
+      let visibleRowCount = 0;
+
+      filasDeDatos.forEach(fila => {
+        const estadoFila = fila.dataset.estado;
+        if (estadoSeleccionado === "" || estadoFila === estadoSeleccionado) {
+          fila.style.display = "";
+          visibleRowCount++;
+        } else {
+          fila.style.display = "none";
+        }
+      });
+
+      if (filaSinResultados) {
+        filaSinResultados.style.display = (visibleRowCount === 0) ? "" : "none";
+      }
     });
-}
+  }
 
-// Filtros
-function applyFilters(){
-    const q = $('#q').value.toLowerCase();
-    const e = $('#fEstado').value; const o=$('#fOperacion').value; const f=$('#fFrecuencia').value;
-    const list = propiedades.filter(p =>
-        (!q || (p.titulo+p.ubic).toLowerCase().includes(q)) &&
-        (!e || p.estado===e || e==='Activo' && p.estado==='Activo') &&
-        (!o || p.operacion===o)
-    );
-    renderCards(list);
-
-    // (Opcional) filtrar tablas según selects
-    // …
-}
-
-// Tabs
-document.querySelectorAll('.tab-btn').forEach(b=>{
-    b.addEventListener('click',()=>{
-        document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
-        document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-        b.classList.add('active'); document.getElementById(b.dataset.tab).classList.add('active');
-    });
 });
-
-// Handlers
-['q','fEstado','fOperacion','fFrecuencia'].forEach(id=>document.getElementById(id).addEventListener('input',applyFilters));
-
-document.getElementById('btnLimpiar').addEventListener('click',()=>{
-    ['q','fEstado','fOperacion','fFrecuencia'].forEach(id=>document.getElementById(id).value=''); applyFilters();
-});
-
-// Init
-renderCards(propiedades);
-renderContratos(); renderPagos(); renderSolicitudes(); renderVencimientos();

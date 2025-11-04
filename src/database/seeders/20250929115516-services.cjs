@@ -14,8 +14,9 @@ module.exports = {
       {nombre: 'Patio'},
       {nombre: 'Balcón'},
       {nombre: 'Seguridad 24h'},
-      {nombre: 'Lavandería'},
-      {nombre: 'Piscina'}
+      {nombre: 'Lavanderia'},
+      {nombre: 'Piscina'},
+      {nombre: 'Mascotas'}
     ], {});
   },
 

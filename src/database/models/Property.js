@@ -17,10 +17,6 @@ export default (sequelize, DataTypes) => {
         foreignKey: 'operation_type_id',
         as: 'operation'
       });
-      Property.belongsTo(models.Guarantee, {
-        foreignKey: 'guarantee_id',
-        as: 'guarantees'
-      });
       Property.belongsToMany(models.Service, {
         through: models.PropertyService,
         foreignKey: 'property_id',
@@ -30,6 +26,16 @@ export default (sequelize, DataTypes) => {
       Property.hasMany(models.PropertyImage, {
         foreignKey: 'property_id',
         as: 'images'
+      });
+      Property.belongsToMany(models.Guarantee, {
+        through: models.PropertyGuarantee,
+        foreignKey: 'property_id',
+        otherKey: 'guarantee_id',
+        as: 'guarantees'
+      });
+      Property.hasMany(models.Conversation, {
+        foreignKey: 'property_id',
+        as: 'conversations'
       });
     }
   }
@@ -52,10 +58,6 @@ export default (sequelize, DataTypes) => {
     operation_type_id: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
-    },
-    guarantee_id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: true,
     },
     titulo: {
       type: DataTypes.STRING,
@@ -117,10 +119,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10, 2).UNSIGNED,
       allowNull: true,
     },
-    // expensas: {
-    //   type: DataTypes.DECIMAL(10, 2).UNSIGNED,
-    //   allowNull: true,
-    // },
     precio_diario: {
       type: DataTypes.DECIMAL(10, 2).UNSIGNED,
       allowNull: true,
@@ -158,9 +156,9 @@ export default (sequelize, DataTypes) => {
       defaultValue: false
     },
     estado: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM('disponible','pendiente','inactivo'),
       allowNull: false,
-      defaultValue: 'Disponible'
+      defaultValue: 'pendiente'
     },
     created_at: {
       type: DataTypes.DATE,

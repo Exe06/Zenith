@@ -3,196 +3,360 @@
 
 <%- include('partials/head') %>
 
+<% 
+  /* --- HELPERS PARA RELLENAR EL FORMULARIO --- */
+  const data = locals.old || {};
+
+  const serviceNameMap = {
+    'electricidad': 'electricidad',
+    'agua': 'agua',
+    'gas': 'gas',
+    'internet': 'internet',
+    'aire acondicionado': 'ac',
+    'calefacción': 'calefaccion',
+    'seguridad 24h': 'seguridad',
+    'lavanderia': 'lavanderia',
+    'piscina': 'piscina',
+    'ascensor': 'ascensor',
+    'cochera': 'cochera',
+    'balcón': 'balcon',
+    'patio': 'patio',
+    'mascotas': 'mascotas'
+  };
+
+  const getValue = (oldName, propName) => {
+    if (locals.old && locals.old[oldName] !== undefined) {
+      return locals.old[oldName] ?? '';
+    }
+    return property[propName] ?? '';
+  };
+
+  const getSelectedId = (oldName, propName) => {
+    let value;
+    if (locals.old && locals.old[oldName] !== undefined) {
+      value = locals.old[oldName];
+    } else {
+      value = property[propName];
+    }
+    return String(value || '');
+  };
+
+  let tempGuarantees;
+  if (locals.old && locals.old.garantia !== undefined) {
+    tempGuarantees = locals.old.garantia || [];
+  } else {
+    tempGuarantees = property.guarantees?.map(g => g.id) || [];
+  }
+  const selectedGuarantees = (Array.isArray(tempGuarantees) ? tempGuarantees : [tempGuarantees]).map(String);
+
+  let tempServices;
+  if (locals.old && locals.old.servicios !== undefined) {
+    tempServices = locals.old.servicios || []; 
+  } else {
+    tempServices = property.services?.map(s => {
+      const dbNameLower = s.nombre.toLowerCase();
+      return serviceNameMap[dbNameLower];
+    }) || [];
+  }
+  const currentSelectedServices = Array.isArray(tempServices) ? tempServices : [tempServices];
+
+%>
+
 <body>
-  
   <%- include('partials/header') %>
 
   <div class="container">
-    
+    <h1>Editar Propiedad</h1>
+    <div class="sub"><%= property.titulo %></div>
 
-    <h1>Editar publicación</h1>
-    <div class="sub">Ingresá la información de tu propiedad. Podés guardar como borrador y publicar más tarde.</div>
+      <form id="listingForm" class="grid" action="/property/<%= property.id %>?_method=PUT" method="POST" enctype="multipart/form-data" novalidate>
+        <% if (locals.errors && errors.general) { %>
+          <div class="alert red" style="grid-column: 1 / -1;">
+            <%= errors.general.msg %>
+          </div>
+        <% } %>
+        
+        <div>
+          <section class="card section">
+            <h3>Información básica</h3>
+            <div class="row">
+              <div class="field h6">
+                <label class="label" for="title">Título <span class="hint" id="titleCount">0/80</span></label>
+                <input id="title" name="title" maxlength="80" placeholder="Ej: Departamento céntrico..." required value="<%= getValue('title', 'titulo') %>" />
+                <% if (locals.errors && errors.title) { %>
+                  <span class="form-error"> <%= errors.title.msg %> </span>
+                <% } %>
+              </div>
 
-    <form id="listingForm" class="grid" novalidate>
-      <!-- LEFT -->
-      <div>
-        <!-- Básico -->
-        <section class="card section">
-          <h3>Información básica</h3>
-          <div class="row">
+              <div class="field h6">
+                <label class="label" for="operationType">Tipo de operación</label>
+                <select id="operationType" name="operation_type" required>
+                  <% const selectedOp = getSelectedId('operation_type', 'operation_type_id') %>
+                  <option value="">Seleccionar</option>
+                  <option value="1" <%= selectedOp === '1' ? 'selected' : '' %>>Alquiler a largo plazo</option>
+                  <option value="2" <%= selectedOp === '2' ? 'selected' : '' %>>Alquiler temporal</option>
+                </select>
+                <% if (locals.errors && errors.operation_type) { %>
+                  <span class="form-error"> <%= errors.operation_type.msg %> </span>
+                <% } %>
+              </div>
+
+              <div class="field h6">
+                <label class="label" for="propertyType">Tipo de inmueble</label>
+                <select id="propertyType" name="property_type" required>
+                  <% const selectedType = getSelectedId('property_type', 'property_type_id') %>
+                  <option value="">Seleccionar</option>
+                  <option value="1" <%= selectedType === '1' ? 'selected' : '' %>>Casa</option>
+                  <option value="2" <%= selectedType === '2' ? 'selected' : '' %>>Departamento</option>
+                  <option value="3" <%= selectedType === '3' ? 'selected' : '' %>>Monoambiente</option>
+                </select>
+                <% if (locals.errors && errors.property_type) { %>
+                  <span class="form-error"> <%= errors.property_type.msg %> </span>
+                <% } %>
+              </div>
+
+              <div class="field h6">
+                <label class="label" for="address">Dirección</label>
+                <input id="address" name="direccion" placeholder="Calle, número" required value="<%= getValue('direccion', 'direccion') %>" />
+                <% if (locals.errors && errors.direccion) { %>
+                  <span class="form-error"> <%= errors.direccion.msg %> </span>
+                <% } %>
+              </div>
+
+              <div class="field h4">
+                <label class="label" for="province">Provincia</label>
+                <select id="province" name="provincia" required>
+                  <% const selectedProv = getValue('provincia', 'provincia') %>
+                  <option value="" selected>Seleccione una provincia</option>
+                  <% provincias.forEach(p => {  %>
+                    <option value="<%= p %>" <%= selectedProv === p ? 'selected' : '' %>><%= p %></option>
+                  <% }) %>
+                </select>
+                <% if (locals.errors && errors.provincia) { %>
+                  <span class="form-error"> <%= errors.provincia.msg %> </span>
+                <% } %>
+              </div>
+
+              <div class="field h4">
+                <label class="label" for="city">Ciudad / Localidad</label>
+                <input id="city" name="ciudad" placeholder="Santiago del Estero" required value="<%= getValue('ciudad', 'ciudad') %>" />
+                <% if (locals.errors && errors.ciudad) { %>
+                  <span class="form-error"> <%= errors.ciudad.msg %> </span>
+                <% } %>
+              </div>
+
+              <div class="field h4">
+                <label class="label" for="neighborhood">Barrio (opcional)</label>
+                <input id="neighborhood" name="barrio" placeholder="Centro" value="<%= getValue('barrio', 'barrio') %>" />
+                <% if (locals.errors && errors.barrio) { %>
+                  <span class="form-error"> <%= errors.barrio.msg %> </span>
+                <% } %>
+              </div>
+
+              <div class="field">
+                <label class="label" for="description">Descripción <span class="hint" id="descCount">0/500</span></label>
+                <textarea id="description" name="descripcion" maxlength="500" placeholder="Contá lo mejor de tu propiedad..." required><%= getValue('descripcion', 'descripcion') %></textarea>
+                <% if (locals.errors && errors.descripcion) { %>
+                  <span class="form-error"> <%= errors.descripcion.msg %> </span>
+                <% } %>
+              </div>
+            </div>
+          </section>
+
+          <section class="card section">
+            <h3>Detalles</h3>
+            <div class="row">
+              <div class="field h3">
+                <label class="label" for="rooms">Ambientes</label>
+                <input id="rooms" name="ambientes" type="number" min="1" step="1" required value="<%= getValue('ambientes', 'ambientes') %>">
+              </div>
+              <div class="field h3">
+                <label class="label" for="bedrooms">Dormitorios</label>
+                <input id="bedrooms" name="habitaciones" type="number" min="0" step="1" required value="<%= getValue('habitaciones', 'habitaciones') %>">
+              </div>
+              <div class="field h3">
+                <label class="label" for="bathrooms">Baños</label>
+                <input id="bathrooms" name="banios" type="number" min="1" step="1" required value="<%= getValue('banios', 'banios') %>">
+              </div>
+              <div class="field h3">
+                <label class="label" for="area">Superficie (m²)</label>
+                <input id="area" name="areaTotal" type="number" min="10" step="1" required value="<%= getValue('areaTotal', 'area_total') %>">
+              </div>
+              <div class="field h3">
+                <label class="label" for="covered-area">Superficie Cubierta (m²)</label>
+                <input id="covered-area" name="areaCubierta" type="number" min="10" step="1" required value="<%= getValue('areaCubierta', 'area_cubierta') %>">
+              </div>
+              <div class="field h3">
+                <label class="label" for="floors">Pisos</label>
+                <input id="floors" name="pisos" type="number" min="0" step="1" required value="<%= getValue('pisos', 'pisos') %>">
+              </div>
+            </div>
+          </section>
+
+          <section class="card section">
+            <h3>Servicios</h3>
+            <div class="chips" id="amenities">
+              <span class="chip <%= currentSelectedServices.includes('electricidad') ? 'active' : '' %>" data-key="electricidad" <%= currentSelectedServices.includes('electricidad') ? 'data-active="true"' : '' %>>Electricidad</span>
+              <span class="chip <%= currentSelectedServices.includes('agua') ? 'active' : '' %>" data-key="agua" <%= currentSelectedServices.includes('agua') ? 'data-active="true"' : '' %>>Agua Corriente</span>
+              <span class="chip <%= currentSelectedServices.includes('gas') ? 'active' : '' %>" data-key="gas" <%= currentSelectedServices.includes('gas') ? 'data-active="true"' : '' %>>Gas Natural</span>
+              <span class="chip <%= currentSelectedServices.includes('ac') ? 'active' : '' %>" data-key="ac" <%= currentSelectedServices.includes('ac') ? 'data-active="true"' : '' %>>Aire Acondicionado</span>
+              <span class="chip <%= currentSelectedServices.includes('calefaccion') ? 'active' : '' %>" data-key="calefaccion" <%= currentSelectedServices.includes('calefaccion') ? 'data-active="true"' : '' %>>Calefacción</span>
+              <span class="chip <%= currentSelectedServices.includes('seguridad') ? 'active' : '' %>" data-key="seguridad" <%= currentSelectedServices.includes('seguridad') ? 'data-active="true"' : '' %>>Seguridad 24h</span>
+              <span class="chip <%= currentSelectedServices.includes('lavanderia') ? 'active' : '' %>" data-key="lavanderia" <%= currentSelectedServices.includes('lavanderia') ? 'data-active="true"' : '' %>>Lavanderia</span>
+              <span class="chip <%= currentSelectedServices.includes('piscina') ? 'active' : '' %>" data-key="piscina" <%= currentSelectedServices.includes('piscina') ? 'data-active="true"' : '' %>>Piscina</span>
+              <span class="chip <%= currentSelectedServices.includes('ascensor') ? 'active' : '' %>" data-key="ascensor" <%= currentSelectedServices.includes('ascensor') ? 'data-active="true"' : '' %>>Ascensor</span>
+              <span class="chip <%= currentSelectedServices.includes('cochera') ? 'active' : '' %>" data-key="cochera" <%= currentSelectedServices.includes('cochera') ? 'data-active="true"' : '' %>>Cochera</span>
+              <span class="chip <%= currentSelectedServices.includes('balcon') ? 'active' : '' %>" data-key="balcon" <%= currentSelectedServices.includes('balcon') ? 'data-active="true"' : '' %>>Balcon</span>
+              <span class="chip <%= currentSelectedServices.includes('patio') ? 'active' : '' %>" data-key="patio" <%= currentSelectedServices.includes('patio') ? 'data-active="true"' : '' %>>Patio</span>
+              <span class="chip <%= currentSelectedServices.includes('mascotas') ? 'active' : '' %>" data-key="mascotas" <%= currentSelectedServices.includes('mascotas') ? 'data-active="true"' : '' %>>Mascotas</span>
+              <span class="chip <%= currentSelectedServices.includes('internet') ? 'active' : '' %>" data-key="internet" <%= currentSelectedServices.includes('internet') ? 'data-active="true"' : '' %>>Internet</span>
+            </div>
+            <% if (locals.errors && errors.servicios) { %>
+              <span class="form-error"> <%= errors.servicios.msg %> </span>
+            <% } %>
+          </section>
+
+          <section class="card section">
+            <h3>Imágenes</h3>
+
+            <h4>Imágenes Actuales</h4>
+              <div id="previews" class="previews" aria-live="polite">
+                <% if (property.images && property.images.length > 0) { %>
+                  <% property.images.forEach(image => { %>
+                    <div class="ph">
+                      <img src="/img/properties/<%= image.filename %>" alt="Imagen actual">
+                      <button type="button" class="btn-delete-img" data-image-id="<%= image.id %>">✕</button>
+                    </div>
+                  <% }) %>
+                <% } else { %>
+                  <p class="muted">Esta publicación no tiene imágenes.</p>
+                <% } %>
+              </div>
+
+            <hr style="margin: 16px 0; border: 0; border-top: 1px solid #e5e7eb;">
+            <h4 style="margin-bottom: 8px;">Añadir nuevas imágenes</h4>
+            <div class="uploader" id="drop">
+              <input type="file" id="files" name="images" accept="image/*" multiple>
+              <div>
+                <div class="cta" onclick="document.getElementById('files').click()">Subir imágenes</div>
+                <div class="hint" style="margin-top:8px">Arrastrá y soltá hasta 10 imágenes.</div>
+              </div>
+            </div>
+            <% if (locals.errors && errors.images) { %>
+              <span class="form-error"> <%= errors.images.msg %> </span>
+            <% } %>
+          </section>
+
+          <section class="card section">
+            <h3>Condiciones y precio</h3>
+            <div class="row">
+              <div class="field h6">
+                <label class="label" for="baseAmount">Monto base</label>
+                <input id="baseAmount" name="montoBase" type="number" min="0" step="100" placeholder="Ej: 320000" value="<%= getValue('montoBase', 'monto_base') %>">
+                <% if (locals.errors && errors.montoBase) { %>
+                  <span class="form-error"> <%= errors.montoBase.msg %> </span>
+                <% } %>
+              </div>
+              <div class="field h6">
+                <label class="label" for="deposit">Depósito</label>
+                <input id="deposit" name="deposito" type="number" min="0" step="100" placeholder="Ej: 320000" value="<%= getValue('deposito', 'deposito') %>">
+                <% if (locals.errors && errors.deposito) { %>
+                  <span class="form-error"> <%= errors.deposito.msg %> </span>
+                <% } %>
+              </div>
+              <div class="field">
+                <label class="label">Garantía propuesta</label>
+                <div class="checkbox-group" id="guarantee">
+                  <div>
+                    <input type="checkbox" id="garantia_1" name="garantia" value="1" <%= selectedGuarantees.includes('1') ? 'checked' : '' %>>
+                    <label for="garantia_1">Propietaria</label>
+                  </div>   
+                  <div>
+                    <input type="checkbox" id="garantia_2" name="garantia" value="2" <%= selectedGuarantees.includes('2') ? 'checked' : '' %>>
+                    <label for="garantia_2">Seguro de caución</label>
+                  </div>
+                  <div>
+                    <input type="checkbox" id="garantia_3" name="garantia" value="3" <%= selectedGuarantees.includes('3') ? 'checked' : '' %>>
+                    <label for="garantia_3">Aval bancario</label>
+                  </div>
+                </div>
+                <% if (locals.errors && errors.garantia) { %>
+                  <span class="form-error"> <%= errors.garantia.msg %> </span>
+                <% } %>
+              </div>
+
+              <div class="field h6" hidden>
+                <label class="label" for="dailyPrice">Valor por día</label>
+                <input id="dailyPrice" name="dailyPrice" type="number" min="0" step="100" placeholder="Ej: 25000" value="<%= getValue('dailyPrice', 'precio_diario') %>" />
+                <% if (locals.errors && errors.dailyPrice) { %>
+                  <span class="form-error"> <%= errors.dailyPrice.msg %> </span>
+                <% } %>
+              </div>
+              <div class="field h6" hidden>
+                <label class="label" for="weeklyDiscount">Descuento semanal (%)</label>
+                <input id="weeklyDiscount" name="weeklyDiscount" type="number" min="5" max="15" step="1" placeholder="Ej: 10" value="<%= getValue('weeklyDiscount', 'descuento_semanal') %>">
+                <% if (locals.errors && errors.weeklyDiscount) { %>
+                  <span class="form-error"> <%= errors.weeklyDiscount.msg %> </span>
+                <% } %>
+              </div>
+              <div class="field h6" hidden>
+                <label class="label" for="monthlyDiscount">Descuento mensual (%)</label>
+                <input id="monthlyDiscount" name="monthlyDiscount" type="number" min="20" max="40" step="1" placeholder="Ej: 25" value="<%= getValue('monthlyDiscount', 'descuento_mensual') %>">
+                <% if (locals.errors && errors.monthlyDiscount) { %>
+                  <span class="form-error"> <%= errors.monthlyDiscount.msg %> </span>
+                <% } %>
+              </div>
+            </div>
+          </section>
+
+          <section class="card section">
+            <h3>Escritura</h3>
+          
             <div class="field h6">
-              <label class="label" for="title">Título <span class="hint" id="titleCount">0/80</span></label>
-              <input id="title" name="title" maxlength="80" placeholder="Ej: Departamento céntrico, luminoso y con balcón" required />
+              <label class="label" style="font-weight: 500;">Escritura Actual</label>
+              <% if (property.escritura) { %>
+                <a href="/uploads/escrituras/<%= property.escritura %>" target="_blank" style="color: var(--brand);"><%= property.escritura %></a>
+              <% } else { %>
+                <p class="muted">No se subió una escritura.</p>
+              <% } %>
             </div>
-            <div class="field h6">
-              <label class="label" for="operationType">Tipo de operación</label>
-              <select id="operationType" name="operation_type" required>
-                <option value="">Seleccionar</option>
-                <option value="alquiler">Alquiler</option>
-                <option value="venta">Venta</option>
-                <option value="temporal">Alquiler temporal (por día)</option>
-              </select>
+            <div class="row">
+              <div class="field h6">
+                <label class="label" for="titleDeed">Reemplazar Título de propiedad (opcional)</label>
+                <input type="file" id="titleDeed" name="escritura" accept="application/pdf">
+                <% if (locals.errors && errors.escritura) { %>
+                  <span class="form-error"> <%= errors.escritura.msg %> </span>
+                <% } %>
+              </div>
             </div>
-            <div class="field h6">
-              <label class="label" for="propertyType">Tipo de inmueble</label>
-              <select id="propertyType" name="property_type" required>
-                <option value="">Seleccionar</option>
-                <option value="departamento">Departamento</option>
-                <option value="casa">Casa</option>
-                <option value="duplex">Dúplex</option>
-                <option value="monoambiente">Monoambiente</option>
-              </select>
-            </div>
-            <div class="field h6">
-              <label class="label" for="address">Dirección</label>
-              <input id="address" name="address" placeholder="Calle, número" required />
-            </div>
-            <div class="field h4">
-              <label class="label" for="province">Provincia</label>
-              <select id="province" required></select>
-            </div>
-            <div class="field h4">
-              <label class="label" for="city">Ciudad / Localidad</label>
-              <input id="city" name="city" placeholder="Santiago del Estero" required />
-            </div>
-            <div class="field h4">
-              <label class="label" for="neighborhood">Barrio (opcional)</label>
-              <input id="neighborhood" name="neighborhood" placeholder="Centro" />
-            </div>
-            <div class="field">
-              <label class="label" for="description">Descripción <span class="hint" id="descCount">0/500</span></label>
-              <textarea id="description" name="description" maxlength="500" placeholder="Contá lo mejor de tu propiedad: orientación, terminaciones, cercanías, etc." required></textarea>
-            </div>
-          </div>
-        </section>
+          </section>
 
-        <!-- Detalles físicos -->
-        <section class="card section">
-          <h3>Detalles</h3>
-          <div class="row">
-            <div class="field h3"><label class="label" for="rooms">Ambientes</label><input id="rooms" type="number" min="1" step="1" required></div>
-            <div class="field h3"><label class="label" for="bedrooms">Dormitorios</label><input id="bedrooms" type="number" min="0" step="1" required></div>
-            <div class="field h3"><label class="label" for="bathrooms">Baños</label><input id="bathrooms" type="number" min="1" step="1" required></div>
-            <div class="field h3"><label class="label" for="area">Superficie (m²)</label><input id="area" type="number" min="10" step="1" required></div>
-            <div class="field h3"><label class="label" for="garage">Cochera</label><select id="garage"><option value="no">No</option><option value="si">Sí</option></select></div>
-            <div class="field h3"><label class="label" for="outdoor">Balcón/Patio</label><select id="outdoor"><option value="ninguno">Ninguno</option><option value="balcon">Balcón</option><option value="patio">Patio</option></select></div>
-            <div class="field h3"><label class="label" for="pets">Mascotas</label><select id="pets"><option value="no">No permitidas</option><option value="si">Permitidas</option></select></div>
-            <div class="field h3"><label class="label" for="age">Antigüedad (años)</label><input id="age" type="number" min="0" step="1"></div>
-          </div>
-        </section>
-
-        <!-- Servicios / amenities -->
-        <section class="card section">
-          <h3>Servicios y amenities</h3>
-          <div class="chips" id="amenities">
-            <span class="chip" data-key="electricidad">Electricidad</span>
-            <span class="chip" data-key="agua">Agua corriente</span>
-            <span class="chip" data-key="gas">Gas natural</span>
-            <span class="chip" data-key="ac">Aire acondicionado</span>
-            <span class="chip" data-key="calefaccion">Calefacción</span>
-            <span class="chip" data-key="seguridad">Seguridad 24h</span>
-            <span class="chip" data-key="lavadero">Lavadero</span>
-            <span class="chip" data-key="piscina">Piscina</span>
-            <span class="chip" data-key="ascensor">Ascensor</span>
-          </div>
-        </section>
-
-        <!-- Imágenes -->
-        <section class="card section">
-          <h3>Imágenes</h3>
-          <div class="uploader" id="drop">
-            <input type="file" id="files" accept="image/*" multiple>
-            <div>
-              <div class="cta" onclick="document.getElementById('files').click()">Subir imágenes</div>
-              <div class="hint" style="margin-top:8px">Arrastrá y soltá hasta 10 imágenes. La primera será la principal.</div>
+          <section class="card section">
+            <div class="btns">
+              <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             </div>
-          </div>
-          <div id="previews" class="previews" aria-live="polite"></div>
-        </section>
-
-        <!-- Ubicación -->
-        <section class="card section">
-          <h3>Ubicación</h3>
-          <div class="row">
-            <div class="field h6"><label class="label" for="lat">Latitud</label><input id="lat" placeholder="-27.784" type="number" step="any"></div>
-            <div class="field h6"><label class="label" for="lng">Longitud</label><input id="lng" placeholder="-64.264" type="number" step="any"></div>
-            <div class="field"><label class="label" for="maps">URL de Google Maps (opcional)</label><input id="maps" placeholder="https://maps.google.com/..." type="url"></div>
-          </div>
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14118.646114725634!2d-64.2755133029628!3d-27.789401490816584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x943b52103439bf83%3A0xdb1fbfa8b97fbad6!2sUrquiza%20200%2C%20G4204%20Santiago%20del%20Estero!5e0!3m2!1ses-419!2sar!4v1754765928238!5m2!1ses-419!2sar" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </section>
-
-        <!-- Condiciones -->
-        <section class="card section">
-          <h3>Condiciones y precio</h3>
-          <div class="row">
-            <div class="field h6"><label class="label" for="baseAmount">Monto base</label><input id="baseAmount" type="number" min="0" step="100" placeholder="Ej: 320000" required></div>
-            <div class="field h6" id="frequencyWrap">
-              <label class="label" for="paymentFrequency">Frecuencia de pago</label>
-              <select id="paymentFrequency">
-                <option value="mensual">Mensual</option>
-                <option value="quincenal">Quincenal</option>
-                <option value="semanal">Semanal</option>
-                <option value="diaria">Diaria</option>
-              </select>
-            </div>
-            <div class="field h6"><label class="label" for="deposit">Depósito</label><input id="deposit" type="number" min="0" step="100" placeholder="Ej: 320000"></div>
-            <div class="field h6"><label class="label" for="expenses">Expensas</label><input id="expenses" type="number" min="0" step="100" placeholder="Ej: 25000"></div>
-            <div class="field h6"><label class="label" for="guarantee">Garantía</label>
-              <select id="guarantee">
-                <option value="">Seleccionar</option>
-                <option value="propietaria">Propietaria</option>
-                <option value="seguro_caucion">Seguro de caución</option>
-                <option value="recibo_sueldo">Recibos de sueldo</option>
-              </select>
-            </div>
-            <div class="field h6">
-              <label class="label">Estado</label>
-              <div class="switch"><input id="active" type="checkbox" checked><span>Publicación activa</span></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Reglas -->
-        <section class="card section">
-          <h3>Reglas</h3>
-          <div class="row">
-            <div class="field h6"><label class="label" for="smoke">Fumar</label><select id="smoke"><option value="no">No permitido</option><option value="si">Permitido</option></select></div>
-            <div class="field h6"><label class="label" for="events">Eventos</label><select id="events"><option value="no">No permitido</option><option value="si">Permitido</option></select></div>
-            <div class="field h6"><label class="label" for="minStay">Estadía mínima (días)</label><input id="minStay" type="number" min="0" step="1" value="0"></div>
-            <div class="field h6"><label class="label" for="maxGuests">Huéspedes máximos</label><input id="maxGuests" type="number" min="1" step="1" value="3"></div>
-          </div>
-        </section>
-
-        <!-- Acciones -->
-        <section class="card section">
-          <div class="btns">
-            <button type="button" class="btn btn-ghost" id="draftBtn">Guardar borrador</button>
-            <button type="submit" class="btn btn-primary">Publicar</button>
-          </div>
-          <div id="formErrors" class="errors" style="margin-top:8px"></div>
-        </section>
-      </div>
-
-      <!-- RIGHT: Resumen -->
-      <aside class="card sticky side">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div class="pill" id="sideOp">Operación</div>
-            <div class="price" id="sidePrice">$ 0</div>
-            <div class="hint" id="sideFreq">Frecuencia</div>
-          </div>
-          <div style="width:110px;height:82px;border-radius:16px;overflow:hidden;box-shadow:var(--ring)">
-            <img id="sideImg" src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=600&auto=format&fit=crop" alt="Preview" style="width:100%;height:100%;object-fit:cover">
-          </div>
+          </section>
         </div>
-        <div class="divider"></div>
-        <div style="font-weight:800" id="sideTitle">Título de la publicación</div>
-        <div class="hint" id="sideLocation">Provincia, Ciudad</div>
-        <div class="chips" id="sideChips" style="margin-top:10px"></div>
-      </aside>
-    </form>
-  </div>
 
-  <script src="/js/create_property.js"></script>
-</body>
+        <aside class="card sticky side">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="pill" id="sideOp">Operación</div>
+              <div class="price" id="sidePrice">$ 0</div>
+            </div>
+            <div style="width:110px;height:82px;border-radius:16px;overflow:hidden;box-shadow:var(--ring)">
+              <% const coverImage = property.images && property.images.length > 0 ? `/img/properties/${property.images[0].filename}` : "https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=600&auto=format&fit=crop"; %>
+              <img id="sideImg" src="<%= coverImage %>" alt="Preview" style="width:100%;height:100%;object-fit:cover">
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div style="font-weight:800" id="sideTitle">Título de la publicación</div>
+          <div class="hint" id="sideLocation">Provincia, Ciudad</div>
+          <div class="chips" id="sideChips" style="margin-top:10px"></div>
+        </aside>
+      </form>
+    </div>
+
+  <script src="/js/editProperty.js"></script>
+  </body>
 </html>

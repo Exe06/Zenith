@@ -26,7 +26,11 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2).UNSIGNED,
       allowNull: false
     },
-    paid_at: {
+    due_date: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    paid_date: {
       type: DataTypes.DATE,
       allowNull: true
     },
@@ -37,11 +41,6 @@ export default (sequelize, DataTypes) => {
     description: {
       type: DataTypes.STRING,
       allowNull: true
-    },
-    status: { 
-      type: DataTypes.ENUM('pendiente', 'pagado', 'atrasado'),
-      allowNull: false, 
-      defaultValue: 'pendiente' 
     },
     created_at: {
       type: DataTypes.DATE,

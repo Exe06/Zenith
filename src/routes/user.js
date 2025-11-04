@@ -3,7 +3,9 @@ import userController from '../controllers/user.js';
 import requireAuth from '../middlewares/requireAuth.js';
 import requireGuest from '../middlewares/requireGuest.js';
 import upload from '../middlewares/multerUser.js';
-import { validateUser, validatePassword, validateLogin } from '../validators/userValidator.js' 
+import { uploadDniFiles } from '../middlewares/multerVerification.js';
+import { validateUser, validatePassword, validateLogin } from '../validators/userValidator.js'
+import { validateVerification } from '../validators/verificationValidator.js';
 
 const router = Router();
 
@@ -17,8 +19,10 @@ router.post('/login', requireGuest, validateLogin, userController.processLogin);
 
 router.get('/logout', requireAuth, userController.logout);
 
+router.get('/panel', userController.panel);
+
 // Olvidé mi contraseña
-router.get('/forgot_pass', requireGuest, userController.forgot_pass);
+router.get('/forgot_pass', requireGuest, userController.forgotPass);
 
 // Panel de Gestión de Propiedades
 router.get('/managment', requireAuth, userController.managment);
@@ -26,8 +30,10 @@ router.get('/managment', requireAuth, userController.managment);
 // Perfil de Usuario
 router.get('/profile', requireAuth, userController.profile);
 
-router.get('/become_owner', requireAuth, userController.becomeOwner)
-router.patch('/become_owner', requireAuth, userController.updateOwner);
+router.get('/verify_account', requireAuth, userController.verifyAccount)
+router.post('/verify_account', requireAuth, uploadDniFiles, validateVerification, userController.processVerification);
+
+router.get('/user/verificationPending', requireAuth, userController.verificationPending);
 
 // Editar Perfil
 router.get('/edit/:id', requireAuth, userController.edit);

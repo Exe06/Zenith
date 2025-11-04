@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body>
+
+  <div class="container" style="max-width: 1200px;">
+    <h1>Detalle de Propiedad</h1>
+    <div class="sub">Revisando: <%= property.titulo %></div>
+
+    <div class="grid" style="grid-template-columns: 2fr 1fr; gap: 24px;">
+      <div>
+        <section class="card section">
+          <h3>Información Básica</h3>
+          <div class-="detail-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px;">
+            <div class="info-box">
+              <strong>Tipo:</strong> <%= property.type.nombre %>
+            </div>
+            <div class="info-box">
+              <strong>Operación:</strong> <%= property.operation.nombre %>
+            </div>
+            <div class="info-box">
+              <strong>Estado:</strong> <span class="pill <%= property.estado %>"><%= property.estado %></span>
+            </div>
+            <div style="grid-column: 1 / -1;">
+              <strong>Descripción:</strong> <p class="muted"><%= property.descripcion %></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card section">
+          <h3>Ubicación y Propietario</h3>
+          <div class="detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+            <div class="info-box"><strong>Dirección:</strong> <%= property.direccion %></div>
+              <div class="info-box"><strong>Barrio:</strong> <%= property.barrio || 'N/A' %></div>
+              <div class="info-box"><strong>Ciudad:</strong> <%= property.ciudad %></div>
+              <div class="info-box"><strong>Provincia:</strong> <%= property.provincia %></div>
+              <div class="info-box" style="grid-column: 1 / -1;">
+              <strong>Propietario:</strong> <%= property.owner.nombre %> <%= property.owner.apellido %> (<%= property.owner.email %>)
+            </div>
+          </div>
+        </section>
+
+        <section class="card section">
+        <h3>Detalles Físicos y Dimensiones</h3>
+        <div class="detail-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px;">
+          <div class="info-box"><strong>Ambientes:</strong> <%= property.ambientes %></div>
+          <div class="info-box"><strong>Dormitorios:</strong> <%= property.habitaciones %></div>
+          <div class="info-box"><strong>Baños:</strong> <%= property.banios %></div>
+          <div class="info-box"><strong>Pisos:</strong> <%= property.pisos %></div>
+          <div class="info-box"><strong>Área Total:</strong> <%= property.area_total %> m²</div>
+          <div class="info-box"><strong>Área Cubierta:</strong> <%= property.area_cubierta %> m²</div>
+        </div>
+        </section>
+
+        <section class="card section">
+          <h3>Condiciones y Servicios</h3>
+          <h4>Precios</h4>
+          <div class="detail-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 10px;">
+            <div class="info-box"><strong>Monto Base (LP):</strong> <%= property.monto_base || 'N/A' %></div>
+            <div class="info-box"><strong>Depósito:</strong> <%= property.deposito || 'N/A' %></div>
+            <div class="info-box"><strong>Precio Diario:</strong> <%= property.precio_diario || 'N/A' %></div>
+            <div class="info-box"><strong>Desc. Semanal:</strong> <%= property.descuento_semanal ? property.descuento_semanal + '%' : 'N/A' %></div>
+          </div>
+     
+          <h4 style="margin-top: 20px;">Garantías</h4>
+          <div class="meta" style="margin-top: 10px;">
+            <% if (property.guarantees && property.guarantees.length > 0) { %>
+              <% property.guarantees.forEach(g => { %>
+                <span class="chip"><%= g.nombre %></span>
+              <% }) %>
+            <% } else { %>
+              <span class="muted">No aplica o no especificado.</span>
+            <% } %>
+          </div>
+
+          <h4 style="margin-top: 20px;">Servicios</h4>
+          <div class="meta" style="margin-top: 10px;">
+            <% if (property.services && property.services.length > 0) { %>
+              <% property.services.forEach(s => { %>
+                <span class="chip"><%= s.nombre %></span>
+              <% }) %>
+            <% } else { %>
+              <span class="muted">Sin servicios marcados.</span>
+            <% } %>
+          </div>
+        </section>
+      </div>
+      
+      <aside style="display: flex; flex-direction: column; gap: 20px;">
+        <section class="card">
+          <h3>Imágenes</h3>
+          <div id="image-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+            <% if (property.images && property.images.length > 0) { %>
+              <% property.images.forEach(image => { %>
+                <img src="/img/properties/<%= image.filename %>" alt="Foto" style="width: 100%; height: auto; object-fit: cover; border-radius: 6px;">
+              <% }) %>
+            <% } else { %>
+              <p class="muted" style="grid-column: 1 / -1;">No hay imágenes.</p>
+            <% } %>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>Archivos</h3>
+          <h4 style="margin-top: 10px;">Escritura (Documento)</h4>
+          <% if (property.escritura) { %>
+            <a href="/admin/get-deed/<%= property.escritura %>" target="_blank" class="btn btn-primary" style="margin-top: 10px;">
+            Ver Documento
+            </a>
+          <% } else { %>
+            <p class="muted" style="margin-top: 10px;">Escritura no cargada.</p>
+          <% } %>
+        </section>
+        <% if (property.estado === 'pendiente') { %>
+          <div class="panel" style="margin-top: 24px; text-align: center">
+            <h3>Decisión</h3>
+            <p class="muted"> Al aprobar, la propiedad será visible para todos.</p>
+            <div class="decision-actions">
+              <form action="/admin/property/approve/<%= property.id %>?_method=PUT" method="POST" style="display:inline;margin-right: 15px">
+                <button type="submit" class="btn-approve">
+                  <i class="fa-solid fa-check"></i> Aprobar Verificación
+                </button>
+              </form>
+    
+              <form action="/admin/property/reject/<%= property.id %>" method="POST" style="display:inline;">
+                <button type="submit" class="btn-reject">
+                  <i class="fa-solid fa-xmark"></i> Rechazar
+                </button>
+              </form>
+            </div>
+          </div>
+        <% } else { %>
+          <div class="panel" style="margin-top: 24px; text-align: center">
+            <p class="muted" style="font-weight: 600">
+              El estado actual es: <%= property.estado.toUpperCase() %>. No se requieren acciones.
+            </p>
+          </div>
+        <% } %>
+      </aside>
+    </div>
+
+  </body>
+</html>

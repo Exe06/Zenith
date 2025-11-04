@@ -8,112 +8,103 @@
   <%- include('partials/header') %>
 
   <!-- FILTROS -->
-  <form method="GET" action="/property/search" id="filters" class="filters-wrap">
-    <div class="filters" id="filters">
-      <div class="filter" style="grid-column:span 2">
-        <label for="fTipo">Tipo</label>
-        <select id="fTipo" name="tipo">
-          <option value="">Todos</option>
-          <option value="1">Casa</option>
-          <option value="2">Departamento</option>
-          <option value="3">Monoambiente</option>
-        </select>
-      </div>
+  <div class="toolbar" id="filters">
+    <input id="q" type="search" value="<%= locals.query?.q || '' %>" placeholder="Buscar por titulo..." />
 
-      <div class="filter" style="grid-column:span 2">
-        <label for="fOperacion">Operación</label>
-        <select id="fOperacion" name="op">
-          <option value="">Cualquiera</option>
-          <option value="1">Largo Plazo</option>
-          <option value="2">Temporal</option>
-        </select>
-      </div>
-
-      <div class="filter" style="grid-column:span 2">
-        <label for="fGarantia">Garantía</label>
-        <select id="fGarantia" name="garantia">
-          <option value="">Cualquiera</option>
-          <option value="1">Propietario</option>
-          <option value="2">Seguro de caución</option>
-          <option value="3">Aval Bancario</option>
-        </select>
-      </div>
-
-      <div class="filter" style="grid-column:span 1">
-        <label for="fAmb">Ambientes (mín.)</label>
-        <select id="fAmb" name="amb">
-          <option value="">—</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-        </select>
-      </div>
-
-      <div class="filter" style="grid-column:span 1">
-        <label for="fDorm">Dorm. (mín.)</label>
-        <select id="fDorm" name="dorm">
-          <option value="">—</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </select>
-      </div>
-
-      <div class="filter" style="grid-column:span 1">
-        <label for="fProv">Provincia</label>
-        <select id="fProv" name="provincia">
-          <option value="">Todas</option>
-          <% provincias.forEach(prov => { %>
-            <option value="<%= prov %>"><%= prov %></option>
-          <%  }); %>
-        </select>
-      </div>
-
-      <div class="filter" style="grid-column:span 2">
-        <label for="fPrecio">Precio máx.</label>
-        <select id="fPrecio" name="max_price">
-          <option value="">Sin tope</option>
-          <option value="150000">Hasta $150.000</option>
-          <option value="250000">Hasta $250.000</option>
-          <option value="350000">Hasta $350.000</option>
-          <option value="500000">Hasta $500.000</option>
-        </select>
-      </div>
-
-      <select name="sort">
-        <option value="newest">Más recientes</option>
-        <option value="price_asc">Precio ↑</option>
-        <option value="price_desc">Precio ↓</option>
+    <div class="filter">
+      <label for="fTipo">Tipo</label>
+      <select id="fTipo" name="tipo">
+        <option value="">Todos</option>
+        <option value="1" <%= locals.query?.tipo === '1' ? 'selected' : '' %>>Casa</option>
+        <option value="2" <%= locals.query?.tipo === '2' ? 'selected' : '' %>>Departamento</option>
+        <option value="3" <%= locals.query?.tipo === '3' ? 'selected' : '' %>>Monoambiente</option>
       </select>
-
-      <div class="filter" style="grid-column:span 6">
-        <div class="checkline">
-          <label><input type="checkbox" class="srv" name="svc" value="mascota"> Mascotas</label>
-          <label><input type="checkbox" class="srv" name="svc" value="garage"> Cochera</label>
-          <label><input type="checkbox" class="srv" name="svc" value="balcon"> Balcón</label>
-
-          <label><input type="checkbox" class="srv" name="svc" value="internet"> Internet</label>
-          <label><input type="checkbox" class="srv" name="svc" value="gas"> Gas</label>
-          <label><input type="checkbox" class="srv" name="svc" value="luz"> Luz</label>
-          <label><input type="checkbox" class="srv" name="svc" value="agua"> Agua</label>
-        </div>
-      </div>
-
-      <button type="submit">Filtrar</button>
     </div>
-  </form>
+
+    <div class="filter">
+      <label for="fOperacion">Operación</label>
+      <select id="fOperacion" name="op">
+        <option value="">Cualquiera</option>
+        <option value="2" <%= locals.query?.op === '2' ? 'selected' : '' %>>Temporal</option>
+        <option value="1" <%= locals.query?.op === '1' ? 'selected' : '' %>>Largo Plazo</option>
+      </select>
+    </div>
+
+    <div class="filter">
+      <label for="fGarantia">Garantía</label>
+      <select id="fGarantia" name="garantia">
+        <option value="">Cualquiera</option>
+        <option value="1" <%= locals.query?.garantia === '1' ? 'selected' : '' %>>Propietario</option>
+        <option value="2" <%= locals.query?.garantia === '2' ? 'selected' : '' %>>Seguro de caución</option>
+        <option value="3" <%= locals.query?.garantia === '3' ? 'selected' : '' %>>Aval Bancario</option>
+      </select>
+    </div>
+
+    <div class="filter">
+      <label for="fAmb">Ambientes (min)</label>
+      <select id="fAmb" name="amb">
+        <option value="">—</option>
+        <option value="1" <%= locals.query?.amb === '1' ? 'selected' : '' %>>1</option>
+        <option value="2" <%= locals.query?.amb === '2' ? 'selected' : '' %>>2</option>
+        <option value="3" <%= locals.query?.amb === '3' ? 'selected' : '' %>>3</option>
+        <option value="4" <%= locals.query?.amb === '4' ? 'selected' : '' %>>4</option>
+      </select>
+    </div>
+
+    <div class="filter">
+      <label for="fDorm">Dormitorios (min)</label>
+      <select id="fDorm" name="dorm">
+        <option value="">—</option>
+        <option value="1" <%= locals.query?.dorm === '1' ? 'selected' : '' %>>1</option>
+        <option value="2" <%= locals.query?.dorm === '2' ? 'selected' : '' %>>2</option>
+        <option value="3" <%= locals.query?.dorm === '3' ? 'selected' : '' %>>3</option>
+      </select>
+    </div>
+
+    <div class="filter">
+      <label for="fProv">Provincia</label>
+      <select id="fProv" name="provincia">
+        <option value="">Todas</option>
+        <% provincias.forEach(prov => { %>
+          <option value="<%= prov %>" <%= locals.q?.provincia === prov ? 'selected' : '' %>><%= prov %></option>
+        <%  }); %>
+      </select>
+    </div>
+
+    <select name="sort">
+      <option value="newest" <%= locals.query?.sort === 'newest' ? 'selected' : '' %>>Más recientes</option>
+      <option value="price_asc" <%= locals.query?.sort === 'price_asc' ? 'selected' : '' %>>Precio Menor - Mayor</option>
+      <option value="price_desc" <%= locals.query?.sort === 'price_desc' ? 'selected' : '' %>>Precio Mayor - Menor</option>
+    </select>
+
+    <div class="filter">
+      <div class="checkline">
+        <% const services = Array.isArray(locals.query?.svc) ? locals.query.svc : (locals.query?.svc ? [locals.query.svc] : []) %>
+        <label><input type="checkbox" class="srv" name="svc" value="mascota" <%= services.includes('mascota') ? 'checked' : '' %>> Mascotas</label>
+        <label><input type="checkbox" class="srv" name="svc" value="garage" <%= services.includes('garage') ? 'checked' : '' %>> Cochera</label>
+        <label><input type="checkbox" class="srv" name="svc" value="balcon" <%= services.includes('balcon') ? 'checked' : '' %>> Balcón</label>
+        <label><input type="checkbox" class="srv" name="svc" value="internet" <%= services.includes('internet') ? 'checked' : '' %>> Internet</label>
+        <label><input type="checkbox" class="srv" name="svc" value="gas" <%= services.includes('gas') ? 'checked' : '' %>> Gas</label>
+        <label><input type="checkbox" class="srv" name="svc" value="luz" <%= services.includes('luz') ? 'checked' : '' %>> Luz</label>
+        <label><input type="checkbox" class="srv" name="svc" value="agua" <%= services.includes('agua') ? 'checked' : '' %>> Agua</label>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost" id="btnLimpiar">Limpiar</button>
+  </div> 
 
   <!-- CONTENIDO -->
   <main class="container">
     <h1 class="title">Propiedades Disponibles</h1>
 
     <% if (!properties || !properties.length) { %>
-      <div class="card section">No encontramos propiedades.</div>
+      <% if (totalPropertiesCount > 0) { %>
+        <div class="card section">No se encontraron propiedades.</div>
+      <% } else { %>
+        <div class="card section">No hay propiedades publicadas en el sitio por el momento.</div>
+      <% } %>
     <% } else { %>
       <section id="grid" class="grid">
-        <!-- 8 TARJETAS DE EJEMPLO -->
-        <!-- data-servicios es lista separada por coma -->
         <% properties.forEach(p => { %>
           <article class="prop-card card-propiedad">
             <div class="img"><img src="/img/properties/<%=p.images[0].filename%>" alt="<%=p.images[0].filename%>"></div>
@@ -138,7 +129,9 @@
     <% } %>
   </main>
 
-  <!-- <script src="/js/search.js"></script> -->
+  <%- include('partials/footer') %>
+
+  <script src="/js/search.js"></script>
 </body>
 </html>
 

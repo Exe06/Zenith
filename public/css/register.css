@@ -110,6 +110,7 @@ select:focus {
 /* Botón */
 button {
   width: 100%;
+  margin-top: 20px;
   padding: 12px;
   background-color: #669bbc;
   color: white;

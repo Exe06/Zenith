@@ -17,10 +17,30 @@ export default (sequelize, DataTypes) => {
         as: 'properties'
       });
       
-    //   User.hasMany(models.Contracts, {
-    //     foreignKey: 'user_id',
-    //     as: 'contracts'
-    //   });
+      User.hasMany(models.Contract, {
+        foreignKey: 'owner_id',
+        as: 'contracts_owned'
+      });
+
+      User.hasMany(models.Contract, {
+        foreignKey: 'tenant_id',
+        as: 'contracts_rented'
+      });
+
+      User.hasMany(models.Conversation, {
+        foreignKey: 'tenant_id',
+        as: 'tenant_conversations'
+      });
+
+      User.hasMany(models.Conversation, {
+        foreignKey: 'owner_id',
+        as: 'owner_conversations'
+      });
+
+      User.hasMany(models.Message, {
+        foreignKey: 'sender_id',
+        as: 'sent_messages'
+      });
     };
   };
 
@@ -66,6 +86,32 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'default.png'
     },
+    dni_front: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    dni_back: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    bank_account_type: {
+      type: DataTypes.ENUM('cbu', 'cvu'),
+      allowNull: true
+    },
+    bank_account_number: {
+      type: DataTypes.STRING(22),
+      allowNull: true,
+      unique: true
+    },
+    bank_account_alias: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    estado: {
+      type: DataTypes.ENUM('activo', 'inactivo', 'pendiente'),
+      allowNull: false,
+      defaultValue: 'activo'
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -103,9 +149,11 @@ export default (sequelize, DataTypes) => {
     }
   });
 
-  User.beforeDestroy(async (user, { transaction, force }) => {
-    if (!force) {
-      const count = await Property.count({ where: { user_id: user.id }, transaction });
+  User.beforeDestroy(async (user, options) => {
+    const { Property } = user.sequelize.models;
+
+    if (!options.force) {
+      const count = await Property.count({ where: { user_id: user.id }, transaction: options.transaction });
       if (count > 0) throw new Error('No podés eliminar tu cuenta: hay propiedades asociadas.');
     }
   });

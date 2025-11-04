@@ -8,10 +8,8 @@
 
   const opSel = document.getElementById('operationType');
   const baseAmount = document.getElementById('baseAmount');
-  const paymentFrequency = document.getElementById('paymentFrequency');
-  const deposit          = document.getElementById('deposit');
-  const expenses         = document.getElementById('expenses');
-  const guarantee        = document.getElementById('guarantee');
+  const deposit = document.getElementById('deposit');
+  const guarantee = document.getElementById('guarantee');
 
   const dailyPrice       = document.getElementById('dailyPrice');
   const weeklyDiscount   = document.getElementById('weeklyDiscount');
@@ -22,7 +20,6 @@
 
   const sideOp = document.getElementById('sideOp');
   const sidePrice = document.getElementById('sidePrice');
-  const sideFreq = document.getElementById('sideFreq');
   const sideTitle = document.getElementById('sideTitle');
   const sideLocation = document.getElementById('sideLocation');
   const sideChips = document.getElementById('sideChips');
@@ -35,9 +32,7 @@
 
   // wrappers (los .field que contienen a cada input)
   const baseAmountWrap   = baseAmount?.closest('.field');
-  const frequencyWrap    = document.getElementById('frequencyWrap');
   const depositWrap      = deposit?.closest('.field');
-  const expensesWrap     = expenses?.closest('.field');
   const guaranteeWrap    = guarantee?.closest('.field');
 
   const dailyWrap        = dailyPrice?.closest('.field');
@@ -53,8 +48,16 @@
     sideTitle.textContent = title.value || 'Título de la publicación';
     const opText = opSel?.options[opSel.selectedIndex]?.text || 'Operación';
     sideOp.textContent = opText;
-    sidePrice.textContent = fmtARS(baseAmount?.value);
-    sideFreq.textContent = paymentFrequency ? `Pago: ${paymentFrequency.value || '-'}` : 'Pago: -';
+
+    const isTemporal = opSel?.value === '2';
+    let priceToShow = 0;
+    
+    if (isTemporal) {
+      priceToShow = dailyPrice?.value;
+    } else {
+      priceToShow = deposit?.value; 
+    }
+    sidePrice.textContent = fmtARS(priceToShow);
     sideLocation.textContent = `${provinceSel?.value || 'Provincia'}, ${city?.value || 'Ciudad'}`;
 
     const actives = Array.from(chipsWrap.querySelectorAll('.chip[data-active="true"]'))
@@ -65,7 +68,6 @@
   function setEnabled(el, enabled) {
     if (!el) return;
     el.disabled = !enabled;
-    // si el campo tenía required, lo recordamos para no romper la validación
     if (!enabled) {
       el.dataset.wasRequired = el.required ? '1' : '';
       el.required = false;
@@ -89,7 +91,7 @@
   });
 
   // ----- actualizaciones al cambiar campos clave -----
-  ['city','operationType','paymentFrequency','province','baseAmount','propertyType','address']
+  ['city','operationType','province','dailyPrice','propertyType','address', 'deposit']
     .forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -100,13 +102,13 @@
   // crear inputs ocultos según chips activos
   function syncAmenities() {
     // limpiar anteriores
-    form.querySelectorAll('input[name="servicios[]"]').forEach(el => el.remove());
+    form.querySelectorAll('input[name="servicios"]').forEach(el => el.remove());
     // agregar uno por cada chip activo
     chipsWrap.querySelectorAll('.chip.active').forEach(chip => {
       const inp = document.createElement('input');
       inp.type = 'hidden';
-      inp.name = 'servicios[]';
-      inp.value = chip.dataset.key; // ej: "electricidad"
+      inp.name = 'servicios';
+      inp.value = chip.dataset.key;
       form.appendChild(inp);
     });
   }
@@ -130,14 +132,10 @@
 
     // Largo plazo: mostrar y habilitar
     show(baseAmountWrap,   !isTemporal);
-    show(frequencyWrap,    !isTemporal);
     show(depositWrap,      !isTemporal);
-    show(expensesWrap,     !isTemporal);
     show(guaranteeWrap,    !isTemporal);
     setEnabled(baseAmount,       !isTemporal);
-    setEnabled(paymentFrequency, !isTemporal);
     setEnabled(deposit,          !isTemporal);
-    setEnabled(expenses,         !isTemporal);
     setEnabled(guarantee,        !isTemporal);
 
     // Temporal: mostrar y habilitar

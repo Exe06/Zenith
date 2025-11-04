@@ -3,95 +3,234 @@
 
 <%- include('partials/head') %>
 
-<body>
-
-  <%- include('partials/header') %>
-
-  <div class="container">
+<body><%- include('partials/header') %>
+    <div class="container">
     <div>
       <h1>Mis Propiedades</h1>
 
       <div class="toolbar">
-        <input id="q" type="search" placeholder="Buscar por dirección / inquilino…" />
-        <select id="fEstado">
-          <option value="">Estado contrato</option>
-          <option>Activo</option><option>Pendiente de firma</option><option>Finalizado</option>
-          <option>Rescindido</option><option>Incumplimiento</option>
-        </select>
+        <input id="q" type="search" value="<%= locals.query?.q || '' %>" placeholder="Buscar por titulo..." />
         <select id="fOperacion">
           <option value="">Operación</option>
-          <option>Alquiler</option><option>Temporario</option>
+          <option value="1" <%= locals.query?.fOperacion === '1' ? 'selected' : '' %>>Largo Plazo</option>
+          <option value="2" <%= locals.query?.fOperacion === '2' ? 'selected' : '' %>>Temporal</option>
         </select>
-        <select id="fFrecuencia">
-          <option value="">Frecuencia de pago</option>
-          <option>Mensual</option><option>Trimestral</option><option>Anual</option>
+        <select id="fPropEstado">
+          <option value="">Estado Propiedad</option>
+          <option value="disponible" <%= locals.query?.fPropEstado === 'disponible' ? 'selected' : '' %>>Disponible</option>
+          <option value="pendiente" <%= locals.query?.fPropEstado === 'pendiente' ? 'selected' : '' %>>Pendiente</option>
+          <option value="inactivo" <%= locals.query?.fPropEstado === 'inactivo' ? 'selected' : '' %>>Inactivo</option>
         </select>
         <button class="btn btn-ghost" id="btnLimpiar">Limpiar</button>
-        <a href="/property/create" class="btn btn-primary" id="btnNuevo">Nueva publicación</a>
+        <a href="/property/create" class="btn btn-primary" id="btnNuevo" style="margin-left: auto;">Nueva publicación</a>
       </div>
 
-      <!-- Cards propiedades -->
-      <section class="cards" id="cards"></section>
+      <section class="cards" id="cards">
+        <% if (properties && properties.length > 0) { %>
+          <% properties.forEach(property => { %>
+            <article class="card">
+              <% const cover = property.images && property.images.length > 0 ? `/img/properties/${property.images[0].filename}` : '/img/default-placeholder.jpg' %>
+              <img src="<%= cover %>" alt="Foto de la propiedad">
+              <div class="title"><%= property.titulo %></div>
+              <div class="muted"><%= property.ciudad %> · <%= property.ambientes %> amb</div>
+              <span class="status st-<%= property.estado.toLowerCase() %>"><%= property.estado %></span>
+              
+              <div class="row">
+                <a class="btn btn-primary" href="/property/<%= property.id %>">Ver detalles</a>
+                <div style="display: flex; gap: 4px; align-items: center; margin-left: auto;">
+                  <a class="btn btn-ghost" href="/property/edit/<%= property.id %>">Editar</a>
+                  <form action="/property/<%= property.id %>?_method=DELETE" method="POST" style="margin: 0;" onsubmit="return confirm('¿Estás seguro de que querés eliminar esta propiedad? Esta acción no se puede deshacer.');">
+                    <button type="submit" class="btn btn-ghost" style="color: var(--err); border-color: var(--err);">Eliminar</button>
+                  </form>
+                </div>
+              </div>
+            </article>
+          <% }) %>
+        <% } else { %>
+          <% if (totalPropertiesCount > 0) { %>
+            <p>No se encontraron propiedades.</p>
+          <% } else { %>
+            <p>No tienes propiedades publicadas.</p>
+          <% } %>
+        <% } %>
+      </section>
 
-      <!-- Tabs -->
       <section class="tabs">
         <div class="tab-head">
           <button class="tab-btn active" data-tab="contratos">Contratos</button>
           <button class="tab-btn" data-tab="pagos">Pagos</button>
-          <button class="tab-btn" data-tab="solicitudes">Solicitudes</button>
+          <button class="tab-btn" data-tab="solicitudes">Mensajes</button>
+
+          <div class="local-filters-container" style="margin-left: auto; display: flex; gap: 8px;">
+            <select id="filtroEstadoContrato" class="local-filter" data-tab="contratos">
+              <option value="">Ver todos los estados</option>
+              <option value="activo">Activo</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="finalizado">Finalizado</option>
+            </select>
+
+            <select id="filtroEstadoPago" class="local-filter" data-tab="pagos" style="display: none;">
+              <option value="">Ver todos los estados</option>
+              <option value="pagado">Pagado</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="atrasado">Atrasado</option>
+            </select>
+            
+          </div>
         </div>
 
-        <!-- CONTRATOS -->
         <div id="contratos" class="tab-pane active">
+
           <div class="table-wrap">
-            <table>
+            <table id="tablaContratos">
               <thead>
                 <tr>
                   <th>Inquilino</th><th>Propiedad</th><th>Inicio</th><th>Fin</th>
-                  <th>Frecuencia</th><th>Monto base</th><th>Estado</th><th></th>
+                  <th>Tipo</th><th>Monto</th><th>Estado</th><th></th>
                 </tr>
               </thead>
-              <tbody id="tbContratos"></tbody>
+              <tbody id="tbContratos">
+                <% if (contracts && contracts.length > 0) { %>
+                  <% contracts.forEach(contract => { %>
+                    <tr class="data-row" data-estado="<%= contract.estado.toLowerCase() %>">
+                      <td><%= contract.tenant.nombre %> <%= contract.tenant.apellido %></td>
+                      <td><%= contract.property.titulo %></td>
+                      <td><%= new Date(contract.start_date).toLocaleDateString('es-AR') %></td>
+                      <td><%= new Date(contract.end_date).toLocaleDateString('es-AR') %></td>
+                      <td><%= contract.contract_type %></td>
+                      <td><%= contract.unit_price.toLocaleString('es-AR', {style: 'currency', currency: 'ARS'}) %></td>
+                      <td><span class="status st-<%= contract.estado.toLowerCase() %>"><%= contract.estado %></span></td>
+                      <td class="actions">
+                        <a href="/property/contracts/<%= contract.id %>" class="btn btn-ghost">Ver</a>
+                      </td>
+                    </tr>
+                  <% }) %>
+
+                  <tr class="no-results-row" style="display: none;">
+                    <td colspan="8" style="text-align: center;">No se encontraron contratos.</td>
+                  </tr>
+                <% } else { %>
+                  <tr class="no-results-row">
+                    <td colspan="8" style="text-align: center;">No se encontraron contratos.</td>
+                  </tr>
+                <% } %>
+              </tbody>
             </table>
           </div>
         </div>
 
-        <!-- PAGOS -->
         <div id="pagos" class="tab-pane">
+
           <div class="table-wrap">
-            <table>
+            <table id="tablaPagos">
               <thead>
                 <tr>
-                  <th>Fecha</th><th>Inquilino</th><th>Propiedad</th><th>Mes</th><th>Año</th>
-                  <th>Monto</th><th>Estado</th><th></th>
+                  <th>Fecha Vencimiento</th><th>Inquilino</th><th>Propiedad</th>
+                  <th>Monto</th><th>Fecha de Pago</th><th>Estado</th><th></th>
                 </tr>
               </thead>
-              <tbody id="tbPagos"></tbody>
+              <tbody id="tbPagos">
+                <% if (payments && payments.length > 0) { %>
+                  <% payments.forEach(payment => { %>
+
+                    <% 
+                      let estadoCalculado = 'pagado';
+                      if (!payment.paid_at) {
+                        const hoy = new Date();
+                        hoy.setHours(0, 0, 0, 0); 
+                        const vencimiento = new Date(payment.due_date);
+                        vencimiento.setHours(0, 0, 0, 0);
+                        
+                        estadoCalculado = (hoy > vencimiento) ? 'atrasado' : 'pendiente';
+                      }
+                    %>
+
+                    <tr class="data-row" data-estado="<%= estadoCalculado %>">
+                      <td><%= new Date(payment.due_date).toLocaleDateString('es-AR') %></td>
+                      <td><%= payment.contract.tenant.nombre %> <%= payment.contract.tenant.apellido %></td>
+                      <td><%= payment.contract.property.titulo %></td>
+                      <td><%= payment.amount.toLocaleString('es-AR', {style: 'currency', currency: 'ARS'}) %></td>
+                      <td>
+                        <%= payment.paid_at ? new Date(payment.paid_at).toLocaleDateString('es-AR') : '---' %>
+                      </td>
+
+                      <td><span class="status st-<%= estadoCalculado %>"><%= estadoCalculado %></span></td> 
+                      
+                      <td class="actions">
+                        <% if (payment.paid_at) { %>
+                          <a href="/payments/receipt/<%= payment.id %>" class="btn btn-ghost">Comprobante</a>
+                        <% } else { %>
+                          <form action="/payments/mark-as-paid/<%= payment.id %>?_method=PATCH" method="POST">
+                            <button type="submit" class="btn btn-primary">Registrar Pago</button>
+                          </form>
+                        <% } %>
+                      </td>
+                    </tr>
+                  <% }) %>
+
+                  <tr class="no-results-row" style="display: none;">
+                    <td colspan="7" style="text-align: center;">No se encontraron pagos.</td>
+                  </tr>
+                <% } else { %>
+                  <tr><td colspan="7" style="text-align: center;">No se encontraron pagos.</td></tr>
+                <% } %>
+              </tbody>
             </table>
           </div>
         </div>
 
-        <!-- SOLICITUDES -->
         <div id="solicitudes" class="tab-pane">
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Fecha</th><th>Interesado</th><th>Propiedad</th><th>Mensaje</th><th></th>
+                  <th>Últ. Actividad</th><th>Interesado</th><th>Propiedad</th><th>Último Mensaje</th><th></th>
                 </tr>
               </thead>
-              <tbody id="tbSolicitudes"></tbody>
+              <tbody id="tbSolicitudes">
+                <% if (conversations && conversations.length > 0) { %>
+                  <% conversations.forEach(convo => { %>
+                    <% const lastMsg = convo.messages && convo.messages.length > 0 ? convo.messages[0].body : 'Conversación iniciada' %>
+                    <tr>
+                      <td><%= new Date(convo.updated_at).toLocaleString('es-AR') %></td>
+                      <td><%= convo.tenant.nombre %> <%= convo.tenant.apellido %></td>
+                      <td><%= convo.property.titulo %></td>
+                      <td title="<%= lastMsg %>"><%= lastMsg.substring(0, 50) %>...</td>
+                      <td class="actions">
+                        <a href="/user/messages/<%= convo.id %>" class="btn btn-ghost">Responder</a>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr><td colspan="5" style="text-align: center;">No tienes consultas pendientes.</td></tr>
+                <% } %>
+              </tbody>
             </table>
           </div>
         </div>
       </section>
     </div>
 
-    <!-- ASIDE -->
     <aside>
       <div class="panel">
         <h3>Próximos vencimientos</h3>
-        <div class="list" id="vxList"></div>
+          <div class="list" id="vxList">
+          <% if (expirations && expirations.length > 0) { %>
+            <% expirations.forEach(exp => { %>
+              <div class="item">
+                <div>
+                  <strong><%= exp.property.titulo %></strong>
+                  <div class="muted"><%= exp.estado %></div>
+              	</div>
+                <div class="chip"><%= new Date(exp.end_date).toLocaleDateString('es-AR') %></div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <div class="item">
+              <span>No hay vencimientos próximos.</span>
+            </div>
+          <% } %>
+        </div>
       </div>
 
       <div class="panel">
@@ -105,6 +244,6 @@
     </aside>
   </div>
 
-  <script src="/js/managment2.js"></script>
+  <script src="/js/managment.js"></script>
 </body>
 </html>

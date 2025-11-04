@@ -23,21 +23,19 @@ module.exports = {
         type: Sequelize.DECIMAL(10,2).UNSIGNED,
         allowNull: false
       },
-      paid_at: {
+      due_date: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW
+        allowNull: false
+      },
+      paid_date: {
+        type: Sequelize.DATE,
+        allowNull: true
       },
       method: { 
         type: Sequelize.ENUM('transferencia', 'mercado_pago'),
         allowNull: false 
       },
-      status: { 
-        type: Sequelize.ENUM('pendiente', 'pagado', 'atrasado'),
-        allowNull: false, 
-        defaultValue: 'pendiente' 
-      },
-      descrition: {
+      description: {
         type: Sequelize.STRING,
         allowNull: true
       },

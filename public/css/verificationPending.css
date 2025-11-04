@@ -1,0 +1,103 @@
+/* --- Estilos para verificationPending.css --- */
+
+:root {
+    --primary-color: #007bff; /* Un azul primario */
+    --secondary-color: #6c757d; /* Gris secundario */
+    --success-color: #28a745; /* Verde para éxito (si lo usas) */
+    --warning-color: #ffc107; /* Amarillo para advertencia */
+    --info-color: #17a2b8;   /* Azul claro para información */
+    --background-light: #f8f9fa; /* Fondo claro */
+    --text-dark: #343a40; /* Texto oscuro */
+    --border-color: #dee2e6; /* Color de borde */
+    --shadow-light: rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+body {
+    background-color: var(--background-light);
+    font-family: Arial, sans-serif;
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Contenedor principal para centrar la tarjeta */
+.pending-container {
+    flex-grow: 1; /* Para que ocupe el espacio restante */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Tarjeta de información */
+.pending-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px var(--shadow-light);
+    padding: 40px;
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    margin: 20px;
+}
+
+/* Sección del icono */
+.icon-section {
+    font-size: 3.5rem; /* Tamaño grande para el icono */
+    color: var(--warning-color); /* Color de advertencia o informativo */
+    margin-bottom: 25px;
+}
+
+/* Título */
+.pending-card h1 {
+    font-size: 2.2rem;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+/* Párrafos de texto */
+.pending-card p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+/* Botones */
+.pending-card .btn-primary,
+.pending-card .btn-secondary {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    margin: 15px 10px 0;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.pending-card .btn-primary {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: 1px solid var(--primary-color);
+}
+
+.pending-card .btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.pending-card .btn-secondary {
+    background-color: transparent;
+    color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+}
+
+.pending-card .btn-secondary:hover {
+    background-color: var(--secondary-color);
+    color: #ffffff;
+    transform: translateY(-2px);
+}

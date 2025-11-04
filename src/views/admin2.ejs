@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+  <%- include('partials/head') %>
+
+  <body>
+    <div class="wrap">
+      <div class="header">
+        <div class="brand">
+          <i class="fa-solid fa-building"></i> Panel de Administración
+        </div>
+        <div class="tabs">
+          <button
+            class="tab <%= currentTab === 'usuarios' ? 'active' : '' %>"
+            data-tab="usuarios"
+          >
+            <i class="fa-solid fa-users"></i>&nbsp;Usuarios
+          </button>
+          <button
+            class="tab <%= currentTab === 'inmuebles' ? 'active' : '' %>"
+            data-tab="inmuebles"
+          >
+            <i class="fa-solid fa-house-chimney"></i>&nbsp;Publicaciones
+          </button>
+          <button class="btn-logout" onclick="cerrarSesion()">
+            <i class="fa-solid fa-right-from-bracket"></i>&nbsp;Cerrar sesión
+          </button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header" style="display: flex; gap: 15px; align-items: center; padding: 15px 20px;">
+          <form d="search-form" action="/admin" method="GET" class="search-form" style="flex-grow: 1">
+            <div class="search" style="display: flex; align-items: center;">
+              <i class="fa-solid fa-magnifying-glass" style="color: #6b7aa6"></i>
+              <input id="search-input" name="q" type="search" placeholder="Buscar por nombre, email, ciudad, título…"value="<%= locals.query?.q %>" style="border: none; background: transparent; flex-grow: 1; height: 36px;"/>
+            </div>
+            <input type="hidden" name="tab" value="<%= currentTab %>" />
+            <button type="submit" style="display: none;"></button>
+          </form>
+
+          <div style="margin-left: auto;">
+            <select id="filtroEstadoUsuario" name="fEstado" style="height: 38px; border-radius: 10px; border: 1px solid var(--border); padding: 0 12px; background: #fff;">
+              <option value="">Ver todos los estados</option>
+              <option value="activo" <%= locals.query?.fEstado === 'activo' ? 'selected' : '' %>>Activo</option>
+              <option value="pendiente" <%= locals.query?.fEstado === 'pendiente' ? 'selected' : '' %>>Pendiente</option>
+              <option value="inactivo" <%= locals.query?.fEstado === 'inactivo' ? 'selected' : '' %>>Inactivo</option>
+            </select>
+          </div>
+          
+          <div class="actions">
+            <button id="btn-export" class="btn btn-ghost" style="margin-left: 10px;">
+              <i class="fa-solid fa-file-arrow-down"></i> Exportar
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <% if (currentTab === 'usuarios') { %>
+            <table id="table-usuarios">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Apellido</th>
+                  <th>Email</th>
+                  <th>Roles</th>
+                  <th>Estado</th>
+                  <th style="width: 220px">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (results && results.length > 0) { %>
+                  <% results.forEach(u => {%>
+                    <%
+                      const userRoles = u.roles.map(r => r.nombre);
+                      let estadoDisplay = u.estado
+                      let statusClass = 'gray';
+
+                      if (u.deleted_at) {
+                        estadoDisplay = 'Inactivo';
+                        statusClass = 'red';
+                      } else if (u.estado.toLowerCase() === 'pendiente') {
+                        statusClass = 'orange';
+                      } else if (u.estado.toLowerCase() === 'activo') { 
+                        statusClass = 'green';
+                      }
+                    %>
+                    <tr>
+                      <td><%= u.nombre %></td>
+                      <td><%= u.apellido %></td>
+                      <td><%= u.email %></td>
+                      <td><%= userRoles.join(', ') %></td>
+                      <td><span class="pill <%= statusClass %>"><%= estadoDisplay %></span></td>
+                      <td class="row-actions">
+                        <a href="/admin/user/review/<%= u.id %>" class="btn btn-outline btn-sm" style="text-decoration: none;">
+                            <i class="fa-regular fa-eye"></i> Ver
+                        </a>
+                        <form action="/admin/user/delete/<%= u.id %>?_method=DELETE" method="POST" style="display:inline;" onsubmit="return confirm('¿Seguro que querés eliminar a <%= u.nombre %>?');">
+                          <button type="submit" class="btn btn-outline btn-sm"><i class="fa-regular fa-trash-can"></i> Eliminar</button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="6" style="text-align: center">No se encontraron usuarios.</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+
+          <% } %> <% if (currentTab === 'inmuebles') { %>
+            <table id="table-inmuebles">
+              <thead>
+                <tr>
+                  <th>Portada</th>
+                  <th>Título</th>
+                  <th>Tipo Op.</th>
+                  <th>Ciudad</th>
+                  <th>Precio</th>
+                  <th>Estado</th>
+                  <th style="width: 220px">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (results && results.length > 0) { %> <% results.forEach(i =>
+                { %>
+                <tr>
+                  <td>
+                    <% const img = i.images && i.images.length > 0 ?
+                    i.images[0].filename : 'default.jpg'; %>
+                    <img
+                      src="/img/properties/<%= img %>"
+                      alt="Portada"
+                      style="
+                        width: 50px;
+                        height: 35px;
+                        object-fit: cover;
+                        border-radius: 4px;
+                      "
+                    />
+                  </td>
+                  <td><%= i.titulo %></td>
+                  <td><%= i.operation?.nombre || 'N/A' %></td>
+                  <td><%= i.ciudad %></td>
+                  <td>
+                    <%= i.monto_base ? i.monto_base.toLocaleString('es-AR',
+                    {style: 'currency', currency: 'ARS'}) : i.precio_diario %>
+                  </td>
+                  <td>
+                    <span class="pill <%= i.estado %>"><%= i.estado %></span>
+                  </td>
+                  <td class="row-actions">
+                    <a href="/admin/property/review/<%= i.id %>" class="btn btn-outline btn-sm" style="text-decoration: none;"><i class="fa-regular fa-eye"></i> Ver</a>
+                    
+                    <form
+                      action="/property/delete/<%= i.id %>?_method=DELETE"
+                      method="POST"
+                      style="display: inline"
+                      onsubmit="return confirm('¿Eliminar inmueble?');"
+                    >
+                      <button type="submit" class="btn btn-outline btn-sm">
+                        <i class="fa-regular fa-trash-can"></i> Eliminar
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }); %> <% } else { %>
+                <tr>
+                  <td colspan="7" style="text-align: center">
+                    No se encontraron inmuebles.
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/admin2.js"></script>
+  </body>
+</html>

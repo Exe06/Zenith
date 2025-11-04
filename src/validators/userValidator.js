@@ -33,7 +33,8 @@ export const validateUser = [
             const userExist = await User.findOne({
                 where: {
                     email: value
-                }
+                },
+                paranoid: false
             });
             if (userExist) {
                 throw new Error('El email ingresado ya está registrado.')
@@ -78,7 +79,6 @@ export const validateUpdate = [
                 return true;
             }
             else {
-
                 throw new Error('El archivo debe ser una imagen JPEG, PNG o JPG.');
             }
         })

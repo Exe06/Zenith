@@ -66,6 +66,35 @@
           <h3>Descripción</h3>
           <p class="desc"><%= property.descripcion%></p>
         </div>
+
+        <div class="divider"></div>
+        <div class="section">
+          <h3>Ubicación</h3>
+          <div>
+            <div class="info-item">
+              <span class="info-label">Dirección:</span>
+              <span class="info-data"><%= property.direccion %></span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Ciudad:</span>
+              <span class="info-data"><%= property.ciudad %></span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Provincia:</span>
+              <span class="info-data"><%= property.provincia %></span>
+            </div>
+
+            <% if (property.barrio) { %>
+              <div class="info-item">
+                <span class="info-label">Barrio:</span>
+                <span class="info-data"><%= property.barrio %></span>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
         <div class="divider"></div>
         <div class="section">
           <h3>Características</h3>
@@ -89,14 +118,6 @@
           </div>
         </div>
 
-        <div class="divider"></div>
-        <div class="section">
-          <h3>Ubicación</h3>
-          <div class="map card">
-            <!-- Reemplazar por iframe de Google Maps si corresponde -->
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14118.646114725634!2d-64.2755133029628!3d-27.789401490816584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x943b52103439bf83%3A0xdb1fbfa8b97fbad6!2sUrquiza%20200%2C%20G4204%20Santiago%20del%20Estero!5e0!3m2!1ses-419!2sar!4v1754765928238!5m2!1ses-419!2sar" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          </div>
-        </div>
         <div class="divider"></div>
         <div class="section">
           <h3>Propietario</h3>
@@ -150,19 +171,18 @@
                 <% if (display.deposit != null) { %>
                   <div class="row"><span>Depósito</span><strong>$<%= display.deposit %></strong></div>
                 <% } %>
-                <% if (display.expenses != null) { %>
-                <div class="row"><span>Expensas</span><strong>$<%= display.expenses %></strong></div>
-                <% } %>
-                <% if (display.guarantee) { %>
-                <div class="row"><span>Garantía</span><strong><%= display.guarantee?.nombre %></strong></div>
+                <% if (display.guarantees) { %>
+                  <div class="row"><span>Garantía</span>
+                    <strong><%= display.guarantees.map(g => g.nombre).join(' / ') %></strong>
+                  </div>
                 <% } %>
               </div>
             <% } %>
           </div>
 
           <% if (locals.user) { %>
-            <button class="btn btn-primary">Contactar</button>
-            <button class="btn btn-ghost" id="shareBtn">Compartir</button>
+            <!-- <button class="btn btn-primary">Contactar</button>
+            <button class="btn btn-ghost" id="shareBtn">Compartir</button> -->
             <div class="card contact-card">
               <h3 style="margin:0 0 10px">Enviar consulta</h3>
               <form onsubmit="event.preventDefault(); alert('Consulta enviada. ¡Te contactaremos pronto!')">
@@ -172,7 +192,9 @@
               </form>
             </div>
           <% } else { %>
-            <h3>Inicia sesión para contactarnos!</h3>
+            <div class="card contact-card">
+              <h3>Inicia sesión para contactarnos!</h3>
+            </div>
           <% } %>
         </div>
       </aside>

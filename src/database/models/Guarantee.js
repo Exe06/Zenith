@@ -5,8 +5,10 @@ export default (sequelize, DataTypes) => {
   class Guarantee extends Model {
 
     static associate(models) {
-      Guarantee.hasMany(models.Property, {
+      Guarantee.belongsToMany(models.Property, {
+        through: models.PropertyGuarantee,
         foreignKey: 'guarantee_id',
+        otherKey: 'property_id',
         as: 'properties'
       });
     }

@@ -94,14 +94,16 @@ body{
 .btn-ghost{background:#f1f5f9}
 .btn-ghost:hover{background:#e9eef4}
 
-.details{padding:16px;border-top:1px dashed #e5e7eb;margin-top:12px;display:grid;gap:8px}
-.row{display:flex;justify-content:space-between;color:#334155}
+.details{border-top:1px dashed #e5e7eb;margin-top:12px;display:grid;gap:8px}
+.row{display:flex;justify-content:space-between;color:#334155;gap:20px}
 
 .contact-card{margin-top:16px;padding:18px}
 .contact-card input, .contact-card textarea{width:100%;border:1px solid #e5e7eb;border-radius:12px;padding:12px;font:inherit}
 .contact-card textarea{min-height:100px;resize:vertical}
 
-.map{height:280px;border-radius:18px;overflow:hidden}
+.info-item {margin-bottom: 12px; }
+.info-label {font-weight: 600;margin-right: 8px;}
+.info-data {color: var(--muted);}
 
 .divider{height:1px;background:linear-gradient(to right, transparent, #e5e7eb, transparent);margin:14px 0}
 

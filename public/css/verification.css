@@ -1,0 +1,233 @@
+/* PASO 1: Copiamos las variables de :root de managment.css 
+  para unificar el estilo (colores, bordes, etc.)
+*/
+:root {
+  --bg: #f6f7f9;
+  --card: #fff;
+  --text: #0f172a;
+  --muted: #5b6b7a;
+  --brand: #0088ff; /* Color de 'managment' */
+  --brand-600: #0074d6;
+  --ok: #065f46;
+  --warn: #92400e;
+  --err: #991b1b;
+  --ring: 0 10px 30px rgba(2, 14, 40, .08);
+  --border: #e5e7eb;
+}
+
+/* PASO 2: Reseteo básico (igual que managment)
+*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Fredoka', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  padding-top: 72px;
+}
+
+a { text-decoration: none; color: var(--text); }
+h1 { font-size: clamp(1.6rem,1.2rem+1.5vw,2.2rem); font-weight: 800; margin:0 0 8px; }
+h3 { margin: 0 0 10px; font-size: 1.25rem; }
+.muted { color: var(--muted); font-size: .9rem; }
+
+/* PASO 3: Layout (copiado de managment)
+*/
+.container {
+  max-width: 1280px;
+  margin: 32px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+}
+
+/* PASO 4: Componentes (copiados de managment)
+*/
+.btn {
+  border: none;
+  border-radius: 10px;
+  height: 38px;
+  padding: 0 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: var(--brand-600); }
+
+.card {
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: var(--ring);
+  padding: 24px; /* Un poco más de padding para un form */
+}
+
+/* El EJS usa <section class="card section"> */
+.section {
+  margin-bottom: 24px;
+}
+
+aside {
+  position: sticky;
+  top: 88px;
+  height: max-content;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: var(--ring);
+  padding: 14px;
+}
+.panel h3 { margin: 0 0 10px; font-size: 1.05rem; }
+
+
+/* PASO 5: ¡NUEVOS ESTILOS! (Para tu formulario)
+*/
+
+/* El wrapper para cada label + input */
+.field {
+  margin-bottom: 1.25rem; /* 20px */
+}
+
+/* El label que usaste en el EJS */
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* Estilos genéricos para los inputs del form */
+input[type="text"],
+select {
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 12px;
+  background: #fff;
+  font-size: .95rem;
+  width: 100%; /* Hacemos que ocupen el 100% del .field */
+}
+
+/* Estilo especial para el input de archivo */
+input[type="file"] {
+  width: 100%;
+  padding: 7px 10px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: .9rem;
+  color: var(--muted);
+}
+/* Estilo del botón interno del file input */
+input[type="file"]::file-selector-button {
+  border: none;
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+  margin-right: 12px;
+}
+input[type="file"]::file-selector-button:hover {
+  background: #e9eef4;
+}
+
+/* El span de error (copiado del estilo 'alert' de managment) */
+.form-error {
+  display: block;
+  margin-top: 6px;
+  font-size: .85rem;
+  color: var(--err); /* Variable de color de error */
+  font-weight: 500;
+}
+
+/* Media query (igual que managment) */
+@media (max-width: 1024px) {
+  .container { grid-template-columns: 1fr; }
+}
+
+footer {
+  background: #1a1a1a;
+  color: white;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer-logo h2 {
+  font-weight: 600;
+  font-size: 22px;
+  color: #fff;
+  margin: 0;
+}
+
+.footer-logo span {
+  color: #669bbc;
+  font-weight: 400;
+}
+
+.footer-contacto h4 {
+  margin: 0 0 10px;
+}
+
+.footer-contacto p {
+  margin: 5px 0;
+  font-size: 0.9em;
+}
+
+.footer-social {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  color: #4a8dbb;
+}
+
+.footer-social img {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s ease;
+}
+
+.footer-social img:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-left {
+    align-items: center;
+  }
+
+  .footer-social {
+    margin-top: 20px;
+  }
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+  <%- include('partials/head') %>
+  <body>
+    <div class="wrap" style="max-width: 1000px; margin: 32px auto">
+      <h1>Revisión de Usuario</h1>
+
+      <div
+        class="panel"
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 24px;
+        "
+      >
+        <div>
+          <h2><%= user.nombre %> <%= user.apellido %></h2>
+          <p class="muted">Email: <%= user.email %></p>
+          <p class="muted">Telefono: <%= user.telefono || "-" %></p>
+          <p class="muted">
+            Roles actuales: <%= user.roles.map(r => r.nombre).join(', ') %>
+          </p>
+          <h4 style="margin-top: 10px">
+            Estado:
+            <span
+              class="pill <%= user.estado.toLowerCase() %>"
+              style="font-size: 1rem"
+            >
+              <%= user.estado %>
+            </span>
+          </h4>
+        </div>
+
+        <div style="background: #f8fafc; padding: 12px; border-radius: 8px">
+          <strong>Datos de Cobro:</strong>
+          <p>
+            <%= user.bank_account_type?.toUpperCase() || 'N/A' %>: <%=
+            user.bank_account_number %>
+          </p>
+          <p>Alias: <%= user.bank_account_alias || 'Sin alias' %></p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Documentos de Identidad (DNI)</h3>
+        <p class="muted" style="margin-bottom: 15px">
+          Archivos subidos por el usuario.
+        </p>
+
+        <div style="display: flex; gap: 20px; flex-wrap: wrap">
+          <div style="flex-basis: 45%">
+            <h4 class="muted">Frente</h4>
+            <img
+              src="/admin/get-file/<%= user.dni_front %>"
+              alt="Frente del DNI"
+              style="
+                width: 100%;
+                max-height: 250px;
+                object-fit: cover;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+              "
+            />
+          </div>
+
+          <div style="flex-basis: 45%">
+            <h4 class="muted">Dorso</h4>
+            <img
+              src="/admin/get-file/<%= user.dni_back %>"
+              alt="Dorso del DNI"
+              style="
+                width: 100%;
+                max-height: 250px;
+                object-fit: cover;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+              "
+            />
+          </div>
+        </div>
+      </div>
+
+      <% if (user.estado === 'pendiente') { %>
+        <div class="panel" style="margin-top: 24px; text-align: center">
+          <h3>Decisión</h3>
+          <p class="muted">
+            Al aprobar, se le asignará el rol "propietario" y podrá publicar
+            propiedades.
+          </p>
+          <div class="decision-actions">
+            <form
+              action="/admin/user/approve/<%= user.id %>?_method=PUT"
+              method="POST"
+              style="display: inline-block; margin-right: 15px"
+            >
+              <button type="submit" class="btn-approve">
+                <i class="fa-solid fa-check"></i> Aprobar Verificación
+              </button>
+            </form>
+
+            <form
+              action="/admin/user/reject/<%= user.id %>?_method=PUT"
+              method="POST"
+              style="display: inline-block"
+            >
+              <button type="submit" class="btn-reject">
+                <i class="fa-solid fa-xmark"></i> Rechazar
+              </button>
+            </form>
+          </div>
+        </div>
+      <% } else { %>
+
+        <div class="panel" style="margin-top: 24px; text-align: center">
+          <p class="muted" style="font-weight: 600">
+            El estado actual es: <%= user.estado.toUpperCase() %>. No se requieren
+            acciones.
+          </p>
+        </div>
+
+      <% } %>
+    </div>
+  </body>
+</html>

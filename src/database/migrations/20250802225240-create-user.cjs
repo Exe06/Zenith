@@ -44,6 +44,32 @@ module.exports = {
         allowNull: false,
         defaultValue: 'default.png'
       },
+      dni_front: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      dni_back: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      bank_account_type: {
+        type: Sequelize.ENUM('cbu', 'cvu'),
+        allowNull: true
+      },
+      bank_account_number: {
+        type: Sequelize.STRING(22),
+        allowNull: true,
+        unique: true
+      },
+      bank_account_alias: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      estado: {
+        type: Sequelize.ENUM('activo', 'inactivo', 'pendiente'),
+        allowNull: false,
+        defaultValue: 'activo'
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

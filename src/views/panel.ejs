@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('partials/head') %>
+
+<body>
+  <%- include('partials/header') %>
+
+  <div class="container main-panel-only"> 
+    <main class="settings-content full-width">
+    <h1>Mis Alquileres</h1>
+
+    <section class="tabs">
+      <div class="tab-head">
+        <button class="tab-btn active" data-tab="pagos">Pagos</button>
+        <button class="tab-btn" data-tab="contratos">Contratos</button>
+        <button class="tab-btn" data-tab="solicitudes">Mensajes</button>
+      </div>
+
+      <div id="pagos" class="tab-pane active">
+        <div class="table-wrap">
+        <table id="tablaPagos">
+        <thead>
+          <tr>
+            <th>Vencimiento</th><th>Propietario</th><th>Propiedad</th><th>Monto</th>
+            <th>Fecha de Pago</th><th>Estado</th><th></th>
+          </tr>
+        </thead>
+      <tbody id="tbPagos">
+        <% if (payments && payments.length > 0) { %>
+          <% payments.forEach(payment => { %>
+            <% 
+              let estadoCalculado = 'pagado';
+              if (!payment.paid_at) {
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0); 
+                const vencimiento = new Date(payment.due_date);
+                vencimiento.setHours(0, 0, 0, 0);
+                
+                estadoCalculado = (hoy > vencimiento) ? 'atrasado' : 'pendiente';
+              }
+            %>
+
+            <tr class="data-row" data-estado="<%= estadoCalculado %>">
+              <td><%= new Date(payment.due_date).toLocaleDateString('es-AR') %></td>
+              <td><%= payment.contract.property.titulo %></td>
+              <td><%= contract.owner.nombre %> <%= contract.owner.apellido %></td>
+              <td><%= payment.amount.toLocaleString('es-AR', {style: 'currency', currency: 'ARS'}) %></td>
+              <td><%= payment.paid_at ? new Date(payment.paid_at).toLocaleDateString('es-AR') : '---' %></td>
+              <td><span class="status st-<%= estadoCalculado %>"><%= estadoCalculado %></span></td> 
+              
+              <td class="actions">
+                <% if (payment.paid_at) { %>
+                  <a href="/payments/receipt/<%= payment.id %>" class="btn btn-ghost">Comprobante</a>
+                <% } else { %>
+                  <a href="/payments/pay/<%= payment.id %>" class="btn btn-primary">Pagar</a>
+                <% } %>
+              </td> 
+            </tr>
+          <% }) %>
+          <tr class="no-results-row" style="display: none;">
+            <td colspan="7" style="text-align: center;">No se encontraron pagos.</td>
+          </tr>
+        <% } else { %>
+         <tr class="no-results-row"><td colspan="7" style="text-align: center;">No tienes pagos registrados.</td></tr>
+        <% } %>
+        </tbody>
+       </table>
+      </div>
+    </div>
+
+    <div id="contratos" class="tab-pane">
+      <div class="table-wrap">
+       <table id="tablaContratos">
+        <thead>
+         <tr>
+          <th>Propietario</th><th>Propiedad</th><th>Inicio</th><th>Fin</th>
+          <th>Tipo</th><th>Monto</th><th>Estado</th><th></th>
+         </tr>
+        </thead>
+        <tbody id="tbContratos">
+         <% if (contracts && contracts.length > 0) { %>
+          <% contracts.forEach(contract => { %>
+           <tr class="data-row" data-estado="<%= contract.estado.toLowerCase() %>">
+            <td><%= contract.owner.nombre %> <%= contract.owner.apellido %></td>
+            <td><%= contract.property.titulo %></td>
+            <td><%= new Date(contract.start_date).toLocaleDateString('es-AR') %></td>
+            <td><%= new Date(contract.end_date).toLocaleDateString('es-AR') %></td>
+            <td><%= contract.contract_type %></td>
+            <td><span class="status st-<%= contract.estado.toLowerCase() %>"><%= contract.estado %></span></td>
+            <td class="actions">
+             <a href="/property/contracts/<%= contract.id %>" class="btn btn-ghost">Ver</a>
+            </td>
+           </tr>
+          <% }) %>
+          <tr class="no-results-row" style="display: none;"><td colspan="8" style="text-align: center;">No se encontraron contratos.</td></tr>
+         <% } else { %>
+          <tr class="no-results-row"><td colspan="8" style="text-align: center;">No tienes contratos registrados.</td></tr>
+         <% } %>
+        </tbody>
+       </table>
+      </div>
+     </div>
+
+     <div id="solicitudes" class="tab-pane">
+      <div class="table-wrap">
+       <table>
+        <thead>
+         <tr>
+          <th>Últ. Actividad</th><th>Propietario</th><th>Propiedad</th>
+          <th>Último Mensaje</th><th></th>
+        </tr>
+       </thead>
+       <tbody id="tbSolicitudes">
+        <% if (conversations && conversations.length > 0) { %>
+         <% conversations.forEach(convo => { %>
+          <% const lastMsg = convo.messages && convo.messages.length > 0 ? convo.messages[0].body : 'Conversación iniciada' %>
+          <tr>
+           <td><%= new Date(convo.updated_at).toLocaleString('es-AR') %></td>
+           <td><%= convo.owner.nombre %> <%= convo.owner.apellido %></td>
+           <td><%= convo.property.titulo %></td>
+           <td title="<%= lastMsg %>"><%= lastMsg.substring(0, 50) %>...</td>
+           <td class="actions">
+            <a href="/user/messages/<%= convo.id %>" class="btn btn-ghost">Ver Chat</a>
+           </td>
+          </tr>
+         <% }) %>
+         <% } else { %>
+          <tr><td colspan="5" style="text-align: center;">No tienes mensajes.</td></tr>
+         <% } %>
+        </tbody>
+       </table>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div>
+
+  <script src="/js/panel.js"></script>
+</body>
+</html>

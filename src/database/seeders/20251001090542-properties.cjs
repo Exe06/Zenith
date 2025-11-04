@@ -5,10 +5,10 @@ module.exports = {
     await queryInterface.bulkInsert('properties', [
       {
         // FK catálogos (ajusta los ids a los tuyos)
-        property_type_id: 1,       // ej: Departamento
-        user_id: 1,               // propietario existente
-        operation_type_id: 1,      // 1 = largo plazo (ajusta si hace falta)
-        guarantee_id: 1,         // opcional (puede ser null)
+        property_type_id: 1,
+        user_id: 1, 
+        operation_type_id: 1,      // 1 = largo plazo
+        // guarantee_id: 1,
 
         titulo: 'Depto céntrico - 2 amb',
         descripcion: 'Departamento luminoso con balcón, a metros del centro.',
@@ -28,7 +28,6 @@ module.exports = {
         // Largo plazo
         monto_base: 320000.00,
         deposito: 320000.00,
-        expensas: 30000.00,
 
         // Temporal (no aplica)
         precio_diario: null,
@@ -49,7 +48,7 @@ module.exports = {
         property_type_id: 2,       // ej: Loft
         user_id: 1,
         operation_type_id: 2,      // 2 = temporario
-        guarantee_id: null,
+        // guarantee_id: null,
 
         titulo: 'Loft moderno',
         descripcion: 'Loft con cochera y gran ventanal. Ideal estadías cortas.',
@@ -69,7 +68,6 @@ module.exports = {
         // Largo plazo (no aplica)
         monto_base: null,
         deposito: null,
-        expensas: null,
 
         // Temporal
         precio_diario: 20000.00,

@@ -39,16 +39,6 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'RESTRICT'
       },
-      guarantee_id: {
-        type: Sequelize.INTEGER.UNSIGNED,
-        allowNull: true,
-        references: {
-          model: 'guarantees',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT'
-      },
       titulo: {
         type: Sequelize.STRING,
         allowNull: false
@@ -109,10 +99,6 @@ module.exports = {
         type: Sequelize.DECIMAL(10, 2).UNSIGNED,
         allowNull: true
       },
-      expensas: {
-        type: Sequelize.DECIMAL(10, 2).UNSIGNED,
-        allowNull: true
-      },
       precio_diario: {
         type: Sequelize.DECIMAL(10, 2).UNSIGNED,
         allowNull: true
@@ -150,9 +136,9 @@ module.exports = {
         defaultValue: false
       },
       estado: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM('disponible','pendiente','inactivo'),
         allowNull: false,
-        defaultValue: 'Disponible'
+        defaultValue: 'pendiente'
       },
       created_at: {
         type: Sequelize.DATE,

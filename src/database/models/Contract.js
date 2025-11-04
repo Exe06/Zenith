@@ -7,7 +7,7 @@ export default (sequelize, DataTypes) => {
     static associate(models) {
       Contract.belongsTo(models.Property, {
         foreignKey: 'property_id',
-        as: 'properties'
+        as: 'property'
       });
       Contract.belongsTo(models.User, {
         foreignKey: 'owner_id',
@@ -17,10 +17,10 @@ export default (sequelize, DataTypes) => {
         foreignKey: 'tenant_id',
         as: 'tenant',
       });
-      // Contract.hasMany(Payment, {
-      //   foreignKey: 'contract_id',
-      //   as: 'payments'
-      // });
+      Contract.hasMany(models.Payment, {
+        foreignKey: 'contract_id',
+        as: 'payments'
+      });
     }
   }
   Contract.init({
@@ -98,7 +98,8 @@ export default (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Contract',
     tableName: 'contracts',
-    underscored: true
+    underscored: true,
+    paranoid: true
   });
 
   return Contract;

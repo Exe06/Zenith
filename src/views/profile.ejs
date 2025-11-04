@@ -5,7 +5,7 @@
     <%- include('partials/header') %>
 
     <section class="user-dashboard">
-      <!-- IZQUIERDA: PERFIL -->
+
       <aside class="profile-panel">
         <div class="profile-card">
           <div class="avatar">
@@ -13,105 +13,29 @@
           </div>
 
           <div class="profile-body">
-            <h2 class="name"><%= locals.user.nombre %></h2>
+            <h2 class="name"><%= locals.user.nombre %> <%= locals.user.apellido %></h2>
             <p class="role"><%= locals.user.roles %></p>
 
             <div class="profile-info">
+              <p><strong>DNI:</strong> <%= locals.user.dni %></p>
               <p><strong>Email:</strong> <%= locals.user.email %></p>
               <p><strong>Teléfono:</strong> <%= locals.user.telefono %></p>
               <p><strong>Provincia:</strong> <%= locals.user.provincia %></p>
             </div>
 
-            <a class="btn edit" href="/user/edit/<%= locals.user.id %>">Editar perfil</a>
-            <a class="btn logout" href="/user/logout">Cerrar Sesión</a>
+            <div class="profile-actions">
+              <a class="btn edit" href="/user/edit/<%= locals.user.id %>">Editar perfil</a>
+              <a class="btn logout" href="/user/logout">Cerrar Sesión</a>
+            </div>
+            <div class="danger-zone">
+              <form action="/user/<%= locals.user.id %>?_method=DELETE" method="POST" onsubmit="return confirm('¿Estás SEGURO de que querés eliminar tu cuenta? Esta acción es permanente.');">
+                <button type="submit" class="btn delete">Eliminar mi cuenta</button>
+              </form>
+            </div>
           </div>
         </div>
-      </aside>
-
-      <!-- DERECHA: PANEL CON TABS -->
-      <main class="rentals-panel">
-        <header class="panel-header" role="tablist" aria-label="Secciones de cuenta">
-          <button class="tab active" role="tab" aria-selected="true" data-tab="pagos">Pagos</button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="contratos">Contratos</button>
-          <button class="tab" role="tab" aria-selected="false" data-tab="mensajes">Mensajes</button>
-        </header>
-
-        <!-- PAGOS -->
-        <section class="tab-panel" data-panel="pagos">
-          <div class="table-wrap">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Propiedad</th>
-                  <th>Periodo</th>
-                  <th>Monto</th>
-                  <th>Estado</th>
-                  <th class="text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="tbTPagos"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- CONTRATOS -->
-        <section class="tab-panel" data-panel="contratos" hidden>
-          <div class="table-wrap">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Propietario</th>
-                  <th>Propiedad</th>
-                  <th>Inicio</th>
-                  <th>Fin</th>
-                  <th>Frecuencia</th>
-                  <th>Monto</th>
-                  <th>Estado</th>
-                  <th class="text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="tbTContratos"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- MENSAJES -->
-        <section class="tab-panel" data-panel="mensajes" hidden>
-          <div class="table-wrap">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Propietario</th>
-                  <th>Propiedad</th>
-                  <th>Asunto</th>
-                  <th class="text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="tbTMsgs"></tbody>
-            </table>
-          </div>
-        </section>
-      </main>
+      </aside>  
     </section>
-
-    <script>
-      window.__PAY_CONFIG = {
-        bank: {
-          banco: 'Banco Ejemplo',
-          titular: 'Juan Propietario',
-          cbu: '0000000000000000000000',
-          alias: 'PROPIETARIO.ALIAS',
-          cuit: '20-12345678-3'
-        },
-        // Si ya tenés preferencia de MP, reemplazá por tus URLs reales:
-        mp: {
-          checkout_url: 'https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=TEST-XYZ',
-          qr_img: '/img/qr/mp-demo.png' // poné tu QR estático o generado server-side
-        }
-      };
-    </script>
-    <script src="/js/profile.js"></script>
+    <!-- <script src="/js/profile.js"></script> -->
   </body>
 </html>

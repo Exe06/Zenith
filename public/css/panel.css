@@ -11,7 +11,16 @@
   font-family: 'Fredoka', sans-serif;
 }
 body{margin:0;background:var(--bg);color:var(--text);padding-top: 72px;}
-.container{max-width:1280px;margin:32px auto;padding:0 20px;display:grid;grid-template-columns:1fr 320px;gap:24px}
+.container {
+  max-width: 1280px;
+  margin: 32px auto;
+  padding: 0 20px;
+  display: block;
+  gap: 0;
+}
+.settings-content {
+  width: 100%;
+}
 header{grid-column:1/-1;margin-bottom:6px}
 h1{font-size:clamp(1.6rem,1.2rem+1.5vw,2.2rem);font-weight:800;margin:0 0 8px}
 a{text-decoration: none; color: var(--text);}
@@ -54,58 +63,60 @@ tbody tr{border-top:1px solid var(--border)}
 .table-wrap{overflow:auto;border-radius:12px}
 .actions{display:flex;gap:8px}
 
-/* Aside */
-aside{position:sticky;top:88px;height:max-content;display:flex;flex-direction:column;gap:16px}
-.panel{background:var(--card);border-radius:16px;box-shadow:var(--ring);padding:14px}
-.panel h3{margin:0 0 10px;font-size:1.05rem}
-.alert{display:flex;gap:10px;padding:10px;border-radius:12px;margin-bottom:10px;background:#fff7ed;color:var(--warn)}
-.alert.red{background:#fef2f2;color:var(--err)}
-.alert .small{font-size:.85rem}
-.list{display:flex;flex-direction:column;gap:10px}
-.list .item{display:flex;justify-content:space-between;gap:10px}
-@media (max-width:1024px){.container{grid-template-columns:1fr}}
-
-/* Contenedor dialogo (envoltorio del <form>) */
-.modal-surface{
-  min-width:min(860px,95vw); max-width:1000px;
-  background:var(--card); color:var(--text);
-  border:1px solid var(--border); border-radius:12px;
-  box-shadow: var(--ring);
+/* Contenedor principal de la decisión */
+.panel h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 5px;
 }
 
-/* Header del modal */
-.modal-header{
-  padding:14px 16px; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; gap:8px; background: #fff;
+/* Texto de descripción */
+.panel p.muted {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: var(--muted);
 }
 
-/* Cuerpo del modal */
-.modal-body{ padding:16px; display:flex; flex-direction:column; gap:16px; }
-
-/* Paneles internos */
-.panel-soft{
-  border:1px solid var(--border); border-radius:10px; padding:12px; background:#fff;
+/* Nuevo contenedor para agrupar los botones */
+.decision-actions {
+    display: flex;
+    justify-content: center; /* Centramos el grupo de botones */
+    gap: 20px; /* Espacio entre el botón Aprobar y Rechazar */
+    margin-top: 20px;
 }
 
-/* Caja de lista de mensajes */
-.chat-box{
-  background:#fafbfc; border:1px solid var(--border); border-radius:10px;
-  padding:10px; max-height:40vh; overflow:auto;
+/* Estilo Base para los botones de acción */
+.decision-actions button {
+    height: 48px;
+    padding: 0 25px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre el icono y el texto */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
 }
 
-/* Burbuja de chat */
-.bubble{
-  margin:6px 0; padding:10px; border-radius:10px; border:1px solid var(--border);
-  background:#fff;
+/* Botón APROBAR (Fondo de éxito) */
+.decision-actions .btn-approve {
+    background-color: var(--ok); /* Tu color verde */
+    color: white;
 }
-.bubble.me{ border-color:#c7e6ff; background:#eef7ff; }        /* propietario */
-.bubble.them{ border-color:#e6e8ee; background:#f7f8fb; }      /* interesado */
-
-/* Textarea */
-.input-area{
-  background:#fff; color:var(--text);
-  border:1px solid var(--border); border-radius:10px; padding:10px; min-height:90px; resize:vertical;
+.decision-actions .btn-approve:hover {
+    background-color: #044b36; /* Un verde un poco más oscuro */
+    box-shadow: 0 6px 15px rgba(6, 95, 70, 0.4);
 }
 
-/* Chips/labels suaves */
-.muted{ color:var(--muted); }
+/* Botón RECHAZAR (Fondo de error/peligro) */
+.decision-actions .btn-reject {
+    background-color: var(--err); /* Tu color rojo */
+    color: white;
+}
+.decision-actions .btn-reject:hover {
+    background-color: #7b1313; /* Un rojo un poco más oscuro */
+    box-shadow: 0 6px 15px rgba(153, 27, 27, 0.4);
+}
