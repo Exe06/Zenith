@@ -180,7 +180,27 @@ const indexController = {
   },
   rejectUser: async (req, res) => {
     const { id } = req.params;
-    return res.redirect('/admin?tab=usuarios');
+    const { rejection_reason } = req.body; // <-- 1. Leer el motivo del body
+
+    try {
+      const user = await User.findByPk(id);
+
+      if (!user) {
+        return res.status(404).send('Propiedad no encontrada.');
+      }
+
+      if (user.estado === 'pendiente') {
+        await user.update({ 
+          rejection_reason: rejection_reason || null // 3. Guardar el motivo
+        });
+      }
+
+      return res.redirect('/admin?tab=usuarios');
+
+    } catch (error) {
+      console.error('Error al rechazar al usuario:', error);
+      return res.status(500).send('Error interno al rechazar.');
+    }
   },
   deleteUser: async (req, res) => {
     

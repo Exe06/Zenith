@@ -435,7 +435,7 @@ const userController = {
         title: 'Verificar Cuenta',
         stylesheet: 'verification.css',
         errors: errors.mapped(),
-        old: req.body 
+        old: req.body
       });
     }
 

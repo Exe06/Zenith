@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import paymentController from '../controllers/payment.js'
+import requireAuth from '../middlewares/requireAuth.js';
+
 const router = Router();
 
-router.get('/pay/:id', paymentController.initiatePayment);
+router.get('/pay/:id', requireAuth, paymentController.initiatePayment);
 
 router.get('/success', (req, res) => {res.send('Pago Exitoso')});
 

@@ -20,7 +20,7 @@
           <div class="row">
             <div class="field h6">
               <label class="label" for="title">Título <span class="hint" id="titleCount">0/80</span></label>
-              <input id="title" name="title" maxlength="80" placeholder="Ej: Departamento céntrico, luminoso y con balcón" required />
+              <input id="title" name="title" maxlength="80" placeholder="Ej: Departamento céntrico, luminoso y con balcón" required value="<%= locals.old && old.title %>"/>
               <% if (locals.errors && errors.title) { %>
                 <span class="form-error"> <%= errors.title.msg %> </span>
               <% } %>
@@ -53,7 +53,7 @@
 
             <div class="field h6">
               <label class="label" for="address">Dirección</label>
-              <input id="address" name="direccion" placeholder="Calle, número" required />
+              <input id="address" name="direccion" placeholder="Calle, número" required value="<%= locals.old && old.direccion %>"/>
               <% if (locals.errors && errors.direccion) { %>
                 <span class="form-error"> <%= errors.direccion.msg %> </span>
               <% } %>
@@ -74,7 +74,7 @@
 
             <div class="field h4">
               <label class="label" for="city">Ciudad / Localidad</label>
-              <input id="city" name="ciudad" placeholder="Santiago del Estero" required />
+              <input id="city" name="ciudad" placeholder="Santiago del Estero" required value="<%= locals.old && old.ciudad %>"/>
               <% if (locals.errors && errors.ciudad) { %>
                 <span class="form-error"> <%= errors.ciudad.msg %> </span>
               <% } %>
@@ -82,7 +82,7 @@
 
             <div class="field h4">
               <label class="label" for="neighborhood">Barrio (opcional)</label>
-              <input id="neighborhood" name="barrio" placeholder="Centro" />
+              <input id="neighborhood" name="barrio" placeholder="Centro" value="<%= locals.old && old.barrio %>"/>
               <% if (locals.errors && errors.barrio) { %>
                 <span class="form-error"> <%= errors.barrio.msg %> </span>
               <% } %>
@@ -104,7 +104,7 @@
           <div class="row">
             <div class="field h3">
               <label class="label" for="rooms">Ambientes</label>
-              <input id="rooms" name="ambientes" type="number" min="1" step="1" required>
+              <input id="rooms" name="ambientes" type="number" min="1" step="1" required value="<%= locals.old && old.ambientes %>">
               <% if (locals.errors && errors.ambientes) { %>
                 <span class="form-error"> <%= errors.ambientes.msg %> </span>
               <% } %>
@@ -125,7 +125,7 @@
             </div>
             <div class="field h3">
               <label class="label" for="area">Superficie (m²)</label>
-              <input id="area" name="areaTotal" type="number" min="10" step="1" required>
+              <input id="area" name="areaTotal" type="number" min="10" step="1" value="<%= locals.old?.areaTotal || '' %>" required>
               <% if (locals.errors && errors.areaTotal) { %>
                 <span class="form-error"> <%= errors.areaTotal.msg %> </span>
               <% } %>

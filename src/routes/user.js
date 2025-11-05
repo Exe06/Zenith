@@ -2,6 +2,7 @@ import { Router } from 'express';
 import userController from '../controllers/user.js';
 import requireAuth from '../middlewares/requireAuth.js';
 import requireGuest from '../middlewares/requireGuest.js';
+import requireOwner from '../middlewares/requireOwner.js';
 import upload from '../middlewares/multerUser.js';
 import { uploadDniFiles } from '../middlewares/multerVerification.js';
 import { validateUser, validatePassword, validateLogin, validateMessage, validateReply } from '../validators/userValidator.js'
@@ -19,13 +20,14 @@ router.post('/login', requireGuest, validateLogin, userController.processLogin);
 
 router.get('/logout', requireAuth, userController.logout);
 
-router.get('/panel', userController.panel);
+// Mis alquileres
+router.get('/panel', requireAuth, userController.panel);
 
 // Olvidé mi contraseña
 router.get('/forgot_pass', requireGuest, userController.forgotPass);
 
 // Panel de Gestión de Propiedades
-router.get('/managment', requireAuth, userController.managment);
+router.get('/managment', requireAuth, requireOwner, userController.managment);
 
 // Perfil de Usuario
 router.get('/profile', requireAuth, userController.profile);
@@ -36,8 +38,8 @@ router.post('/verify_account', requireAuth, uploadDniFiles, validateVerification
 router.get('/user/verificationPending', requireAuth, userController.verificationPending);
 
 router.post('/messages/start', requireAuth, validateMessage, userController.startConversation);
-router.post('/messages/reply', userController.replyToConversation)
-router.get('/messages/:id', userController.showConversation)
+router.post('/messages/reply', requireAuth, userController.replyToConversation)
+router.get('/messages/:id', requireAuth, userController.showConversation)
 
 // Editar Perfil
 router.get('/edit/:id', requireAuth, userController.edit);

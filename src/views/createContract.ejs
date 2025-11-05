@@ -46,7 +46,7 @@
       <section class="grid-2">
         <div class="field">
           <label>Inquilino (DNI) <span class="req">*</span></label>
-          <input id="tenant_dni" name="tenant_dni" inputmode="numeric" pattern="[0-9]{6,12}" placeholder="Ej: 32123456" required />
+          <input id="tenant_dni" name="tenant_dni" inputmode="numeric" pattern="[0-9]{6,12}" placeholder="Ej: 32123456" required value="<%= locals.old && old.tenant_dni %>"/>
           <% if (locals.errors && errors.tenant_dni) { %>
             <span class="form-error"> <%= errors.tenant_dni.msg %> </span>
           <% } %>
@@ -90,7 +90,7 @@
       <section class="grid-3">
         <div class="field h6" id="baseAmountWrap" hidden>
           <label class="label" for="baseAmount">Pago Inicial</label>
-          <input id="baseAmount" name="montoBase" type="number" min="0" step="100" required>
+          <input id="baseAmount" name="montoBase" type="number" min="0" step="100" required value="<%= locals.old && old.montoBase %>">
           <% if (locals.errors && errors.montoBase) { %>
             <span class="form-error"> <%= errors.montoBase.msg %> </span>
           <% } %>
@@ -98,7 +98,7 @@
         
         <div class="field h6" id="depositWrap" hidden>
           <label class="label" for="deposit">Depósito Mensual</label>
-          <input id="deposit" name="deposito" type="number" min="0" step="100">
+          <input id="deposit" name="deposito" type="number" min="0" step="100" value="<%= locals.old && old.deposito %>">
           <% if (locals.errors && errors.deposito) { %>
             <span class="form-error"> <%= errors.deposito.msg %> </span>
           <% } %>
@@ -106,7 +106,7 @@
         
         <div class="field h6" id="dailyWrap" hidden>
           <label class="label" for="dailyPrice">Valor por día</label>
-          <input id="dailyPrice" name="dailyPrice" type="number" min="0" step="100">
+          <input id="dailyPrice" name="dailyPrice" type="number" min="0" step="100" value="<%= locals.old && old.dailyPrice %>">
           <% if (locals.errors && errors.dailyPrice) { %>
             <span class="form-error"> <%= errors.dailyPrice.msg %> </span>
           <% } %>
@@ -122,7 +122,7 @@
 
         <div class="field h6"> 
           <label class="label" for="moraRate">Tasa de Mora Diaria (%)</label>
-          <input type="number" id="moraRate" name="mora_interest_rate" min="0" max="1.0" step="0.01" placeholder="Ej: 0.2" />
+          <input type="number" id="moraRate" name="mora_interest_rate" min="0" max="1.0" step="0.01" placeholder="Ej: 0.2" value="<%= locals.old && old.mora_interest_rate %>"/>
           <small class="muted">Interés (%) que aplica por día de retraso.</small>
           <% if (locals.errors && errors.mora_interest_rate) { %>
             <span class="form-error"> <%= errors.mora_interest_rate.msg %> </span>

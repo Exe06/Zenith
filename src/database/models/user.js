@@ -112,6 +112,10 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'activo'
     },
+    rejection_reason: { // <-- ¡CAMPO NUEVO!
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
