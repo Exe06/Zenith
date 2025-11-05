@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const filtroPagos = document.getElementById('filtroEstadoPago');
   const tablaPagos = document.getElementById('tablaPagos');
 
-  if (filtroPagos && tablaPagosBody) {
+  if (filtroPagos && tablaPagos) {
     const filasDeDatos = tablaPagos.querySelectorAll('tbody tr.data-row');
     const filaSinResultados = tablaPagos.querySelector('tbody tr.no-results-row');
     

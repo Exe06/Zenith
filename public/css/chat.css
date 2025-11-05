@@ -1,0 +1,125 @@
+/* --- Estilos para la Vista de Chat (chat.css) --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Fredoka', sans-serif;
+}
+
+body{margin:0;background:var(--bg);color:var(--text);padding-top: 72px;}
+/* 1. Contenedor Principal
+   Centra la caja de chat y le da un ancho máximo.
+*/
+.chat-container {
+  max-width: 800px;
+  margin: 32px auto; /* Centra en la página */
+  padding: 0 20px;
+}
+
+/* 2. La Tarjeta de Chat
+   Usa tus variables --card, --border, --ring
+*/
+.chat-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px; /* Tu radio estándar */
+  box-shadow: var(--ring);
+  overflow: hidden;
+}
+
+/* 3. Encabezado del Chat
+   (Donde dice "Consulta por:...")
+*/
+.chat-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  background: #fdfdfd; /* Un fondo muy suave */
+}
+.chat-header h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.chat-header .muted {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* 4. Lista de Mensajes (La parte con scroll)
+*/
+.message-list {
+  padding: 24px;
+  max-height: 60vh; /* Altura máxima (ej. 60% de la pantalla) */
+  overflow-y: auto; /* ¡Scroll! */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 5. Burbujas de Mensaje (Estilo base)
+*/
+.bubble {
+  padding: 12px 18px;
+  border-radius: 20px; /* Bordes redondeados */
+  max-width: 75%; /* Para que no ocupe toda la pantalla */
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.bubble small {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  opacity: 0.8;
+}
+
+/* 6. Mensajes "Ellos" (Recibidos)
+   Usamos tus colores .btn-ghost
+*/
+.bubble.them {
+  background-color: #f1f5f9; /* Gris claro */
+  color: var(--text);
+  margin-right: auto; /* Alineado a la izquierda */
+  border-top-left-radius: 8px; /* Esquina "puntiaguda" */
+}
+
+/* 7. Mensajes "Yo" (Enviados)
+   Usamos tu color --brand
+*/
+.bubble.me {
+  background-color: var(--brand); /* Tu azul principal */
+  color: white;
+  margin-left: auto; /* ¡Alineado a la derecha! */
+  border-top-right-radius: 8px; /* Esquina "puntiaguda" */
+}
+.bubble.me small {
+  color: rgba(255, 255, 255, 0.7); /* Texto de "nombre" más suave */
+}
+
+
+/* 8. Formulario de Respuesta
+*/
+.reply-form {
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  background: #f8fafc; /* Fondo suave */
+}
+
+.reply-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px; /* Mismo radio que tus inputs */
+  font-family: 'Fredoka', sans-serif; /* Misma fuente */
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.reply-form .btn-primary {
+   width: 100%; /* Botón ocupa todo el ancho */
+   margin-top: 10px;
+   /* El .btn y .btn-primary ya vienen de tu CSS principal */
+}

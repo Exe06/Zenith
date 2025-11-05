@@ -11,6 +11,10 @@ export default (sequelize, DataTypes) => {
         otherKey: 'property_id',
         as: 'properties'
       });
+      Guarantee.hasMany(models.Contract, {
+        foreignKey: 'guarantee_id',
+        as: 'contracts'
+      })
     }
   }
   Guarantee.init({

@@ -156,9 +156,13 @@ export default (sequelize, DataTypes) => {
       defaultValue: false
     },
     estado: {
-      type: DataTypes.ENUM('disponible','pendiente','inactivo'),
+      type: DataTypes.ENUM('disponible','pendiente','inactivo', 'rechazado'),
       allowNull: false,
       defaultValue: 'pendiente'
+    },
+    rejection_reason: {
+      type: DataTypes.TEXT,
+      allowNull: true
     },
     created_at: {
       type: DataTypes.DATE,

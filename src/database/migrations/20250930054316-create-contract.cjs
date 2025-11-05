@@ -47,10 +47,10 @@ module.exports = {
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT'
+        onDelete: 'SET NULL'
       },
       contract_type: {
-        type: Sequelize.ENUM('temporary','long_term'),
+        type: Sequelize.ENUM('temporal','largo_plazo'),
         allowNull: false
       },
       start_date: {
@@ -65,7 +65,15 @@ module.exports = {
         type: Sequelize.ENUM('un_pago','diario','semanal','mensual'),
         allowNull: false
       },
-      unit_price: {
+      daily_price: {
+        type: Sequelize.DECIMAL(10,2).UNSIGNED,
+        allowNull: true
+      },
+      monto_base: {
+        type: Sequelize.DECIMAL(10,2).UNSIGNED,
+        allowNull: true
+      },
+      deposito: {
         type: Sequelize.DECIMAL(10,2).UNSIGNED,
         allowNull: true
       },
@@ -73,12 +81,20 @@ module.exports = {
         type: Sequelize.DECIMAL(10,2).UNSIGNED,
         allowNull: false
       },
-      deposito: {
-        type: Sequelize.DECIMAL(10,2).UNSIGNED,
+      interest_rate: {
+        type: Sequelize.DECIMAL(5, 2).UNSIGNED,
+        allowNull: true
+      },
+      adjustment_index: {
+        type: Sequelize.STRING, 
+        allowNull: true
+      },
+      adjustment_period_months: {
+        type: Sequelize.TINYINT.UNSIGNED, 
         allowNull: true
       },
       estado: {
-        type: Sequelize.ENUM('pendiente','activo','completado','canceledo'),
+        type: Sequelize.ENUM('pendiente','activo','finalizado','canceledo'),
         allowNull: false,
         defaultValue: 'pendiente'
       },

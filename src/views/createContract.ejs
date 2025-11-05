@@ -1,4 +1,3 @@
-<!-- views/contracts/new.ejs (o .html si no usás EJS) -->
 <!DOCTYPE html>
 <html lang="es">
 
@@ -9,7 +8,7 @@
   <main class="page">
     <h1>Crear contrato</h1>
 
-    <form id="contractForm" class="card" action="/owner/contracts" method="post" novalidate>
+    <form id="contractForm" class="card" action="/property/create-contract" method="POST" novalidate>
       <!-- Oculto: lo completás en servidor con el user logueado -->
       <input type="hidden" id="owner_id" name="owner_id" value="<%= locals.user?.id || '' %>">
 
@@ -19,23 +18,22 @@
           <label>Propiedad <span class="req">*</span></label>
           <select id="property_id" name="property_id" required>
             <option value="">Seleccioná una propiedad…</option>
-            <!-- Renderizar desde servidor. data-* usados por el JS -->
-            <option value="1"
-              data-owner-id="11"
-              data-contract-type="Largo Plazo"
-              data-monthly-price="320000"
-              data-title="Estilo cálido">
-              #1 · Estilo cálido (LP)
-            </option>
-            <option value="3"
-              data-owner-id="12"
-              data-contract-type="Temporal"
-              data-daily-price="20000"
-              data-title="Loft moderno">
-              #3 · Loft moderno (TEMP)
-            </option>
+            <% properties.forEach(prop => { %>
+              <option value="<%= prop.id %>"
+                data-contract-type="<%= prop.operation.nombre %>"
+                data-monthly-price="<%= prop.deposito %>"
+                data-daily-price="<%= prop.precio_diario %>"
+                data-weekly-discount="<%= prop.descuento_semanal || 0 %>" 
+                data-monthly-discount="<%= prop.descuento_mensual || 0 %>"
+                data-title="<%= prop.titulo %>">
+                <%= prop.titulo %> (<%= prop.operation.nombre %>)
+              </option>
+            <% }) %>
           </select>
           <small class="muted">El tipo de contrato depende de la propiedad.</small>
+          <% if (locals.errors && errors.property_id) { %>
+            <span class="form-error"> <%= errors.property_id.msg %> </span>
+          <% } %>
         </div>
 
         <div class="field">
@@ -45,38 +43,44 @@
       </section>
 
       <!-- 2) Partes -->
-      <section class="grid-3">
+      <section class="grid-2">
         <div class="field">
           <label>Inquilino (DNI) <span class="req">*</span></label>
           <input id="tenant_dni" name="tenant_dni" inputmode="numeric" pattern="[0-9]{6,12}" placeholder="Ej: 32123456" required />
-          <small class="muted">Ingresá el DNI del inquilino.</small>
+          <% if (locals.errors && errors.tenant_dni) { %>
+            <span class="form-error"> <%= errors.tenant_dni.msg %> </span>
+          <% } %>
         </div>
 
         <div class="field" id="box_guarantee" style="display:none">
-          <label>Garantía (opcional)</label>
+          <label>Garantía</label>
           <select id="guarantee_id" name="guarantee_id">
             <option value="">Sin garantía</option>
-            <!-- Render desde servidor -->
-            <option value="301">Propietaria</option>
-            <option value="302">Seguro de Caucion</option>
-            <option value="303">Aval Bancario</option>
+            <% guarantees.forEach(g => { %>
+              <option value="<%= g.id %>"><%= g.nombre %></option>
+            <% }) %>
           </select>
+          <% if (locals.errors && errors.guarantee_id) { %>
+            <span class="form-error"> <%= errors.guarantee_id.msg %> </span>
+          <% } %>
         </div>
       </section>
 
       <!-- 3) Fechas + Frecuencia -->
-      <section class="grid-3">
+      <section class="grid-2">
         <div class="field">
           <label>Inicio <span class="req">*</span></label>
           <input type="date" id="start_date" name="start_date" required />
+          <% if (locals.errors && errors.start_date) { %>
+            <span class="form-error"> <%= errors.start_date.msg %> </span>
+          <% } %>
         </div>
         <div class="field">
           <label>Fin <span class="req">*</span></label>
           <input type="date" id="end_date" name="end_date" required />
-        </div>
-        <div class="field" id="box_frequency">
-          <label>Frecuencia de pago <span class="req">*</span></label>
-          <select id="pay_frequency" name="pay_frequency" required></select>
+          <% if (locals.errors && errors.end_date) { %>
+            <span class="form-error"> <%= errors.end_date.msg %> </span>
+          <% } %>
         </div>
         <!-- Para LP, mandamos una hidden fija en 'mensual' -->
         <input type="hidden" id="pay_frequency_hidden" name="pay_frequency" value="mensual" disabled />
@@ -84,54 +88,83 @@
 
       <!-- 4) Importes -->
       <section class="grid-3">
-        <div class="field">
-          <label id="lbl_unit_price">Precio (…)</label>
-          <input type="number" id="unit_price" name="unit_price" min="0" step="0.01" placeholder="0.00" required />
-          <small class="muted" id="help_unit_price"></small>
+        <div class="field h6" id="baseAmountWrap" hidden>
+          <label class="label" for="baseAmount">Pago Inicial</label>
+          <input id="baseAmount" name="montoBase" type="number" min="0" step="100" required>
+          <% if (locals.errors && errors.montoBase) { %>
+            <span class="form-error"> <%= errors.montoBase.msg %> </span>
+          <% } %>
+        </div>
+        
+        <div class="field h6" id="depositWrap" hidden>
+          <label class="label" for="deposit">Depósito Mensual</label>
+          <input id="deposit" name="deposito" type="number" min="0" step="100">
+          <% if (locals.errors && errors.deposito) { %>
+            <span class="form-error"> <%= errors.deposito.msg %> </span>
+          <% } %>
+        </div>
+        
+        <div class="field h6" id="dailyWrap" hidden>
+          <label class="label" for="dailyPrice">Valor por día</label>
+          <input id="dailyPrice" name="dailyPrice" type="number" min="0" step="100">
+          <% if (locals.errors && errors.dailyPrice) { %>
+            <span class="form-error"> <%= errors.dailyPrice.msg %> </span>
+          <% } %>
         </div>
 
-        <div class="field" id="box_expensas" style="display:none">
-          <label>Expensas mensuales</label>
-          <input type="number" id="expensas" name="expensas" min="0" step="0.01" placeholder="0.00" />
-          <small class="muted">Se registran aparte del alquiler.</small>
+        <div class="field" id="box_frequency" hidden>
+          <label>Frecuencia de pago <span class="req">*</span></label>
+          <select id="pay_frequency" name="pay_frequency" required></select>
+          <% if (locals.errors && errors.pay_frequency) { %>
+            <span class="form-error"> <%= errors.pay_frequency.msg %> </span>
+          <% } %>
         </div>
 
-        <div class="field" id="box_deposito" style="display:none">
-          <label>Depósito</label>
-          <input type="number" id="deposito" name="deposito" min="0" step="0.01" placeholder="0.00" />
+        <div class="field h6"> 
+          <label class="label" for="moraRate">Tasa de Mora Diaria (%)</label>
+          <input type="number" id="moraRate" name="mora_interest_rate" min="0" max="1.0" step="0.01" placeholder="Ej: 0.2" />
+          <small class="muted">Interés (%) que aplica por día de retraso.</small>
+          <% if (locals.errors && errors.mora_interest_rate) { %>
+            <span class="form-error"> <%= errors.mora_interest_rate.msg %> </span>
+          <% } %>
         </div>
       </section>
 
       <!-- 5) Total (solo lectura) -->
-      <section class="grid-3">
-        <div class="field" id="box_cuota" style="display:none">
+      <section class="grid-2">
+        <div class="field" id="box_cuota">
           <label>Cuota</label>
           <input type="number" id="cuota" name="cuota" readonly placeholder="0.00" />
-          <small class="muted">Se calcula según precio diario × frecuencia.</small>
+          <% if (locals.errors && errors.cuota) { %>
+            <span class="form-error"> <%= errors.cuota.msg %> </span>
+          <% } %>
         </div>
         
         <div class="field">
           <label>Total</label>
           <input type="number" id="total" name="total" min="0" step="0.01" placeholder="0.00" readonly />
-          <small class="muted">Se calcula con fechas + precio + frecuencia.</small>
         </div>
       </section>
 
       <!-- 6) Ayudas -->
-      <div class="panel">
-        <div class="grid-3">
+      <div class="panel grid-3">
+        <div class="">
           <div><small class="muted">Duración: <span id="calc_span">–</span></small></div>
-          <div><small class="muted">Sugerido: <span id="calc_suggest">–</span></small></div>
-          <div><small class="muted">Propiedad: <span id="prop_title">–</span></small></div>
+        </div>
+        <div id="discountWeeklyWrap" style="display:none">
+          <small class="muted">Desc. Semanal: <span id="discount_weekly">–</span></small>
+        </div>
+        <div id="discountMonthlyWrap" style="display:none">
+          <small class="muted">Desc. Mensual: <span id="discount_monthly">–</span></small>
         </div>
       </div>
 
-      <!-- 7) Estado oculto (auto) -->
+      <!-- 7) Estado oculto -->
       <input type="hidden" id="estado" name="estado" value="pendiente" />
 
       <!-- CTA -->
       <footer class="form-actions">
-        <button type="button" class="btn btn-ghost" onclick="history.back()">Cancelar</button>
+        <button type="button" class="btn btn-ghost">Cancelar</button>
         <button type="submit" class="btn btn-primary">Crear contrato</button>
       </footer>
     </form>

@@ -22,8 +22,8 @@
         <table id="tablaPagos">
         <thead>
           <tr>
-            <th>Vencimiento</th><th>Propietario</th><th>Propiedad</th><th>Monto</th>
-            <th>Fecha de Pago</th><th>Estado</th><th></th>
+            <th>Vencimiento</th><th>Propietario</th><th>Propiedad</th>
+            <th>Descripcion</th><th>Monto</th><th>Fecha de Pago</th><th>Estado</th><th></th>
           </tr>
         </thead>
       <tbody id="tbPagos">
@@ -31,38 +31,53 @@
           <% payments.forEach(payment => { %>
             <% 
               let estadoCalculado = 'pagado';
-              if (!payment.paid_at) {
+              let montoMostrado = parseFloat(payment.amount);
+
+              if (!payment.paid_date) {
                 const hoy = new Date();
                 hoy.setHours(0, 0, 0, 0); 
                 const vencimiento = new Date(payment.due_date);
                 vencimiento.setHours(0, 0, 0, 0);
                 
-                estadoCalculado = (hoy > vencimiento) ? 'atrasado' : 'pendiente';
+                if (hoy > vencimiento) {
+                  estadoCalculado = 'atrasado';
+
+                  const diasDeMora = (hoy - vencimiento) / (1000 * 60 * 60 * 24);
+                  const tasaDiaria = parseFloat(payment.contract.interest_rate || 0) / 100;
+
+                  if (tasaDiaria > 0) {
+                    const mora = montoMostrado * tasaDiaria * diasDeMora;
+                    montoMostrado = montoMostrado + mora;
+                  }
+                } else {
+                  estadoCalculado = 'pendiente';
+                }
               }
             %>
 
             <tr class="data-row" data-estado="<%= estadoCalculado %>">
               <td><%= new Date(payment.due_date).toLocaleDateString('es-AR') %></td>
+              <td><%= payment.contract.owner.nombre %> <%= payment.contract.owner.apellido %></td>
               <td><%= payment.contract.property.titulo %></td>
-              <td><%= contract.owner.nombre %> <%= contract.owner.apellido %></td>
-              <td><%= payment.amount.toLocaleString('es-AR', {style: 'currency', currency: 'ARS'}) %></td>
-              <td><%= payment.paid_at ? new Date(payment.paid_at).toLocaleDateString('es-AR') : '---' %></td>
+              <td><%= payment.description %></td>
+              <td><%= montoMostrado.toLocaleString('es-AR', {style: 'currency', currency: 'ARS'}) %></td>
+              <td><%= payment.paid_date ? new Date(payment.paid_date).toLocaleDateString('es-AR') : '---' %></td>
               <td><span class="status st-<%= estadoCalculado %>"><%= estadoCalculado %></span></td> 
               
               <td class="actions">
-                <% if (payment.paid_at) { %>
-                  <a href="/payments/receipt/<%= payment.id %>" class="btn btn-ghost">Comprobante</a>
-                <% } else { %>
+                <% if (!payment.paid_date) { %>
                   <a href="/payments/pay/<%= payment.id %>" class="btn btn-primary">Pagar</a>
+                <% } else { %>
+                  <a></a>
                 <% } %>
               </td> 
             </tr>
           <% }) %>
           <tr class="no-results-row" style="display: none;">
-            <td colspan="7" style="text-align: center;">No se encontraron pagos.</td>
+            <td colspan="8" style="text-align: center;">No se encontraron pagos.</td>
           </tr>
         <% } else { %>
-         <tr class="no-results-row"><td colspan="7" style="text-align: center;">No tienes pagos registrados.</td></tr>
+         <tr class="no-results-row"><td colspan="8" style="text-align: center;">No tienes pagos registrados.</td></tr>
         <% } %>
         </tbody>
        </table>
@@ -75,7 +90,7 @@
         <thead>
          <tr>
           <th>Propietario</th><th>Propiedad</th><th>Inicio</th><th>Fin</th>
-          <th>Tipo</th><th>Monto</th><th>Estado</th><th></th>
+          <th>Tipo</th><th>Total</th><th>Estado</th><th></th>
          </tr>
         </thead>
         <tbody id="tbContratos">
@@ -87,6 +102,7 @@
             <td><%= new Date(contract.start_date).toLocaleDateString('es-AR') %></td>
             <td><%= new Date(contract.end_date).toLocaleDateString('es-AR') %></td>
             <td><%= contract.contract_type %></td>
+            <td><%= contract.total.toLocaleString('es-AR', {style: 'currency', currency: 'ARS'}) %></td>
             <td><span class="status st-<%= contract.estado.toLowerCase() %>"><%= contract.estado %></span></td>
             <td class="actions">
              <a href="/property/contracts/<%= contract.id %>" class="btn btn-ghost">Ver</a>

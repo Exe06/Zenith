@@ -124,13 +124,40 @@
                 </button>
               </form>
     
-              <form action="/admin/property/reject/<%= property.id %>" method="POST" style="display:inline;">
-                <button type="submit" class="btn-reject">
-                  <i class="fa-solid fa-xmark"></i> Rechazar
-                </button>
-              </form>
+              <button type="submit" class="btn-reject" id="btn-open-reject-modal">
+                <i class="fa-solid fa-xmark"></i> Rechazar
+              </button>
             </div>
           </div>
+
+          <dialog id="reject-modal" class="modal-surface">
+            <form action="/admin/property/reject/<%= property.id %>?_method=PUT" method="POST" style="display:inline;">
+              <div class="modal-header">
+                <h3 style="color: var(--err);">Rechazar Propiedad</h3>
+                <button type="button" class="btn-close-modal" id="btn-cancel-reject-modal">✕</button>
+              </div>
+
+              <div class="modal-body">
+                <p>Por favor, indicá el motivo del rechazo. Esta información será útil para el propietario.</p>
+                
+                <div class="field">
+                  <label for="rejection_reason">Motivo del rechazo</label>
+                  <textarea 
+                    id="rejection_reason" 
+                    name="rejection_reason" 
+                    rows="4" 
+                    placeholder="Ej: Las fotos no son claras, la escritura no es legible..."
+                    class="input-area"
+                  ></textarea>
+                </div>
+                
+                <div class="decision-actions" style="justify-content: flex-end;">
+                  <button type="button" class="btn btn-ghost" id="btn-cancel-reject-modal-2">Cancelar</button>
+                  <button type="submit" class="btn-reject">Confirmar Rechazo</button>
+                </div>
+              </div>
+            </form>
+          </dialog>
         <% } else { %>
           <div class="panel" style="margin-top: 24px; text-align: center">
             <p class="muted" style="font-weight: 600">
@@ -141,5 +168,6 @@
       </aside>
     </div>
 
+    <script src="/js/reviewProperty.js"></script>
   </body>
 </html>

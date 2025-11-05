@@ -36,7 +36,7 @@ export default (sequelize, DataTypes) => {
     },
     method: { 
       type: DataTypes.ENUM('transferencia', 'mercado_pago'),
-      allowNull: false 
+      allowNull: true 
     },
     description: {
       type: DataTypes.STRING,

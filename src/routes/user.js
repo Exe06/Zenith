@@ -4,7 +4,7 @@ import requireAuth from '../middlewares/requireAuth.js';
 import requireGuest from '../middlewares/requireGuest.js';
 import upload from '../middlewares/multerUser.js';
 import { uploadDniFiles } from '../middlewares/multerVerification.js';
-import { validateUser, validatePassword, validateLogin } from '../validators/userValidator.js'
+import { validateUser, validatePassword, validateLogin, validateMessage, validateReply } from '../validators/userValidator.js'
 import { validateVerification } from '../validators/verificationValidator.js';
 
 const router = Router();
@@ -34,6 +34,10 @@ router.get('/verify_account', requireAuth, userController.verifyAccount)
 router.post('/verify_account', requireAuth, uploadDniFiles, validateVerification, userController.processVerification);
 
 router.get('/user/verificationPending', requireAuth, userController.verificationPending);
+
+router.post('/messages/start', requireAuth, validateMessage, userController.startConversation);
+router.post('/messages/reply', userController.replyToConversation)
+router.get('/messages/:id', userController.showConversation)
 
 // Editar Perfil
 router.get('/edit/:id', requireAuth, userController.edit);

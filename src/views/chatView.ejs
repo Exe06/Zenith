@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<%- include('partials/head') %>
+<style>
+  /* (CSS Básico para el chat) */
+  .chat-box { max-width: 800px; margin: auto; }
+  .bubble { padding: 10px 15px; border-radius: 20px; margin-bottom: 10px; max-width: 70%; }
+  .bubble.me { background: #0088ff; color: white; margin-left: auto; }
+  .bubble.them { background: #e5e7eb; color: #333; }
+  .bubble small { display: block; font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px; }
+  .reply-form textarea { width: 100%; }
+</style>
+<body>
+  <%- include('partials/header') %>
+  <div class="container" style="padding-top: 2rem;">
+
+    <div class="chat-box card section">
+      <h3>Consulta por: <%= conversation.property.titulo %></h3>
+      <p class="muted">
+        Hablando con 
+        <% if (user.id === conversation.tenant_id) { %>
+          <%= conversation.owner.nombre %> <%= conversation.owner.apellido %>(Propietario)
+        <% } else { %>
+          <%= conversation.tenant.nombre %> <%= conversation.tenant.apellido %> (Inquilino)
+        <% } %>
+      </p>
+      <hr>
+
+      <div class="message-list">
+        <% conversation.messages.forEach(message => { %>
+          <% const isMe = message.sender_id === user.id %>
+          
+          <div class="bubble <%= isMe ? 'me' : 'them' %>">
+            <small><%= message.sender.nombre %>:</small>
+            <%= message.body %>
+          </div>
+        <% }) %>
+      </div>
+
+      <form action="/user/messages/reply" method="POST" class="reply-form" style="margin-top: 20px;">
+        <input type="hidden" name="conversation_id" value="<%= conversation.id %>">
+        <textarea name="body" rows="3" placeholder="Escribe tu respuesta..." required></textarea>
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px; padding: 5px;">Enviar Respuesta</button>
+      </form>
+
+    </div>
+  </div>
+</body>
+</html>

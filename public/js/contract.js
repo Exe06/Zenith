@@ -1,263 +1,287 @@
-// /public/js/contract-form.js
+(() => {
+  // Definiciones básicas
+  const $ = (s) => document.querySelector(s);
+  const form = $("#contractForm");
 
-// Helpers
-const $ = (s, ctx=document) => ctx.querySelector(s);
-const money = n => new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(+n||0);
+  // Referencias de la cabecera
+  const propertySelect = $("#property_id");
+  const contractTypeInput = $("#contract_type");
 
-function daysBetweenExclusive(startISO, endISO){
-  if(!startISO || !endISO) return 0;
-  const s = new Date(startISO+'T00:00:00Z');
-  const e = new Date(endISO+'T00:00:00Z'); // fin EXCLUSIVO
-  const ms = e - s;
-  return Math.max(0, Math.round(ms / 86400000));
-}
-function monthsBetween(startISO, endISO){
-  if(!startISO || !endISO) return 0;
-  const s = new Date(startISO+'T00:00:00Z');
-  const e = new Date(endISO+'T00:00:00Z');
-  let m = (e.getUTCFullYear()-s.getUTCFullYear())*12 + (e.getUTCMonth()-s.getUTCMonth());
-  if (e.getUTCDate() < s.getUTCDate()) m -= 1;
-  return Math.max(0, m);
-}
+  // Referencias de Partes
+  const tenantDniInput = $("#tenant_dni");
+  const boxGuarantee = $("#box_guarantee");
 
-// Nodos
-const form = $('#contractForm');
-const selProp = $('#property_id');
-const inpType = $('#contract_type');
-const hiddenOwner = $('#owner_id');
+  // Referencias de Fechas y Frecuencia
+  const startDateInput = $("#start_date");
+  const endDateInput = $("#end_date");
+  const boxFrequency = $("#box_frequency");
+  const payFrequencySelect = $("#pay_frequency");
+  const payFrequencyHidden = $("#pay_frequency_hidden"); // Hidden input
 
-const boxGuarantee = $('#box_guarantee');
-const selGuarantee = $('#guarantee_id');
+  // Referencias de Importes
+  // Wrappers
+  const baseAmountWrap = document.getElementById('baseAmountWrap');
+  const depositWrap = document.getElementById('depositWrap');
+  const dailyWrap = document.getElementById('dailyWrap');
+  
+  // Inputs
+  const baseAmountInput = document.getElementById('baseAmount'); // Pago Inicial (Monto Base)
+  const depositoInput = document.getElementById('deposit'); // Depósito Mensual (CUOTA recurrente)
+  const dailyPriceInput = document.getElementById('dailyPrice'); // Precio Diario (TEMP)
 
-const start = $('#start_date');
-const end = $('#end_date');
+  // Referencias de Total/Ayudas
+  const calcSpan = $("#calc_span");
+  const discountWeeklyWrap = $("#discountWeeklyWrap");
+  const discountMonthlyWrap = $("#discountMonthlyWrap");
+  const discountWeeklySpan = $("#discount_weekly");
+  const discountMonthlySpan = $("#discount_monthly");
+  const cuotaInput = document.getElementById('cuota'); // Campo calculado
+  const totalInput = document.getElementById('total'); // Campo calculado
+  
+  // Almacena los datos de la propiedad activa (data-attributes)
+  let currentPropertyData = null;
+  const ID_LARGO_PLAZO = "Alquiler Largo Plazo";
 
-const boxFreq = $('#box_frequency');
-const selFreq = $('#pay_frequency');
-const freqHiddenLP = $('#pay_frequency_hidden');
+  const elementsToListen = [
+    startDateInput, 
+    endDateInput, 
+    baseAmountInput, 
+    depositoInput, 
+    dailyPriceInput, 
+    payFrequencySelect
+  ].filter(el => el !== null && el !== undefined); // Filtramos cualquier null/undefined
 
-const unit = $('#unit_price');
-const lblUnit = $('#lbl_unit_price');
-const helpUnit = $('#help_unit_price');
+  // --- HELPERS ---
+  const fmtARS = (n) =>
+    new Intl.NumberFormat("es-AR", {
+      style: "currency",
+      currency: "ARS",
+      maximumFractionDigits: 2,
+    }).format(n || 0);
 
-const boxDepo = $('#box_deposito');
-const depo = $('#deposito');
-
-const boxExp = $('#box_expensas');
-const expensas = $('#expensas');
-
-const boxCuota = $('#box_cuota');
-const cuotaInp = $('#cuota');
-
-const total = $('#total');
-
-const calcSpan = $('#calc_span');
-const calcSuggest = $('#calc_suggest');
-const propTitle = $('#prop_title');
-
-const estadoHidden = $('#estado');
-
-// reglas por tipo
-const FREQS_TEMP = ['un_pago','diario','semanal','mensual'];
-
-// init
-init();
-
-function init(){
-  // set min hoy por UX
-  const today = new Date().toISOString().slice(0,10);
-  start.min = today;
-
-  onPropertyChange(); // por si viene preseleccionada
-
-  selProp.addEventListener('change', onPropertyChange);
-  [start, end, unit, depo, expensas].forEach(el=> el.addEventListener('input', recalcTotal));
-  if (selFreq) selFreq.addEventListener('input', recalcTotal);
-  form.addEventListener('submit', onSubmit);
-}
-
-function onPropertyChange(){
-  const opt = selProp.selectedOptions[0];
-  if(!opt || !opt.value){
-    inpType.value='';
-    propTitle.textContent='–';
-    selFreq.innerHTML='';
-    unit.value=''; helpUnit.textContent='';
-    toggleLP(false);
-    total.value='';
-    hideCuota();
-    return;
+  function nightsBetween(start, end) {
+    // Comprueba que ambas fechas existan antes de calcular
+    if (!start || !end) return 0;
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const diff = new Date(end) - new Date(start);
+    return Math.max(0, Math.round(diff / msPerDay));
   }
 
-  // Datos de la propiedad
-  const type = opt.dataset.contractType;            // "Temporal" | "Largo Plazo"
-  const ownerIdFromProp = opt.dataset.ownerId;
-  const monthly = parseFloat(opt.dataset.monthlyPrice||0);
-  const daily = parseFloat(opt.dataset.dailyPrice||0);
-
-  // Seteo de campos derivados
-  inpType.value = type || '';
-  propTitle.textContent = opt.dataset.title || `#${opt.value}`;
-
-  // Owner: si no viene desde servidor, tomamos de la propiedad
-  if(!hiddenOwner.value && ownerIdFromProp){
-    hiddenOwner.value = ownerIdFromProp;
+  // --- FUNCIÓN show (necesaria para los wrappers) ---
+  function show(elWrap, visible) {
+    if (!elWrap) return;
+    elWrap.style.display = visible ? 'block' : 'none';
   }
 
-  // Mostrar/ocultar secciones según tipo
-  const isLP = (type === 'Largo Plazo');
-  toggleLP(isLP);
+  // --- FUNCIÓN PRINCIPAL: MANEJO DEL MODO (LP vs TEMP) ---
+  function applyContractMode() {
+    if (!propertySelect.value) {
+      currentPropertyData = null;
+      contractTypeInput.value = "";
+      // Limpieza de campos de precio
+      baseAmountInput.value = '';
+      depositoInput.value = '';
+      dailyPriceInput.value = '';
+      startDateInput.value = '';
+      endDateInput.value = '';
+      discountWeeklySpan.textContent = '–';
+      discountMonthlySpan.textContent = '–';
 
-  // Frecuencia
-  if(isLP){
-    // LP ⇒ fijo mensual (oculta select, habilita hidden)
-    boxFreq.style.display = 'none';
-    if (selFreq){
-      selFreq.required = false;
-      selFreq.innerHTML = '';
-      selFreq.value = '';
+      // Ocultar todos los wrappers (Volver al estado inicial limpio)
+      show(baseAmountWrap, false);
+      show(depositWrap, false);
+      show(dailyWrap, false);
+      show(boxGuarantee, false);
+      show(discountWeeklyWrap, false);
+      show(discountMonthlyWrap, false);
+      boxFrequency.style.display = "none";
+
+      // Limpiar Ayudas y Cálculos
+      document.querySelector('#calc_span').textContent = '–';
+      document.querySelector('#cuota').value = '0.00';
+      document.querySelector('#total').value = '0.00';
+      
+      return;
     }
-    freqHiddenLP.disabled = false;
-    freqHiddenLP.value = 'mensual';
-  } else {
-    // TEMP ⇒ muestra select
-    boxFreq.style.display = 'block';
-    if (selFreq){
-      selFreq.required = true;
-      freqHiddenLP.disabled = true;
-      selFreq.innerHTML = '';
-      FREQS_TEMP.forEach(v=>{
-        const o = document.createElement('option');
-        o.value = o.textContent = v;
-        selFreq.appendChild(o);
-      });
-      selFreq.value = selFreq.value || 'un_pago';
+
+    const selectedOption = propertySelect.options[propertySelect.selectedIndex];
+
+    // Cargar datos de la propiedad (data-attributes)
+    currentPropertyData = {
+      id: selectedOption.value,
+      type: selectedOption.dataset.contractType,
+      monthlyPrice: parseFloat(selectedOption.dataset.monthlyPrice || 0), // Este es el valor del DEPÓSITO/Cuota Mensual
+      dailyPrice: parseFloat(selectedOption.dataset.dailyPrice || 0),
+      title: selectedOption.dataset.title,
+      // Descuentos vienen como string, los parseamos
+      weeklyDiscount: parseFloat(selectedOption.dataset.weeklyDiscount || 0) / 100,
+      monthlyDiscount: parseFloat(selectedOption.dataset.monthlyDiscount || 0) / 100,
+    };
+    
+    const isLargoPlazo = currentPropertyData.type === ID_LARGO_PLAZO;
+
+    // A. SETEAR VALORES Y VISIBILIDAD
+    contractTypeInput.value = currentPropertyData.type;
+
+    baseAmountInput.value = isLargoPlazo ? currentPropertyData.monthlyPrice.toFixed(2) : ''; // Pago Inicial
+    depositoInput.value = isLargoPlazo ? currentPropertyData.monthlyPrice.toFixed(2) : ''; // Cuota Mensual
+    dailyPriceInput.value = isLargoPlazo ? '' : currentPropertyData.dailyPrice.toFixed(2); // Precio Diario
+
+    // B. LARGO PLAZO (LP)
+    if (isLargoPlazo) {
+      // VISIBILIDAD
+      show(baseAmountWrap, true);
+      show(depositWrap, true);
+      show(dailyWrap, false);
+      show(boxGuarantee, true);
+      show(discountWeeklyWrap, false);
+      show(discountMonthlyWrap, false);
+
+      // INICIALIZACIÓN DE VALORES
+      baseAmountInput.value = currentPropertyData.monthlyPrice.toFixed(2); 
+      depositoInput.value = currentPropertyData.monthlyPrice.toFixed(2);
+      discountWeeklySpan.textContent = '–';
+      discountMonthlySpan.textContent = '–';
+
+      // Frecuencia: Fija a Mensual
+      boxFrequency.style.display = "none";
+      payFrequencyHidden.disabled = false;
     }
-    freqHiddenLP.disabled = true;
+
+    // C. TEMPORAL
+    else {
+      // VISIBILIDAD
+      show(baseAmountWrap, false);
+      show(depositWrap, false);
+      show(dailyWrap, true); // Mostrar Precio Diario
+      show(boxGuarantee, false); // Ocultar Garantía
+      show(discountWeeklyWrap, true);
+      show(discountMonthlyWrap, true);
+
+      // INICIALIZACIÓN DE VALORES
+      dailyPriceInput.value = currentPropertyData.dailyPrice.toFixed(2);
+      discountWeeklySpan.textContent = `${(currentPropertyData.weeklyDiscount * 100).toFixed(0)}%`;
+      discountMonthlySpan.textContent = `${(currentPropertyData.monthlyDiscount * 100).toFixed(0)}%`;
+      
+      // Frecuencia: Mostrar select de opciones
+      populateTemporalFrequency(); 
+      boxFrequency.style.display = "block";
+      payFrequencyHidden.disabled = true;
+    }
+
+    updateCalculations();
   }
 
-  // Unit price + hints
-  if(isLP){
-    lblUnit.textContent = 'Precio mensual';
-    helpUnit.textContent = monthly ? `Sugerido: ${money(monthly)}` : 'Precio por mes';
-    unit.value = monthly || '';
-  } else {
-    lblUnit.textContent = 'Precio por día';
-    helpUnit.textContent = daily ? `Sugerido: ${money(daily)}` : 'Precio por día';
-    unit.value = daily || '';
+  // Llenar el <select> de frecuencia para alquileres temporales
+  function populateTemporalFrequency() {
+    // (Esta función es correcta y queda igual)
+    const options = [
+      { val: "un_pago", text: "Total único" },
+      { val: "diario", text: "Diario" },
+      { val: "semanal", text: "Semanal" },
+      { val: "mensual", text: "Mensual" },
+    ];
+    payFrequencySelect.innerHTML = options
+      .map((o) => `<option value="${o.val}">${o.text}</option>`)
+      .join("");
   }
 
-  recalcTotal();
-}
+  // --- FUNCIÓN DE CÁLCULO (Limpiada) ---
+  function updateCalculations() {
+    if (!currentPropertyData) return;
 
-function toggleLP(isLP){
-  // Garantía + Depósito + Expensas solo en LP
-  boxGuarantee.style.display = isLP ? 'block' : 'none';
-  boxDepo.style.display      = isLP ? 'block' : 'none';
-  boxExp.style.display       = isLP ? 'block' : 'none';
-  if(!isLP){ depo.value=''; expensas.value=''; }
-}
+    const start = startDateInput.value;
+    const end = endDateInput.value;
+    const nights = nightsBetween(start, end);
+    let durationText = '–';
 
-function showCuota(val){
-  if(!boxCuota || !cuotaInp) return;
-  boxCuota.style.display = 'block';
-  cuotaInp.value = (isFinite(val) ? +val : 0).toFixed(2);
-}
-function hideCuota(){
-  if(!boxCuota || !cuotaInp) return;
-  boxCuota.style.display = 'none';
-  cuotaInp.value = '';
-}
+    const isLargoPlazo = currentPropertyData.type === ID_LARGO_PLAZO;
 
-function recalcTotal(){
-  const type = (inpType.value || '').trim();         // "Temporal" | "Largo Plazo"
-  const freq = selFreq ? selFreq.value : '';         // 'un_pago','diario','semanal','mensual'
-  const s = start.value, e = end.value;
-  const u = parseFloat(unit.value || 0);
+    if (nights > 0) {
+      durationText = `${nights} día(s)`
 
-  // ---------- CUOTA (decisión SOLO por tipo/frecuencia) ----------
-  if (type === 'Temporal'){
-    if (freq && freq !== 'un_pago'){
-      let mult = 0;
-      if (freq === 'diario')  mult = 1;
-      if (freq === 'semanal') mult = 7;
-      if (freq === 'mensual') mult = 30;
-      showCuota((+unit.value || 0) * mult); // si no hay precio aún, muestra 0.00
+      if (isLargoPlazo && nights < 1095) { 
+        durationText += ` <span style="color: var(--err); font-weight: 600;">(Mínimo 3 años)</span>`;
+      }
+    }
+    calcSpan.innerHTML = durationText;
+
+    if (!isLargoPlazo) {
+      // Buscamos las opciones DENTRO del select
+      const optSemanal = payFrequencySelect.querySelector('option[value="semanal"]');
+      const optMensual = payFrequencySelect.querySelector('option[value="mensual"]');
+
+      // 1. Deshabilitar 'semanal' si la estadía es menor a 7 días
+      if (optSemanal) {
+        optSemanal.disabled = (nights < 7);
+      }
+      // 2. Deshabilitar 'mensual' si la estadía es menor a 30 días
+      if (optMensual) {
+        optMensual.disabled = (nights < 30);
+      }
+
+      if (payFrequencySelect.options[payFrequencySelect.selectedIndex].disabled) {
+        if (nights < 7) {
+          payFrequencySelect.value = 'un_pago';
+        } else if (nights < 30) {
+          payFrequencySelect.value = 'semanal';
+        }
+      }
+    }
+
+    // Valores de los inputs (aseguramos que sean números válidos)
+    const montoBaseInicial = parseFloat(baseAmountInput?.value || 0); 
+    const depositoMensual = parseFloat(depositoInput?.value || 0); 
+    const dailyPriceTEMP = parseFloat(dailyPriceInput?.value || 0);
+    const months = Math.ceil(nights / 30); 
+
+    let finalTotal = 0;
+    let calculatedCuota = 0; 
+
+    // Cálculos para LARGO PLAZO
+    if (isLargoPlazo) {        
+      // Cuota Recurrente = Depósito Mensual
+      calculatedCuota = depositoMensual;
+      // Total = Pago Inicial Único + (Cuota Mensual * Meses del Contrato)
+      finalTotal = montoBaseInicial + (depositoMensual * months); 
+
     } else {
-      hideCuota();
+      // Obtenemos los descuentos de la propiedad
+      const propWeeklyDiscount = currentPropertyData.weeklyDiscount;
+      const propMonthlyDiscount = currentPropertyData.monthlyDiscount;
+      
+      const pricePerNight = dailyPriceTEMP;
+      let effectiveDailyPrice = pricePerNight;
+      
+      // Aplicación del descuento
+      if (nights >= 30) {
+        effectiveDailyPrice = pricePerNight * (1 - propMonthlyDiscount);
+      } else if (nights >= 7) {
+        effectiveDailyPrice = pricePerNight * (1 - propWeeklyDiscount);
+      }
+      
+      // Total y Cuota Recurrente
+      finalTotal = effectiveDailyPrice * nights;
+      calculatedCuota = effectiveDailyPrice; 
     }
-  } else {
-    hideCuota(); // LP nunca muestra cuota
+
+    // Actualizar Totales (Solo lectura)
+    // Usamos toFixed(2) para asegurar el formato decimal
+    cuotaInput.value = calculatedCuota.toFixed(2);
+    totalInput.value = finalTotal.toFixed(2);
   }
 
-  // ---------- TOTAL (requiere fechas válidas y precio) ----------
-  if (s && e && e <= s){
-    total.value=''; calcSpan.textContent='–'; calcSuggest.textContent='–';
-    return;
-  }
 
-  if (type === 'Temporal'){
-    if (!s || !e || !unit.value){
-      total.value=''; calcSpan.textContent='–'; calcSuggest.textContent='–';
-      return;
-    }
-    const nights = daysBetweenExclusive(s, e);
-    calcSpan.textContent = `${nights} noche(s)`;
-    const suggested = (+unit.value) * nights; // total del contrato temporal
-    total.value = suggested.toFixed(2);
-    calcSuggest.textContent = money(suggested);
+  // --- EVENT LISTENERS Y INIT ---
+  // Escuchamos la selección de la propiedad
+  propertySelect.addEventListener("change", applyContractMode);
 
-  } else if (type === 'Largo Plazo'){
-    if (!s || !e || !unit.value){
-      total.value=''; calcSpan.textContent='–'; calcSuggest.textContent='–';
-      return;
-    }
-    const months = monthsBetween(s, e);
-    calcSpan.textContent = `${months} mes(es)`;
-    const suggested = (+unit.value) * months; // precio mensual * meses
-    total.value = suggested.toFixed(2);
-    calcSuggest.textContent = money(suggested);
+  // Escuchamos cambios en fechas y precio (Añadimos los nuevos inputs)
+  // 2. Escuchamos cambios en esos elementos
+  elementsToListen.forEach(
+    (el) => el.addEventListener("change", updateCalculations)
+  );
 
-  } else {
-    total.value=''; calcSpan.textContent='–'; calcSuggest.textContent='–';
-  }
-}
-
-function onSubmit(e){
-  const errs = [];
-
-  if(!selProp.value) errs.push('Seleccioná una propiedad.');
-  if(!inpType.value) errs.push('No se pudo determinar el tipo de contrato.');
-  if(!hiddenOwner.value) errs.push('No se encontró el propietario (sesión).');
-  if(!$('#tenant_dni').value || !/^[0-9]{6,12}$/.test($('#tenant_dni').value)) errs.push('Ingresá un DNI válido.');
-  if(!start.value || !end.value) errs.push('Completá fechas de inicio y fin.');
-  if(end.value && start.value && end.value <= start.value) errs.push('La fecha de fin debe ser posterior al inicio.');
-  if(!unit.value || +unit.value<=0) errs.push('Ingresá un precio válido.');
-  if(!total.value || +total.value<0) errs.push('Total inválido.');
-
-  // En temporario, frecuencia es requerida
-  if(inpType.value==='Temporal' && (!selFreq || !selFreq.value)) errs.push('Elegí una frecuencia.');
-
-  if(errs.length){
-    e.preventDefault();
-    alert('Revisá el formulario:\n\n• ' + errs.join('\n• '));
-    return;
-  }
-
-  // Estado automático: start <= hoy ⇒ activo, si no ⇒ pendiente
-  const today = new Date().toISOString().slice(0,10);
-  estadoHidden.value = (start.value <= today) ? 'activo' : 'pendiente';
-
-  // Para LP, forzar frecuencia mensual en el payload:
-  if(inpType.value==='Largo Plazo'){
-    if (selFreq) selFreq.disabled = true; // por si el navegador lo envía
-    freqHiddenLP.disabled = false;
-    freqHiddenLP.value = 'mensual';
-  }
-
-  // Normalizar decimales
-  unit.value  = (+unit.value||0).toFixed(2);
-  total.value = (+total.value||0).toFixed(2);
-  if(depo.value) depo.value = (+depo.value||0).toFixed(2);
-  if(expensas.value) expensas.value = (+expensas.value||0).toFixed(2);
-}
+  // Llamada inicial
+  applyContractMode();
+})();

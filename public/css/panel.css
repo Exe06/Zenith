@@ -120,3 +120,50 @@ tbody tr{border-top:1px solid var(--border)}
     background-color: #7b1313; /* Un rojo un poco más oscuro */
     box-shadow: 0 6px 15px rgba(153, 27, 27, 0.4);
 }
+
+dialog::backdrop {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+/* El modal usa la clase que ya tenías */
+dialog.modal-surface {
+  border: none;
+  /* (El resto de tus estilos .modal-surface se aplican) */
+}
+
+/* El botón 'X' de cerrar en la esquina */
+.modal-header .btn-close-modal {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-left: auto;
+  font-weight: bold;
+}
+.modal-header .btn-close-modal:hover {
+  background: #f1f5f9;
+}
+
+/* El textarea (copiado de tu CSS de admin) */
+.modal-body .input-area {
+  width: 100%;
+  background: #fff; 
+  color: var(--text);
+  border: 1px solid var(--border); 
+  border-radius: 10px; 
+  padding: 10px; 
+  min-height: 90px; 
+  resize: vertical;
+}
+
+/* Botones de acción del modal */
+.modal-body .decision-actions {
+  display: flex;
+  justify-content: flex-end; /* Alinea a la derecha */
+  gap: 10px;
+  margin-top: 16px;
+}

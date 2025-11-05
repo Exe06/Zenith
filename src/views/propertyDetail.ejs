@@ -181,14 +181,14 @@
           </div>
 
           <% if (locals.user) { %>
-            <!-- <button class="btn btn-primary">Contactar</button>
-            <button class="btn btn-ghost" id="shareBtn">Compartir</button> -->
             <div class="card contact-card">
               <h3 style="margin:0 0 10px">Enviar consulta</h3>
-              <form onsubmit="event.preventDefault(); alert('Consulta enviada. ¡Te contactaremos pronto!')">
+              <form action="/user/messages/start" method="POST" onsubmit="alert('Consulta enviada. ¡Te contactaremos pronto!')">
+                <input type="hidden" name="property_id" value="<%= property.id %>">
+                <input type="hidden" name="owner_id" value="<%= property.owner.id %>">
                 <label class="sr-only" for="msg">Mensaje</label>
-                <textarea id="msg" placeholder="Hola, me interesa la propiedad. ¿Cuándo puedo visitarla?"></textarea>
-                <button class="btn btn-primary" style="margin-top:12px;width:100%">Enviar</button>
+                <textarea id="msg" name="body" placeholder="Hola, me interesa la propiedad. ¿Cuándo puedo visitarla?"></textarea>
+                <button type='submit' class="btn btn-primary" style="margin-top:12px;width:100%">Enviar</button>
               </form>
             </div>
           <% } else { %>

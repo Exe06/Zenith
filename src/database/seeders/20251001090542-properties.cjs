@@ -6,7 +6,7 @@ module.exports = {
       {
         // FK catálogos (ajusta los ids a los tuyos)
         property_type_id: 1,
-        user_id: 1, 
+        user_id: 2, 
         operation_type_id: 1,      // 1 = largo plazo
         // guarantee_id: 1,
 
@@ -41,12 +41,14 @@ module.exports = {
         temp_weekly_enabled: false,
         temp_monthly_enabled: false,
         temp_one_time_enabled: false,
+
+        estado: 'inactivo'
       },
 
       // === TEMPORARIO ===
       {
         property_type_id: 2,       // ej: Loft
-        user_id: 1,
+        user_id: 2,
         operation_type_id: 2,      // 2 = temporario
         // guarantee_id: null,
 
@@ -81,6 +83,7 @@ module.exports = {
         temp_weekly_enabled: true,
         temp_monthly_enabled: true,
         temp_one_time_enabled: true,
+        estado: 'disponible'
       }
     ], {});
   },

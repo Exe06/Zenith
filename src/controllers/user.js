@@ -8,13 +8,13 @@ import { validationResult } from "express-validator";
 
 const {
   User,
-  Role,
   Property,
   Contract,
   Payment,
   Conversation,
   Message,
   PropertyImage,
+  sequelize
 } = db;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -502,11 +502,12 @@ const userController = {
         include: [{
           model: Contract,
           as: 'contract',
-          attributes: ['id'],
+          attributes: ['id', 'interest_rate'],
           required: true,
           where: { tenant_id: userId }, // <-- CLAVE: Pagos de contratos del inquilino
           include: [
-            { model: Property, as: 'property', attributes: ['titulo'] }
+            { model: Property, as: 'property', attributes: ['titulo'] },
+            { model: User, as: 'owner', attributes: ['nombre', 'apellido'] }
           ]
         }],
         order: [['due_date', 'DESC']]
@@ -548,6 +549,150 @@ const userController = {
     } catch (error) {
       console.error('Error al cargar el panel de alquileres:', error);
       res.status(500).send('Error al cargar la página');
+    }
+  },
+  startConversation: async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.redirect(`/property/${req.body.property_id}?error=validation`);
+    }
+    console.log(req.body);
+
+    const { property_id, owner_id, body } = req.body;
+    const client_id = req.session.user.id; // ID del inquilino (el que envía)
+
+    // 2. Seguridad: Evitar que el propietario se envíe mensajes a sí mismo
+    if (client_id.toString() === owner_id.toString()) {
+      return res.redirect(`/property/${property_id}?error=self_message`);
+    }
+
+    // 3. Iniciar Transacción
+    const t = await sequelize.transaction();
+
+    try {
+      // 4. Buscar si ya existe una conversación entre este usuario y esta propiedad
+      let conversation = await Conversation.findOne({
+        where: {
+          property_id: property_id,
+          tenant_id: client_id
+        }
+        // No incluimos la transacción aquí (es solo una búsqueda)
+      });
+
+      // 5. Si no existe, la creamos
+      if (!conversation) {
+        conversation = await Conversation.create({
+          property_id: property_id,
+          owner_id: owner_id,
+          tenant_id: client_id,
+          subject: `Consulta por propiedad #${property_id}` // Asunto simple
+        }, { transaction: t }); // La creamos DENTRO de la transacción
+      }
+
+      // 6. Crear el primer (o siguiente) mensaje
+      await Message.create({
+        conversation_id: conversation.id,
+        sender_id: client_id, // El que envía es el cliente
+        body: body
+      }, { transaction: t }); // También DENTRO de la transacción
+
+      // 7. Si todo salió bien, confirmar la transacción
+      await t.commit();
+
+      // 8. Redirigir al usuario (idealmente a su panel de "Mis Alquileres" o "Mensajes")
+      return res.redirect(`/property/${property_id}`);
+
+    } catch (error) {
+      await t.rollback(); // Deshacer todo si algo falló
+      console.error('Error al iniciar conversación:', error);
+      return res.redirect(`/property/${property_id}?error=server_error`);
+    }
+  },
+  showConversation: async (req, res) => {
+    try {
+      const conversationId = req.params.id;
+      const userId = req.session.user.id;
+
+      const conversation = await Conversation.findByPk(conversationId, {
+        include: [
+          // Incluir la info de la propiedad (para el título)
+          { model: Property, as: 'property', attributes: ['titulo'] },
+          // Incluir al cliente (inquilino)
+          { model: User, as: 'tenant', attributes: ['id', 'nombre', 'apellido'] },
+          // Incluir al dueño (propietario)
+          { model: User, as: 'owner', attributes: ['id', 'nombre', 'apellido'] },
+          // ¡Lo más importante! Incluir los mensajes
+          {
+            model: Message,
+            as: 'messages',
+            include: [
+              // Incluir quién envió CADA mensaje
+              { model: User, as: 'sender', attributes: ['id', 'nombre', 'apellido'] }
+            ]
+          }
+        ],
+        // Ordenar los mensajes del más viejo al más nuevo
+        order: [
+          [ { model: Message, as: 'messages' }, 'created_at', 'ASC'] 
+        ]
+      });
+
+      // 1. Verificación de Seguridad:
+      // ¿El usuario logueado es parte de esta conversación?
+      if (!conversation || (userId !== conversation.tenant_id && userId !== conversation.owner_id)) {
+        return res.status(403).send('Acceso denegado.');
+      }
+      
+      // 2. Marcar mensajes como leídos (Lógica futura)
+      // (Aquí podrías hacer un Message.update({ is_read: true }, ...))
+
+      res.render('chatView', {
+        title: `Chat: ${conversation.property.titulo}`,
+        stylesheet: 'chat.css',
+        conversation,
+        user: req.session.user
+      });
+
+    } catch (error) {
+      console.error('Error al mostrar conversación:', error);
+      res.redirect('/user/panel');
+    }
+  },
+  replyToConversation: async (req, res) => {
+    const errors = validationResult(req);
+    const { conversation_id, body } = req.body;
+
+    console.log(req.body);
+
+    if (!errors.isEmpty()) {
+      // Si hay error, redirigir de vuelta al chat con un error
+      return res.redirect(`/user/messages/${conversation_id}?error=empty`);
+    }
+
+    const sender_id = req.session.user.id;
+
+    try {
+      // 1. (Opcional) Verificar que el usuario pertenezca a la conversación
+      const conversation = await Conversation.findByPk(conversation_id);
+      if (sender_id !== conversation.tenant_id && sender_id !== conversation.owner_id) {
+        return res.status(403).send('Acceso denegado.');
+      }
+
+      // 2. Crear el nuevo mensaje
+      await Message.create({
+        conversation_id: conversation_id,
+        sender_id: sender_id,
+        body: body
+      });
+
+      // 3. Redirigir de vuelta a la misma página de chat
+      return res.redirect(`/user/messages/${conversation_id}`);
+
+    } catch (error) {
+      console.error('Error al enviar respuesta:', error);
+      console.log(error);
+      
+      return res.redirect(`/user/messages/${conversation_id}?error=server`);
     }
   }
 };

@@ -14,7 +14,9 @@ const {
   PropertyType,
   OperationType,
   Guarantee,
-  User,
+  Contract,
+  Payment,
+  User
 } = db;
 
 const provincias = [
@@ -165,6 +167,31 @@ async function cleanupFiles(files) {
   } catch (cleanupError) {
     console.error("Error al limpiar archivos subidos:", cleanupError);
   }
+}
+
+function nightsBetween(start, end) {
+  // Comprueba que ambas fechas existan antes de calcular
+  if (!start || !end) return 0;
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const diff = new Date(end) - new Date(start);
+  return Math.max(0, Math.round(diff / msPerDay));
+}
+
+function addMonths(date, months) {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + months);
+  // Ajuste por días: Si la fecha resultante no coincide con el día original (ej: 31 Ene -> 3 Mar),
+  // se ajusta al último día del mes.
+  if (d.getDate() !== date.getDate()) {
+    d.setDate(0); 
+  }
+  return d;
+}
+
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
 }
 
 const propertyController = {
@@ -342,13 +369,269 @@ const propertyController = {
     res.redirect("/user/managment");
   },
 
-  createContract: (req, res) => {
-    res.render("createContract", {
-      title: "Crear Contrato",
-      stylesheet: "contract.css",
-    });
+  createContract: async (req, res) => {
+    const userId = req.session.user.id;
+
+    try {
+      // 1. Buscar propiedades del propietario (para el select)
+      const properties = await Property.findAll({
+        where: { user_id: userId, estado: 'disponible' }, 
+        include: ['operation', 'guarantees'] 
+      });
+
+      // 2. Buscar garantías disponibles
+      const guarantees = await Guarantee.findAll();
+
+      res.render('createContract', {
+        title: 'Crear Contrato',
+        stylesheet: 'contract.css',
+        user: req.session.user,
+        properties,
+        guarantees,
+        // Si hay un error de validación, se pasarían errors y old aquí
+        errors: {},
+        old: {}
+      });
+    } catch (error) {
+      console.error('Error al cargar formulario de contrato:', error);
+      res.redirect('/user/managment');
+    }
   },
 
+  processCreateContract: async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+
+      const userId = req.session.user.id;
+
+      // 1. Buscar propiedades del propietario (para el select)
+      const properties = await Property.findAll({
+        where: { user_id: userId, estado: 'disponible' }, 
+        include: ['operation', 'guarantees'] 
+      });
+
+      // 2. Buscar garantías disponibles
+      const guarantees = await Guarantee.findAll();
+
+      return res.render("createContract", {
+        errors: errors.mapped(),
+        old: req.body,
+        title: "Crear Contrato",
+        stylesheet: "contract.css",
+        user: req.session.user,
+        properties,
+        guarantees,
+      });
+    }
+
+    const b = req.body;
+    const t = await sequelize.transaction();
+
+    try {
+      // --- 2. Preparar Variables Clave ---
+      const nights = nightsBetween(b.start_date, b.end_date);
+      const contractMonths = Math.ceil(nights / 30);
+      
+      // CORRECCIÓN CLAVE: ASIGNACIÓN DE VALORES REALES
+      const initialUniquePayment = toDec(b.montoBase);
+      const monthlyRentCuota = toDec(b.deposito);
+      const dailyPrice = toDec(b.dailyPrice);
+      const userDNI = b.tenant_dni;
+      
+      const isLargoPlazo = b.contract_type === 'Alquiler Largo Plazo';
+      const totalContractAmount = toDec(b.total); 
+
+      const tenant = await User.findOne({
+        where: {
+          dni: userDNI
+        },
+        attributes: ['id']
+      })
+
+      console.log("TENANT_ID", tenant);
+
+      // --- 3. Crear el Contrato Principal ---
+      const newContract = await Contract.create({
+        property_id: toInt(b.property_id),
+        owner_id: toInt(b.owner_id),
+        tenant_id: toInt(tenant.id),
+        guarantee_id: toInt(b.guarantee_id) || null,
+        
+        // Términos
+        contract_type: b.contract_type,
+        start_date: b.start_date,
+        end_date: b.end_date,
+        pay_frequency: b.pay_frequency,
+        interest_rate: toDec(b.mora_interest_rate) || null, 
+        
+        // MONTOS (Mapeados correctamente a las columnas de la DB)
+        monto_base: isLargoPlazo ? initialUniquePayment : null,
+        deposito: isLargoPlazo ? monthlyRentCuota : null,
+        daily_price: !isLargoPlazo ? dailyPrice : null,
+        
+        adjustment_index: isLargoPlazo ? 'ICL' : null,
+        adjustment_period_months: isLargoPlazo ? 12 : null,
+
+        total: totalContractAmount, 
+        estado: b.estado 
+          
+      }, { transaction: t });
+
+      // --- 4. Generar Plan de Pagos ---
+      let paymentRecords = [];
+      let currentDate = new Date(b.start_date);
+      
+      // 4.1. Registrar el Pago Inicial Único (Monto Base)
+      if (initialUniquePayment > 0 && isLargoPlazo) {
+        paymentRecords.push({
+          contract_id: newContract.id,
+          due_date: new Date(currentDate),
+          amount: initialUniquePayment,
+          // Si el pago inicial se considera pagado al firmar:
+          // paid_date: new Date(),
+        });
+      }
+      
+      // 4.2. Registrar las Cuotas Mensuales Recurrentes (Depósito Mensual)
+      if (isLargoPlazo) {
+        for (let m = 0; m < contractMonths; m++) {
+          let paymentDate = addMonths(new Date(currentDate), m); 
+          
+          paymentRecords.push({
+            contract_id: newContract.id,
+            due_date: paymentDate,
+            amount: monthlyRentCuota,
+          });
+        }
+      } else { 
+        // 1. Necesitamos la duración y el precio base
+        const pricePerNight = dailyPrice;
+        const frequency = b.pay_frequency;
+        const effectiveDailyPrice = totalContractAmount / nights;
+        const totalAmount = totalContractAmount;
+        let cuotaAmount = 0;
+
+        // 2. Ejecutar lógica según frecuencia
+        if (frequency === 'un_pago') {
+          // Todo el monto se paga en la fecha de inicio
+          paymentRecords.push({
+            contract_id: newContract.id,
+            due_date: new Date(b.start_date), 
+            amount: totalAmount, // Se paga el total
+          });
+
+        } else if (frequency === 'diario') {
+          // Generamos un pago por cada día (Nights)
+          for (let d = 0; d < nights; d++) {
+            let paymentDate = addDays(new Date(b.start_date), d); // Necesitas el helper addDays
+            paymentRecords.push({
+              contract_id: newContract.id,
+              due_date: paymentDate,
+              amount: pricePerNight, // El monto diario (sin descuento, ya que el total está descontado)
+            });
+          }
+        } else if (frequency === 'semanal') {
+          cuotaAmount = effectiveDailyPrice * 7;
+          for (let d = 0; d < nights; d += 7) {
+            let paymentDate = addDays(new Date(b.start_date), d);
+            
+            // Calculamos el monto de la última semana (si es parcial)
+            const daysInPeriod = Math.min(7, nights - d); 
+            const finalAmount = effectiveDailyPrice * daysInPeriod;
+
+            paymentRecords.push({
+              contract_id: newContract.id,
+              due_date: paymentDate,
+              amount: finalAmount
+            });
+          }
+
+        } else if (frequency === 'mensual') {
+          cuotaAmount = effectiveDailyPrice * 30;
+
+          let remainingNights = nights;
+          let currentDay = new Date(b.start_date);
+
+            while (remainingNights > 0) {
+              // Generamos pagos en bloques de 30 días
+              const daysInPeriod = Math.min(30, remainingNights);
+              const finalAmount = effectiveDailyPrice * daysInPeriod;
+
+              paymentRecords.push({
+                contract_id: newContract.id,
+                due_date: currentDay,
+                amount: finalAmount,
+                method: 'transferencia'
+              });
+
+              // Avanzamos 30 días para la siguiente cuota
+              currentDay = addDays(currentDay, 30); 
+              remainingNights -= 30;
+            }
+        }
+      }
+
+      // 4.3. Insertar los pagos en la base de datos
+      if (paymentRecords.length > 0) {
+        await Payment.bulkCreate(paymentRecords, { transaction: t });
+      }
+
+      // --- 5. Actualizar la Propiedad a 'Alquilada' ---
+      await Property.update({
+        estado: 'inactivo' 
+      }, {
+        where: { id: toInt(b.property_id) },
+        transaction: t
+      });
+
+      // --- 6. Confirmar y Redirigir ---
+      await t.commit();
+      return res.redirect('/user/managment');
+
+    } catch (error) {
+      await t.rollback();
+      console.error('Error al crear contrato:', error);
+      return res.status(500).send('Error interno del servidor.');
+    }
+  },
+  contractDetail: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.session.user.id; // ID del usuario logueado (propietario o inquilino)
+
+      const contract = await Contract.findByPk(id, {
+        include: [
+          { model: Property, as: 'property' },
+          { model: User, as: 'owner' },
+          { model: User, as: 'tenant' },
+          { model: Guarantee, as: 'guarantee' }, // Asumiendo que tenés un alias 'guarantee'
+          { 
+            model: Payment, 
+            as: 'payments',
+            order: [['due_date', 'ASC']] // ¡Traer los pagos ordenados por vencimiento!
+          }
+        ]
+      });
+
+      // Verificación de Seguridad:
+      // Solo el propietario o el inquilino de ESE contrato pueden verlo.
+      if (!contract || (contract.owner_id !== userId && contract.tenant_id !== userId)) {
+        return res.redirect('/user/managment'); // O al panel del inquilino
+      }
+
+      // Pasamos el usuario logueado para saber si es 'owner' o 'tenant' en la vista
+      res.render('contractDetail', {
+        title: `Contrato: ${contract.property.titulo}`,
+        stylesheet: 'contractDetail.css', // Reutilizamos el CSS de managment
+        contract,
+        user: req.session.user 
+      });
+
+    } catch (error) {
+      console.error('Error al mostrar el detalle del contrato:', error);
+      res.redirect('/');
+    }
+  },
   detail: async (req, res) => {
     try {
       const idStr = (req.params.id || "").toString().split("-")[0];

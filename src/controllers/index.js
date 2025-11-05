@@ -2,7 +2,6 @@ import db from '../database/models/index.cjs';
 import { Op } from 'sequelize';
 import path from 'path';
 import fs from 'fs';
-import { get } from 'http';
 const { User, Property, Role, PropertyImage, OperationType, sequelize, Service, Guarantee, PropertyType } = db;
 const PAGE_SIZE = 15;
 
@@ -242,16 +241,17 @@ const indexController = {
   },
   rejectProperty: async (req, res) => {
     const { id } = req.params;
+    const { rejection_reason } = req.body;
 
     try {
       const property = await Property.findByPk(id);
 
       if (!property) {
-          return res.status(404).send('Propiedad no encontrada.');
+        return res.status(404).send('Propiedad no encontrada.');
       }
 
       if (property.estado === 'pendiente') {
-          await property.update({ estado: 'inactivo' });
+        await property.update({ estado: 'rechazado', rejection_reason: rejection_reason || null });
       }
 
       return res.redirect('/admin?tab=inmuebles');

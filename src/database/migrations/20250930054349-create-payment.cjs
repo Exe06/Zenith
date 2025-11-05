@@ -33,7 +33,7 @@ module.exports = {
       },
       method: { 
         type: Sequelize.ENUM('transferencia', 'mercado_pago'),
-        allowNull: false 
+        allowNull: true 
       },
       description: {
         type: Sequelize.STRING,

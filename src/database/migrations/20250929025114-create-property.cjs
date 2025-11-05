@@ -136,9 +136,13 @@ module.exports = {
         defaultValue: false
       },
       estado: {
-        type: Sequelize.ENUM('disponible','pendiente','inactivo'),
+        type: Sequelize.ENUM('disponible','pendiente','inactivo', 'rechazado'),
         allowNull: false,
         defaultValue: 'pendiente'
+      },
+      rejection_reason: {
+        type: Sequelize.TEXT,
+        allowNull: true
       },
       created_at: {
         type: Sequelize.DATE,

@@ -10,6 +10,7 @@ import userLogged from './middlewares/userLogged.js';
 import indexRoutes from './routes/index.js';
 import userRoutes from './routes/user.js';
 import propertyRoutes from './routes/property.js';
+import paymentRoutes from './routes/payment.js'
 
 const app = express();
 const PORT = process.env.PORT;
@@ -30,7 +31,6 @@ app.use(session({
 }));
 app.use(userLogged);
 
-
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
@@ -40,6 +40,7 @@ checkConnection();
 app.use("/", indexRoutes);
 app.use("/property", propertyRoutes);
 app.use("/user", userRoutes);
+app.use("/payments", paymentRoutes)
 
 app.use((req, res, next) => {
   res.status(404).redirect('/');

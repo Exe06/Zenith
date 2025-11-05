@@ -21,6 +21,10 @@ export default (sequelize, DataTypes) => {
         foreignKey: 'contract_id',
         as: 'payments'
       });
+      Contract.belongsTo(models.Guarantee, {
+        foreignKey: 'guarantee_id',
+        as: 'guarantee'
+      })
     }
   }
   Contract.init({
@@ -62,7 +66,15 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.ENUM('un_pago','diario','semanal','mensual'),
       allowNull: false
     },
-    unit_price: {
+    daily_price: {
+      type: DataTypes.DECIMAL(10,2).UNSIGNED,
+      allowNull: true
+    },
+    monto_base: {
+      type: DataTypes.DECIMAL(10,2).UNSIGNED,
+      allowNull: true
+    },
+    deposito: {
       type: DataTypes.DECIMAL(10,2).UNSIGNED,
       allowNull: true
     },
@@ -70,8 +82,16 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2).UNSIGNED,
       allowNull: false
     },
-    deposito: {
-      type: DataTypes.DECIMAL(10,2).UNSIGNED,
+    interest_rate: {
+      type: DataTypes.DECIMAL(5, 2).UNSIGNED,
+      allowNull: true
+    },
+    adjustment_index: {
+      type: DataTypes.STRING, 
+      allowNull: true
+    },
+    adjustment_period_months: {
+      type: DataTypes.TINYINT.UNSIGNED, 
       allowNull: true
     },
     estado: {

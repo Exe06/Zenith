@@ -96,4 +96,14 @@ export const validatePassword = [
             returnScore: false
         })
         .withMessage('La contraseña no cumple con los requisitos de seguridad.')
-]
+];
+
+export const validateMessage = [
+  body('body').notEmpty().withMessage('El mensaje no puede estar vacío.').isLength({ min: 5, max: 500 }),
+  body('property_id').isInt(),
+  body('owner_id').isInt()
+];
+
+export const validateReply = [
+  body('body').notEmpty().withMessage('El mensaje no puede estar vacío.')
+];

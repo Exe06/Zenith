@@ -19,6 +19,7 @@ body{ margin:0; background:var(--bg); color:var(--text); font:14px/1.4 system-ui
 .grid-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px }
 @media (max-width:900px){ .grid-2,.grid-3{ grid-template-columns:1fr } }
 
+.field {margin: 10px 10px;}
 .field label{ display:block; font-weight:600; margin-bottom:6px }
 .field .req{ color:var(--err) }
 .field input, .field select{
@@ -36,3 +37,11 @@ body{ margin:0; background:var(--bg); color:var(--text); font:14px/1.4 system-ui
 .btn-ghost{ background:#fff; border-color:var(--border); color:var(--text) }
 .btn-primary{ background:var(--brand); color:#fff }
 .btn-primary:hover{ background:var(--brand-600) }
+
+.form-error {
+  display: block; 
+  color: #d93025;
+  font-size: .9rem;
+  margin-top: .25rem;
+  margin-bottom: 1.25rem;
+}
